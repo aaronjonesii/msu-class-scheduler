@@ -1,4 +1,4 @@
-import { isDevMode } from '@angular/core';
+import { inject, isDevMode } from '@angular/core';
 import { getApp, initializeApp, provideFirebaseApp } from '@angular/fire/app';
 import { environment } from '../environments/environment';
 import {
@@ -9,7 +9,13 @@ import { connectAuthEmulator, getAuth, provideAuth } from '@angular/fire/auth';
 import {
   connectFirestoreEmulator, getFirestore, provideFirestore,
 } from '@angular/fire/firestore';
-import { ReCaptchaV3Provider, initializeAppCheck, provideAppCheck } from "@angular/fire/app-check";
+import {
+  ReCaptchaV3Provider,
+  initializeAppCheck,
+  provideAppCheck,
+  AppCheck
+} from "@angular/fire/app-check";
+import { SSRSafeService } from "./shared/services/ssr-safe.service";
 
 let firestoreEmulatorStarted = false;
 
@@ -38,6 +44,10 @@ export const FirebaseProviders = [
     return auth;
   }),
   provideAppCheck(() => {
+    const ssrSafeService = inject(SSRSafeService);
+
+    if (!ssrSafeService.isBrowser) return new AppCheck({app: getApp()});
+
     const provider = new ReCaptchaV3Provider(environment.recaptcha3SiteKey);
     return initializeAppCheck(
       getApp(),
