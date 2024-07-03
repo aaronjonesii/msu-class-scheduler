@@ -12,7 +12,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "csb",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
@@ -29,7 +29,7 @@
               {
                 "glob": "**/*",
                 "input": "src/assets",
-                "output": "/assets"
+                "output": "assets"
               }
             ],
             "styles": [
