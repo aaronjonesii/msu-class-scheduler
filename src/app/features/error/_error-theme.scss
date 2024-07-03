@@ -18,7 +18,17 @@
   }
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+  csb-error {
+    .header {
+      font: mat.get-theme-typography($theme, headline-large)
+    }
+
+    .header-text {
+      font: mat.get-theme-typography($theme, body-large);
+    }
+  }
+}
 
 @mixin theme($theme) {
   @if mat.theme-has($theme, color) { @include color($theme); }
