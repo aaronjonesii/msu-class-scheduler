@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TopNavBarComponent } from './top-nav-bar.component';
+import { ActivatedRoute } from "@angular/router";
 
 describe('TopNavBarComponent', () => {
   let component: TopNavBarComponent;
@@ -8,7 +9,15 @@ describe('TopNavBarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [TopNavBarComponent]
+      imports: [
+        TopNavBarComponent,
+      ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {},
+        },
+      ],
     })
     .compileComponents();
 

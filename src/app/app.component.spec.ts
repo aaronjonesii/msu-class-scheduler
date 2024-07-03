@@ -3,6 +3,7 @@ import { AppComponent } from './app.component';
 import {
   TopNavBarComponent
 } from "./shared/components/top-nav-bar/top-nav-bar.component";
+import { ActivatedRoute } from "@angular/router";
 
 describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
@@ -13,6 +14,12 @@ describe('AppComponent', () => {
       imports: [
         AppComponent,
         TopNavBarComponent,
+      ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {},
+        },
       ],
     }).compileComponents();
 
