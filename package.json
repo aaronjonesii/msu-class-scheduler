@@ -2,14 +2,18 @@
   "name": "class-schedule-builder",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development",
+    "dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run start:development\"",
+    "emulators": "firebase emulators:start --import=./seed --export-on-exit",
+    "lint": "ng lint",
+    "ng": "ng",
+    "serve:ssr:class-schedule-builder": "node dist/class-schedule-builder/server/server.mjs",
+    "start:development": "ng serve",
+    "start:production": "ng serve --configuration production",
     "test": "ng test",
     "test:headless": "ng test --no-watch --no-progress --browsers=ChromeHeadless",
-    "serve:ssr:class-schedule-builder": "node dist/class-schedule-builder/server/server.mjs",
-    "lint": "ng lint"
+    "watch": "ng build --watch --configuration development",
+    "deploy:preview": "firebase hosting:channel:deploy preview"
   },
   "private": true,
   "dependencies": {
@@ -18,6 +22,7 @@
     "@angular/common": "^18.0.0",
     "@angular/compiler": "^18.0.0",
     "@angular/core": "^18.0.0",
+    "@angular/fire": "^18.0.1",
     "@angular/forms": "^18.0.0",
     "@angular/material": "^18.0.5",
     "@angular/platform-browser": "^18.0.0",
