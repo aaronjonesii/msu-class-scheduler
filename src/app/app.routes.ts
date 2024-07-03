@@ -1,5 +1,9 @@
 import { Routes } from '@angular/router';
 
+export const appRoutes = {
+  'home': '/',
+};
+
 export const routes: Routes = [
   {
     path: '',
