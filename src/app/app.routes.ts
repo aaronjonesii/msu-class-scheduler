@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 export const appRoutes = {
   home: '/',
   signIn: '/sign-in',
+  error: '/error',
 };
 
 export const routes: Routes = [
@@ -11,6 +12,11 @@ export const routes: Routes = [
     pathMatch: 'full',
     loadComponent: () => import('./features/home/home.component')
       .then((c) => c.HomeComponent),
+  },
+  {
+    path: 'error',
+    loadComponent: () => import('./features/error/error.component')
+      .then((c) => c.ErrorComponent),
   },
   {
     path: 'sign-in',

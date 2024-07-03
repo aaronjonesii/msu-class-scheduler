@@ -1,0 +1,16 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  margin-top: 3rem;
+  padding: 2rem;
+  text-align: center;
+}
+.header {
+  line-height: 1.2;
+  font-size: calc(1.475rem + 2.7vw);
+}
+.header-text {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+}

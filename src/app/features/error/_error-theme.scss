@@ -2,13 +2,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './sign-in/sign-in-theme' as signIn;
-@use './error/error-theme' as error;
-
-@mixin componentThemeMixins($theme) {
-  @include signIn.theme($theme);
-  @include error.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -16,6 +10,12 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  csb-error {
+    .header-text {
+      color: mat.get-theme-color($theme, on-surface-variant);
+    }
+  }
 }
 
 @mixin typography($theme) {}
