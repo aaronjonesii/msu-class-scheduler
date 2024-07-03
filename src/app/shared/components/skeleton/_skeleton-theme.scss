@@ -1,0 +1,52 @@
+// https://material.angular.io/guide/theming-your-components
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin componentThemeMixins($theme) {}
+
+@mixin color($theme) {
+  $has-base: mat.theme-has($theme, base);
+  $has-color: mat.theme-has($theme, color);
+  $has-typography: mat.theme-has($theme, typography);
+  $has-density: mat.theme-has($theme, density);
+  $theme-type: mat.get-theme-type($theme);
+
+  csb-skeleton {
+    .skeleton {
+      background: mat.get-theme-color($theme, surface);
+      //background: mat.get-color-from-palette($background-palette, 'app-bar');
+
+      /** Styles for progress animation */
+      &.progress {
+        &:before {
+          background-image: linear-gradient(
+                          90deg,
+                          transparent,
+                          mat.m2-get-color-from-palette(mat.$m2-grey-palette, 200),
+                          transparent,
+          );
+        }
+      }
+      &.progress-dark {
+        &:before {
+          background-image: linear-gradient(
+                          90deg,
+                          transparent,
+                          mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400),
+                          transparent,
+          );
+        }
+      }
+    }
+  }
+}
+
+@mixin typography($theme) {}
+
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) { @include color($theme); }
+
+  @if mat.theme-has($theme, typography) { @include typography($theme); }
+
+  @include componentThemeMixins($theme);
+}

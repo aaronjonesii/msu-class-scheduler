@@ -1,0 +1,16 @@
+<!-- eslint-disable @angular-eslint/template/no-inline-styles -->
+<div class="skeleton"
+     aria-busy="true"
+     aria-valuemin="0"
+     aria-valuemax="100"
+     role="progressbar"
+     tabindex="-1"
+     [ngStyle]="styles()"
+     [ngClass]="computedClasses()"
+     [attr.aria-label]="ariaLabel()"
+     [attr.aria-valuetext]="loadingText()">
+  @if (appearance() === 'custom-content') {
+    <ng-content />
+  }
+</div>
+<!-- eslint-enable @angular-eslint/template/no-inline-styles -->

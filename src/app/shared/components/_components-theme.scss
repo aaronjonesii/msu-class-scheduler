@@ -2,12 +2,10 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './features/features-theme' as features;
-@use './shared/shared-theme' as shared;
+@use './skeleton/skeleton-theme' as skeleton;
 
 @mixin componentThemeMixins($theme) {
-  @include features.theme($theme);
-  @include shared.theme($theme);
+  @include skeleton.theme($theme);
 }
 
 @mixin color($theme) {
