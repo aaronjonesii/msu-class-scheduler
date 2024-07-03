@@ -1,0 +1,81 @@
+// Classes to reduce redundancy
+.word-wrap {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  -moz-hyphens: auto;
+  hyphens: auto;
+}
+.truncate-text, .text-ellipsis {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  width: 100%;
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+}
+.flex-col {
+  display: flex;
+  flex-direction: column;
+}
+.flex-wrap { flex-wrap: wrap; }
+.align-items-center { align-items: center; }
+.justify-content-center { justify-content: center; }
+.justify-content-end { justify-content: end; }
+.justify-space-between { justify-content: space-between; }
+.justify-self-flex-end { justify-self: flex-end; }
+.align-self-flex-end { align-self: flex-end; }
+.align-items-flex-end { align-items: flex-end; }
+.app-gap { gap: var(--gap, 1rem); }
+.text-center { text-align: center; }
+.w-100 { width: 100%; }
+.w-0 { width: 0; }
+.h-100 { height: 100%; }
+.h-0 { height: 0; }
+.app-padding, .page-padding { padding: var(--padding, 1rem) }
+.display-none { display: none; }
+.overflow-auto { overflow: auto; }
+.overflow-visible { overflow: visible; }
+.flex-grow { flex-grow: 1; }
+.p-0 { padding: 0 !important; }
+.m-0 { margin: 0 !important; }
+.display-block { display: block; }
+.display-grid { display: grid; }
+.margin-top-auto { margin-top: auto; }
+.opacity-half { opacity: 0.5; }
+.opacity-full, .opacity-1 { opacity: 1; }
+.hidden, .visibility-hidden { visibility: hidden; }
+.visible, .visibility-visible { visibility: visible; }
+.grid-column-end-span-4 { grid-column-end: span 4; }
+.grid-column-end-span-8 { grid-column-end: span 8; }
+.grid-column-end-span-12 { grid-column-end: span 12; }
+.capitalize { text-transform: capitalize; }
+.cursor-pointer { cursor: pointer; }
+.uppercase { text-transform: uppercase; }
+.position-absolute { position: absolute; }
+.text-bold { font-weight: bold; }
+.text-break-word { word-break: break-word; }
+.text-upright {
+  text-orientation: upright;
+}
+.overflow-wrap-anywhere {
+  overflow-wrap: anywhere;
+}
+.text-decoration-none {
+  text-decoration: none;
+}
+.align-self-center {
+  align-self: center;
+}
+.placeholder {
+  display: inherit;
+  flex-direction: inherit;
+  gap: inherit;
+  width: inherit;
+  height: inherit;
+}
+.font-weight-normal { font-weight: normal !important; }
+.font-weight-600 { font-weight: 600; }
