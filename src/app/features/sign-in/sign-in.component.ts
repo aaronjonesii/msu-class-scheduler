@@ -1,7 +1,14 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal
+} from '@angular/core';
 import { MatButton } from "@angular/material/button";
 import { NgOptimizedImage } from "@angular/common";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { AuthService } from "../../shared/services/auth.service";
+import { LoggerService } from "../../shared/services/logger.service";
 
 @Component({
   selector: 'csb-sign-in',
@@ -16,14 +23,18 @@ import { MatProgressBar } from "@angular/material/progress-bar";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SignInComponent {
+  private authService = inject(AuthService);
+  private logger = inject(LoggerService);
+
   loading = signal(false);
 
-  signIn() {
+  async signIn() {
     try {
       this.loading.set(true);
-      console.debug('Sign in with google. Not yet implemented.');
+
+      await this.authService.signIn();
     } catch (error: unknown) {
-      console.error('Error signing in.', error);
+      this.logger.error('Error signing in.', error);
     } finally {
       this.loading.set(false);
     }

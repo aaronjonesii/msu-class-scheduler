@@ -3,15 +3,19 @@
     Classes Schedule Builder
   </a>
 
-  @if (isSignedIn()) {
-    <a mat-button (click)="signOut()">
-      <mat-icon matButtonIcon fontIcon="logout" />
-      Sign out
-    </a>
-  } @else {
-    <a mat-button [routerLink]="[appRoutes.signIn]">
-      <mat-icon matButtonIcon fontIcon="login" />
-      Sign in
-    </a>
+  @defer (when isSignedIn() !== undefined) {
+    @if (isSignedIn()) {
+      <a mat-button (click)="signOut()">
+        <mat-icon matButtonIcon fontIcon="logout" />
+        Sign out
+      </a>
+    } @else {
+      <a mat-button [routerLink]="[appRoutes.signIn]">
+        <mat-icon matButtonIcon fontIcon="login" />
+        Sign in
+      </a>
+    }
+  } @placeholder (minimum 500ms) {
+    <csb-skeleton [styles]="{width: '75px', height: '30px'}" />
   }
 </nav>

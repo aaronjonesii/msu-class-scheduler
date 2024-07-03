@@ -18,7 +18,7 @@ export class AuthService {
    *
    * @return {User | null}
    */
-  authState$(): Observable<User | null> {
+  get authState$(): Observable<User | null> {
     return authState(this.auth);
   }
 
