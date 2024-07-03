@@ -1,5 +1,17 @@
 <nav>
   <a mat-button [routerLink]="[appRoutes.home]">
-    Class Schedule Builder
+    Classes Schedule Builder
   </a>
+
+  @if (isSignedIn()) {
+    <a mat-button (click)="signOut()">
+      <mat-icon matButtonIcon fontIcon="logout" />
+      Sign out
+    </a>
+  } @else {
+    <a mat-button [routerLink]="[appRoutes.signIn]">
+      <mat-icon matButtonIcon fontIcon="login" />
+      Sign in
+    </a>
+  }
 </nav>

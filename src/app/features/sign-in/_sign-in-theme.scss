@@ -1,0 +1,33 @@
+// https://material.angular.io/guide/theming-your-components
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin componentThemeMixins($theme) {}
+
+@mixin color($theme) {
+  $has-base: mat.theme-has($theme, base);
+  $has-color: mat.theme-has($theme, color);
+  $has-typography: mat.theme-has($theme, typography);
+  $has-density: mat.theme-has($theme, density);
+  $theme-type: mat.get-theme-type($theme);
+
+  csb-sign-in {
+    .card {
+      border-color: mat.get-theme-color($theme, outline);
+    }
+  }
+}
+
+@mixin typography($theme) {
+  .title {
+    font: mat.get-theme-typography($theme, headline-medium, font);
+  }
+}
+
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) { @include color($theme); }
+
+  @if mat.theme-has($theme, typography) { @include typography($theme); }
+
+  @include componentThemeMixins($theme);
+}

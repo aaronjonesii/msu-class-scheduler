@@ -1,0 +1,22 @@
+<div class="card">
+  @if (loading()) {
+    <mat-progress-bar class="loading-bar" mode="indeterminate" />
+  }
+
+  <h1 class="title">Welcome to Classes Schedule Builder!</h1>
+
+  <p>
+    <span class="font-weight-600">Streamline your class scheduling</span> with our visual,
+    user-friendly platform. Designed by a student for students, we're
+    here to make your academic life easier.
+    <br />
+    Have feedback or feature requests? Share them with us
+    <a href="#">here</a>. We're always looking for ways to improve!
+  </p>
+
+  <button mat-stroked-button type="button" (click)="signIn()">
+    <img matButtonIcon class="google-logo" ngSrc="assets/svgs/google-superg.svg"
+         alt="Google Super G Logo" width="24" height="24" />
+    Sign in with Google
+  </button>
+</div>

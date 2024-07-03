@@ -3,6 +3,7 @@
 // For more information: https://material.angular.io/guide/theming
 @use '@angular/material' as mat;
 // Plus imports for other components in your app.
+@use '../../app/app-theme' as app;
 
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
@@ -26,6 +27,8 @@ $class-schedule-builder-theme: mat.define-theme((
 // that you are using.
 :root {
   @include mat.all-component-themes($class-schedule-builder-theme);
+
+  @include app.theme($class-schedule-builder-theme);
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.

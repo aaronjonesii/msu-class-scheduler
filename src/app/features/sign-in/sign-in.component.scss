@@ -1,0 +1,52 @@
+@import '../../../assets/scss/partials/media_queries';
+@import '../../../assets/scss/partials/animations';
+
+:host {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--gap);
+  transition: all $emphasizedDecelerate;
+  position: relative;
+}
+
+.loading-bar {
+  position: absolute;
+  top: 0;
+}
+
+.title {
+  text-align: center;
+}
+
+button {
+  height: unset;
+  padding: calc(var(--padding) * 3/4) var(--padding);
+}
+.google-logo {
+  margin-right: calc(var(--margin) / 2);
+}
+
+@media (min-width: $small) {
+  :host {
+    display: grid;
+    place-content: center;
+  }
+
+  .card {
+    border-width: 1px;
+    border-style: solid;
+    border-radius: var(--border-radius);
+    padding: calc(var(--padding) * 2);
+
+    width: 450px;
+    height: min-content;
+    overflow: hidden;
+  }
+}
