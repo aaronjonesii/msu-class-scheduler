@@ -5,10 +5,7 @@ import { RouterOutlet } from '@angular/router';
   selector: 'csb-root',
   standalone: true,
   imports: [RouterOutlet],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  template: `<router-outlet />`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {
-  title = 'Class Schedule Builder';
-}
+export class AppComponent {}
