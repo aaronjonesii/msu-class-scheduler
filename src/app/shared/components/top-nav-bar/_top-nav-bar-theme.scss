@@ -2,13 +2,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './skeleton/skeleton-theme' as skeleton;
-@use './top-nav-bar/top-nav-bar-theme' as topAppBar;
-
-@mixin componentThemeMixins($theme) {
-  @include skeleton.theme($theme);
-  @include topAppBar.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -16,6 +10,10 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  csb-top-nav-bar {
+    background: rgba(mat.get-theme-color($theme, primary, 70), 0.25);
+  }
 }
 
 @mixin typography($theme) {}
