@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { Auth, AuthError, authState, GoogleAuthProvider,
-  signInWithPopup, User, UserCredential } from "@angular/fire/auth";
+  signInWithPopup, signOut, User, UserCredential } from "@angular/fire/auth";
 import { Observable } from "rxjs";
 import { LoggerService } from "./logger.service";
 import { NavigationExtras, Router } from "@angular/router";
@@ -18,8 +18,26 @@ export class AuthService {
    *
    * @return {User | null}
    */
-  get authState$(): Observable<User | null> {
+  authState$(): Observable<User | null> {
     return authState(this.auth);
+  }
+
+  /**
+   * Signs the user in using Google authentication and navigates to the
+   * home route.
+   *
+   * @remarks
+   * This method calls `googleLogin()` to initiate the Google sign-in process
+   * and, upon successful authentication, redirects the user to the home
+   * route as defined in the `appRoutes` configuration.
+   *
+   * @returns {Promise<UserCredential | AuthError>} A Promise that resolves
+   * with the UserCredential if the sign-in is successful, or rejects with
+   * an AuthError if it fails.
+   */
+  async signIn(): Promise<boolean | AuthError> {
+    return this.googleLogin()
+      .then(() => this.router.navigate([appRoutes.home]))
   }
 
   /**
@@ -36,12 +54,8 @@ export class AuthService {
   async googleLogin(): Promise<UserCredential | AuthError> {
     const provider = new GoogleAuthProvider();
 
-    return await signInWithPopup(this.auth, provider)
-      .then((newCredential) => {
-        this.router.navigate([appRoutes.home]);
-
-        return newCredential;
-      }).catch((error: AuthError) => {
+    return signInWithPopup(this.auth, provider)
+      .catch((error: AuthError) => {
         this.logger.error(
           `Something went wrong signing in with Google`,
           [error, this.auth, provider],
@@ -72,5 +86,27 @@ export class AuthService {
       this.router.navigate([appRoutes.signIn], navigationExtras);
       throw new Error(`You must be signed in`);
     }
+  }
+
+  /**
+   * Signs the current user out.
+   *
+   * @return {Promise<void | AuthError>} A Promise that resolves on
+   * successful sign out, or rejects with an AuthError on failure.
+   */
+  async signOut(): Promise<void | AuthError> {
+    await signOut(this.auth)
+      .then(() => {
+        this.logger.info(`Signed out`);
+
+        this.router.navigate([appRoutes.home]);
+      }).catch((error: AuthError) => {
+        this.logger.error(
+          `Something went wrong signing out`,
+          [error, this.auth],
+        );
+
+        return error;
+      });
   }
 }
