@@ -12,7 +12,7 @@ export const RedirectLoggedInGuard: CanActivateFn = () => {
 
   const logger = inject(LoggerService);
 
-  return auth.authState$.pipe(
+  return auth.authState$().pipe(
     take(1),
     map((user) => {
       const isAuthenticated = !!user;

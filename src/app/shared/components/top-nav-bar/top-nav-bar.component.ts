@@ -32,7 +32,7 @@ export class TopNavBarComponent {
   private authService = inject(AuthService);
 
 
-  isSignedIn$ = this.authService.authState$.pipe(
+  isSignedIn$ = this.authService.authState$().pipe(
     map((user) => !!user),
   );
 
