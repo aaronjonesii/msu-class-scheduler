@@ -3,6 +3,12 @@
     Classes Schedule Builder
   </a>
 
+  <a mat-button type="button" [routerLink]="[appRoutes.schedules]">
+    Schedules
+  </a>
+
+  <div class="flex-spacer"></div>
+
   @defer (when isSignedIn() !== undefined) {
     @if (isSignedIn()) {
       <a mat-button (click)="signOut()">

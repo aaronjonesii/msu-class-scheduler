@@ -24,11 +24,11 @@ export class AuthService {
 
   /**
    * Signs the user in using Google authentication and navigates to the
-   * home route.
+   * schedules route.
    *
    * @remarks
    * This method calls `googleLogin()` to initiate the Google sign-in process
-   * and, upon successful authentication, redirects the user to the home
+   * and, upon successful authentication, redirects the user to the schedules
    * route as defined in the `appRoutes` configuration.
    *
    * @returns {Promise<UserCredential | AuthError>} A Promise that resolves
@@ -37,7 +37,7 @@ export class AuthService {
    */
   async signIn(): Promise<boolean | AuthError> {
     return this.googleLogin()
-      .then(() => this.router.navigate([appRoutes.home]))
+      .then(() => this.router.navigate([appRoutes.schedules]))
   }
 
   /**

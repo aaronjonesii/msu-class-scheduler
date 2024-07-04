@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
+import { AuthGuard } from "./shared/guards/auth.guard";
+import {
+  RedirectLoggedInGuard
+} from "./shared/guards/redirect-logged-in.guard";
 
 export const appRoutes = {
-  home: '/',
-  signIn: '/sign-in',
   error: '/error',
+  home: '/',
+  schedules: '/schedules',
+  signIn: '/sign-in',
 };
 
 export const routes: Routes = [
@@ -19,9 +24,16 @@ export const routes: Routes = [
       .then((c) => c.ErrorComponent),
   },
   {
+    path: 'schedules',
+    loadComponent: () => import('./features/schedules/schedules.component')
+      .then((c) => c.SchedulesComponent),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'sign-in',
     loadComponent: () => import('./features/sign-in/sign-in.component')
       .then((c) => c.SignInComponent),
+    canActivate: [RedirectLoggedInGuard],
   },
   { path: '**', redirectTo: '' },
 ];

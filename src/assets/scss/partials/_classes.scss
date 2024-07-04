@@ -39,7 +39,7 @@
 .display-none { display: none; }
 .overflow-auto { overflow: auto; }
 .overflow-visible { overflow: visible; }
-.flex-grow { flex-grow: 1; }
+.flex-grow, .flex-spacer { flex-grow: 1; }
 .p-0 { padding: 0 !important; }
 .m-0 { margin: 0 !important; }
 .display-block { display: block; }
