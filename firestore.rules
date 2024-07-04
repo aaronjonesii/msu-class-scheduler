@@ -2,8 +2,17 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: if false;
+    match /{document=**} { allow read, write: if false; }
+
+    // functions
+    function isSignedIn() { return request.auth != null; }
+    function hasRsc(rsc) { return rsc != null }
+
+    // schedules collection
+    match /schedules/{scheduleId} {
+      // users can only manage/view their own schedules
+      allow read: if isSignedIn() && hasRsc(resource) && resource.data.userId == request.auth.uid;
+      allow write: if isSignedIn() && hasRsc(request.resource) && request.resource.data.userId == request.auth.uid;
     }
   }
 }

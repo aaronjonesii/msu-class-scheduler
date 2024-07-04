@@ -1,3 +1,11 @@
 <h2 class="title">Schedules</h2>
 
-<section class="schedules"></section>
+<section class="schedules">
+  <mat-nav-list>
+    @for (schedule of schedules(); track schedule.id) {
+      <a mat-menu-item>{{schedule.name}}</a>
+    } @empty {
+      You have no schedules yet.
+    }
+  </mat-nav-list>
+</section>
