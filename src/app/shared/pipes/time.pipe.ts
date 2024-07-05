@@ -3,7 +3,7 @@ import { DatePipe } from "@angular/common";
 
 @Pipe({ name: 'time', standalone: true })
 export class TimePipe implements PipeTransform {
-  private datePipe = inject(DatePipe);
+  constructor(private datePipe: DatePipe) {}
 
   transform(timeString: string): string {
     if (!timeString) return '';

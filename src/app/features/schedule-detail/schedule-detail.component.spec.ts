@@ -2,6 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScheduleDetailComponent } from './schedule-detail.component';
 import { SchedulesService } from "../../shared/services/schedules.service";
+import {
+  ScheduleClassesService
+} from "../../shared/services/schedule-classes.service";
 
 describe('ScheduleDetailComponent', () => {
   let component: ScheduleDetailComponent;
@@ -13,6 +16,10 @@ describe('ScheduleDetailComponent', () => {
       providers: [
         {
           provide: SchedulesService,
+          useValue: {},
+        },
+        {
+          provide: ScheduleClassesService,
           useValue: {},
         },
       ],

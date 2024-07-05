@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScheduleClassFormDialogComponent } from './schedule-class-form-dialog.component';
 import { provideAnimations } from "@angular/platform-browser/animations";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 describe('ScheduleClassFormDialogComponent', () => {
   let component: ScheduleClassFormDialogComponent;
@@ -11,6 +12,10 @@ describe('ScheduleClassFormDialogComponent', () => {
     await TestBed.configureTestingModule({
       imports: [ScheduleClassFormDialogComponent],
       providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: {},
+        },
         provideAnimations(),
       ],
     }).compileComponents();

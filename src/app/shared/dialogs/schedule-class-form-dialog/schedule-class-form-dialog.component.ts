@@ -16,7 +16,6 @@ import {
   ScheduleClassFormComponent
 } from "../../components/schedule-class-form/schedule-class-form.component";
 import { ReadScheduleClass } from "../../interfaces/schedule-class";
-import { sign } from "node:crypto";
 
 export interface ScheduleClassFormDialogContract {
   scheduleClass?: ReadScheduleClass,
