@@ -1,0 +1,63 @@
+<form [formGroup]="meetingFormGroup()">
+  <mat-form-field [appearance]="formAppearance()">
+    <mat-label>Type</mat-label>
+    <mat-select [formControl]="meetingFormGroup().controls.type">
+      @for (type of ScheduleClassMeetingType | keyvalue; track type.key) {
+        <mat-option [value]="type.value">{{type.value}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance()">
+    <mat-label>Location</mat-label>
+    <input matInput type="text" name="location"
+           [formControl]="meetingFormGroup().controls.location" />
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance()">
+    <mat-label>Instructor</mat-label>
+    <input matInput type="text" name="instructor"
+           [formControl]="meetingFormGroup().controls.instructor" />
+  </mat-form-field>
+
+  @for (
+          meetingTime of meetingFormGroup().controls.meetingTimes.controls;
+          track meetingTime.value; let i = $index;
+        ) {
+    <div class="meeting-time">
+      <mat-form-field [appearance]="formAppearance()">
+        <mat-label>Days</mat-label>
+        <mat-select [formControl]="meetingTime.controls.days" [multiple]="true">
+          @for (day of Day | keyvalue: keepSameOrder; track day.key) {
+            <mat-option [value]="day.value">{{day.value}}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+
+      <label for="startTime">Start time</label>
+      <input type="time" id="startTime" name="startTime"
+             [formControl]="meetingTime.controls.startTime" />
+
+      <label for="endTime">End time</label>
+      <input type="time" id="endTime" name="endTime"
+             [formControl]="meetingTime.controls.endTime" />
+
+      <button mat-button type="button" class="error-btn"
+              (click)="meetingFormGroup().controls.meetingTimes.removeAt(i)">
+        <mat-icon matButtonIcon fontIcon="delete" />
+        Remove meeting time
+      </button>
+    </div>
+  }
+
+  <button mat-button type="button" (click)="addMeetingTime()">
+    <mat-icon matButtonIcon fontIcon="add" />
+    Meeting time
+  </button>
+
+  <button mat-button type="button" class="error-btn"
+          (click)="removeMeeting.emit()">
+    <mat-icon matButtonIcon fontIcon="delete" />
+    Remove Meeting
+  </button>
+</form>

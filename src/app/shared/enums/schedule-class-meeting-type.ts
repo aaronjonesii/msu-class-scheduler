@@ -1,5 +1,5 @@
 export enum ScheduleClassMeetingType {
-  LECTURE,
-  RECITATION,
-  LABORATORY,
+  LECTURE = 'Lecture',
+  RECITATION = 'Recitation',
+  LABORATORY = 'Laboratory',
 }

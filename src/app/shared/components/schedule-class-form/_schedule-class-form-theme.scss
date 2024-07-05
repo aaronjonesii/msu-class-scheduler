@@ -2,14 +2,12 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './skeleton/skeleton-theme' as skeleton;
-@use './top-nav-bar/top-nav-bar-theme' as topAppBar;
-@use './schedule-class-form/schedule-class-form-theme' as scheduleClassForm;
+@use './components/schedule-class-meetings-form/schedule-class-meetings-form-theme' as scheduleClassMeetingsForm;
+@use './components/schedule-class-meeting-form/schedule-class-meeting-form-theme' as scheduleClassMeetingForm;
 
 @mixin componentThemeMixins($theme) {
-  @include skeleton.theme($theme);
-  @include topAppBar.theme($theme);
-  @include scheduleClassForm.theme($theme);
+  @include scheduleClassMeetingsForm.theme($theme);
+  @include scheduleClassMeetingForm.theme($theme);
 }
 
 @mixin color($theme) {

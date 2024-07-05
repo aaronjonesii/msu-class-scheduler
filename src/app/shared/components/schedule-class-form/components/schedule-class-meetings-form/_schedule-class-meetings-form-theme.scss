@@ -2,15 +2,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './skeleton/skeleton-theme' as skeleton;
-@use './top-nav-bar/top-nav-bar-theme' as topAppBar;
-@use './schedule-class-form/schedule-class-form-theme' as scheduleClassForm;
-
-@mixin componentThemeMixins($theme) {
-  @include skeleton.theme($theme);
-  @include topAppBar.theme($theme);
-  @include scheduleClassForm.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -20,7 +12,13 @@
   $theme-type: mat.get-theme-type($theme);
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+  csb-schedule-class-meetings-form {
+    .title {
+      font: mat.get-theme-typography($theme, headline-medium);
+    }
+  }
+}
 
 @mixin theme($theme) {
   @if mat.theme-has($theme, color) { @include color($theme); }

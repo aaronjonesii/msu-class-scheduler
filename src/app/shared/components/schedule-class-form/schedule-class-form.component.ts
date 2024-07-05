@@ -6,9 +6,7 @@ import {
 import { ReactiveFormsModule } from "@angular/forms";
 import { ScheduleClassForm } from "../../forms/schedule-class-form";
 import {
-  MatError,
-  MatFormField,
-  MatFormFieldAppearance, MatFormFieldModule, MatHint, MatLabel
+  MatFormFieldAppearance, MatFormFieldModule,
 } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import {
@@ -18,6 +16,9 @@ import { MatOption, provideNativeDateAdapter } from "@angular/material/core";
 import { MatSelect } from "@angular/material/select";
 import { ScheduleClassStatus } from "../../enums/schedule-class-status";
 import { KeyValuePipe } from "@angular/common";
+import {
+  ScheduleClassMeetingsFormComponent
+} from "./components/schedule-class-meetings-form/schedule-class-meetings-form.component";
 
 @Component({
   selector: 'csb-schedule-class-form',
@@ -28,7 +29,8 @@ import { KeyValuePipe } from "@angular/common";
   providers: [provideNativeDateAdapter()],
   imports: [
     ReactiveFormsModule, MatFormFieldModule,
-    MatInput, MatDatepickerModule, MatSelect, KeyValuePipe, MatOption,
+    MatInput, MatDatepickerModule, MatSelect, KeyValuePipe,
+    MatOption, ScheduleClassMeetingsFormComponent,
   ],
 })
 export class ScheduleClassFormComponent {
