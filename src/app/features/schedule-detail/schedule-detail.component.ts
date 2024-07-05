@@ -26,7 +26,7 @@ import {
   ScheduleClass
 } from "../../shared/interfaces/schedule-class";
 import { TimePipe } from "../../shared/pipes/time.pipe";
-import { DatePipe } from "@angular/common";
+import { DatePipe, KeyValuePipe } from "@angular/common";
 import {
   ScheduleClassesService
 } from "../../shared/services/schedule-classes.service";
@@ -37,6 +37,13 @@ import { LoggerService } from "../../shared/services/logger.service";
 import {
   ConfirmDialogComponent, ConfirmDialogContract
 } from "../../shared/components/confirm-dialog/confirm-dialog.component";
+import {
+  ScheduleGridComponent
+} from "../../shared/components/schedule-grid/schedule-grid.component";
+import { MatFormField, MatLabel } from "@angular/material/form-field";
+import { MatOption, MatSelect } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
+import { Day } from "../../shared/enums/day";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -53,6 +60,13 @@ import {
     MatIconButton,
     MatListItemMeta,
     ScheduleClassesListComponent,
+    ScheduleGridComponent,
+    MatFormField,
+    MatSelect,
+    FormsModule,
+    MatOption,
+    MatLabel,
+    KeyValuePipe,
   ],
   providers: [DatePipe],
   templateUrl: './schedule-detail.component.html',
@@ -66,10 +80,15 @@ export class ScheduleDetailComponent {
   private dialog = inject(MatDialog);
 
   protected readonly appRoutes = appRoutes;
+  protected readonly Day = Day;
 
   scheduleId = signal<string | null>(null);
 
   loaded = signal(false);
+
+  timeSlotIncrement = signal(60);
+
+  days = signal(Object.values(Day));
 
   schedule = toSignal(
     toObservable(this.scheduleId).pipe(
@@ -158,4 +177,6 @@ export class ScheduleDetailComponent {
         .then(() => this.logger.log('Deleted schedule class'));
     });
   }
+
+  keepSameOrder = () => 1;
 }

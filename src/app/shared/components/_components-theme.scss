@@ -6,12 +6,14 @@
 @use './top-nav-bar/top-nav-bar-theme' as topAppBar;
 @use './schedule-class-form/schedule-class-form-theme' as scheduleClassForm;
 @use './schedule-classes-list/schedule-classes-list-theme' as scheduleClassesList;
+@use './schedule-grid/schedule-grid-theme' as scheduleGrid;
 
 @mixin componentThemeMixins($theme) {
   @include skeleton.theme($theme);
   @include topAppBar.theme($theme);
   @include scheduleClassForm.theme($theme);
   @include scheduleClassesList.theme($theme);
+  @include scheduleGrid.theme($theme);
 }
 
 @mixin color($theme) {

@@ -1,0 +1,57 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
+// https://material.angular.io/guide/theming-your-components
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin componentThemeMixins($theme) {}
+
+@mixin color($theme) {
+  $has-base: mat.theme-has($theme, base);
+  $has-color: mat.theme-has($theme, color);
+  $has-typography: mat.theme-has($theme, typography);
+  $has-density: mat.theme-has($theme, density);
+  $theme-type: mat.get-theme-type($theme);
+  $yellow-theme: mat.define-theme((color: (primary: mat.$yellow-palette)));
+  $cyan-theme: mat.define-theme((color: (primary: mat.$cyan-palette)));
+  $orange-theme: mat.define-theme((color: (primary: mat.$orange-palette)));
+  $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
+
+  csb-schedule-grid {
+    .primary {
+      background: mat.get-theme-color($theme, primary, 95);
+      color: mat.get-theme-color($theme, primary);
+    }
+    .cyan {
+      background: mat.get-theme-color($cyan-theme, primary, 95);
+      color: mat.get-theme-color($cyan-theme, primary);
+    }
+    .yellow {
+      background: mat.get-theme-color($yellow-theme, primary, 95);
+      color: mat.get-theme-color($yellow-theme, primary);
+    }
+    .orange {
+      background: mat.get-theme-color($orange-theme, primary, 95);
+      color: mat.get-theme-color($orange-theme, primary);
+    }
+    .rose {
+      background: mat.get-theme-color($rose-theme, primary, 95);
+      color: mat.get-theme-color($rose-theme, primary);
+    }
+  }
+}
+
+@mixin typography($theme) {
+  csb-schedule-grid {
+    .labels span {
+      font: mat.get-theme-typography($theme, title-medium);
+    }
+  }
+}
+
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) { @include color($theme); }
+
+  @if mat.theme-has($theme, typography) { @include typography($theme); }
+
+  @include componentThemeMixins($theme);
+}

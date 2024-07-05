@@ -7,6 +7,30 @@
       <p class="description">{{schedule?.description}}</p>
     </section>
 
+    <mat-form-field>
+      <mat-label>Days Shown</mat-label>
+      <mat-select [(ngModel)]="days" [multiple]="true">
+        @for (day of Day | keyvalue: keepSameOrder; track day.key) {
+          <mat-option [value]="day.value">{{day.value}}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Time Slot Increment</mat-label>
+      <mat-select [(ngModel)]="timeSlotIncrement">
+        <mat-option [value]="15">15 minutes</mat-option>
+        <mat-option [value]="30">30 minutes</mat-option>
+        <mat-option [value]="45">45 minutes</mat-option>
+        <mat-option [value]="60">1 hour</mat-option>
+        <mat-option [value]="120">2 hours</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <csb-schedule-grid [days]="days()"
+                       [timeSlotIncrement]="timeSlotIncrement()"
+                       [scheduleClasses]="scheduleClasses() || []" />
+
     <section class="classes">
       <div class="header">
         <h4 class="title">Classes</h4>
