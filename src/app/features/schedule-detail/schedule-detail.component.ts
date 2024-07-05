@@ -86,9 +86,13 @@ export class ScheduleDetailComponent {
 
   loaded = signal(false);
 
-  timeSlotIncrement = signal(60);
+  timeSlotIncrement = signal(15);
 
   days = signal(Object.values(Day));
+
+  startTime = signal('14:30');
+
+  endTime = signal('17:30');
 
   schedule = toSignal(
     toObservable(this.scheduleId).pipe(

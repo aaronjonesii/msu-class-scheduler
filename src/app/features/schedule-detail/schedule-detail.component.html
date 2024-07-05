@@ -16,6 +16,14 @@
       </mat-select>
     </mat-form-field>
 
+    <div class="times">
+      <label for="startTime">Start time</label>
+      <input type="time" id="startTime" name="startTime" [(ngModel)]="startTime" />
+
+      <label for="endTime">End time</label>
+      <input type="time" id="endTime" name="endTime" [(ngModel)]="endTime" />
+    </div>
+
     <mat-form-field>
       <mat-label>Time Slot Increment</mat-label>
       <mat-select [(ngModel)]="timeSlotIncrement">
@@ -29,7 +37,8 @@
 
     <csb-schedule-grid [days]="days()"
                        [timeSlotIncrement]="timeSlotIncrement()"
-                       [scheduleClasses]="scheduleClasses() || []" />
+                       [scheduleClasses]="scheduleClasses() || []"
+                       [times]="{start: startTime(), end: endTime()}" />
 
     <section class="classes">
       <div class="header">
