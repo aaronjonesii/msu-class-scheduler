@@ -1,0 +1,13 @@
+<h1 mat-dialog-title>Create Class</h1>
+
+<mat-dialog-content>
+  <csb-class-form [classForm]="scheduleClassForm()" />
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+
+  <button mat-flat-button type="button"
+          [disabled]="scheduleClassForm().formGroup.invalid"
+          [mat-dialog-close]="scheduleClassForm().scheduleClass">Create</button>
+</mat-dialog-actions>
