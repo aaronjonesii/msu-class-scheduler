@@ -1,9 +1,20 @@
-<h2 class="title">Schedules</h2>
+<section class="header">
+  <h2 class="title">Schedules</h2>
+
+  <button mat-button type="button" (click)="createSchedule()">
+    <mat-icon matButtonIcon fontIcon="add" />
+    Schedule
+  </button>
+</section>
 
 <section class="schedules">
   <mat-nav-list>
     @for (schedule of schedules(); track schedule.id) {
-      <a mat-menu-item>{{schedule.name}}</a>
+      <a mat-menu-item [routerLink]="[appRoutes.scheduleDetail(schedule.id)]">
+        <span matListItemTitle>{{schedule.name || 'Unnamed schedule'}}</span>
+
+        <span matListItemLine>{{schedule.created.toDate() | date}}</span>
+      </a>
     } @empty {
       You have no schedules yet.
     }
