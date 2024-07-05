@@ -14,7 +14,10 @@ import { MatInput } from "@angular/material/input";
 import {
   MatDatepickerModule,
 } from "@angular/material/datepicker";
-import { provideNativeDateAdapter } from "@angular/material/core";
+import { MatOption, provideNativeDateAdapter } from "@angular/material/core";
+import { MatSelect } from "@angular/material/select";
+import { ScheduleClassStatus } from "../../enums/schedule-class-status";
+import { KeyValuePipe } from "@angular/common";
 
 @Component({
   selector: 'csb-schedule-class-form',
@@ -25,11 +28,12 @@ import { provideNativeDateAdapter } from "@angular/material/core";
   providers: [provideNativeDateAdapter()],
   imports: [
     ReactiveFormsModule, MatFormFieldModule,
-    MatInput, MatDatepickerModule,
+    MatInput, MatDatepickerModule, MatSelect, KeyValuePipe, MatOption,
   ],
 })
 export class ScheduleClassFormComponent {
   classForm = input<ScheduleClassForm>(new ScheduleClassForm());
 
   formAppearance: MatFormFieldAppearance = 'outline';
+  protected readonly ScheduleClassStatus = ScheduleClassStatus;
 }

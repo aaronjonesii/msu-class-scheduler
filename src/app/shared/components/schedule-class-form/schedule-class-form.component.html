@@ -11,6 +11,15 @@
   </mat-form-field>
 
   <mat-form-field [appearance]="formAppearance">
+    <mat-label>Status</mat-label>
+    <mat-select [formControl]="classForm().statusCtrl">
+      @for (status of ScheduleClassStatus | keyvalue; track status.key) {
+        <mat-option [value]="status.value">{{status.value}}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
     <mat-label>Meeting Days</mat-label>
     <mat-date-range-input [rangePicker]="meetingDaysPicker">
       <input matStartDate placeholder="Start date"
