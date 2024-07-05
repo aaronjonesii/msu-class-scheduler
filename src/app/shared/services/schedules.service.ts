@@ -1,9 +1,9 @@
 import { inject, Injectable } from '@angular/core';
 import { FirestoreService } from "./firestore.service";
-import { Schedule } from "../schedule";
 import { where } from "@angular/fire/firestore";
 import { LoggerService } from "./logger.service";
-import { catchError, EMPTY } from "rxjs";
+import { catchError, EMPTY, map } from "rxjs";
+import { ReadSchedule, Schedule } from "../interfaces/schedule";
 
 @Injectable({ providedIn: 'root' })
 export class SchedulesService {
@@ -12,8 +12,12 @@ export class SchedulesService {
 
   private readonly collectionName = 'schedules';
 
+  get timestamp() {
+    return this.db.timestamp;
+  }
+
   getByUser$(userId: string) {
-    return this.db.colQuery$<Schedule>(
+    return this.db.colQuery$<ReadSchedule>(
       this.collectionName,
       {idField: 'id'},
       where('userId', '==', userId),
@@ -27,7 +31,8 @@ export class SchedulesService {
   }
 
   getById$(id: string) {
-    return this.db.doc$<Schedule>(`${this.collectionName}/${id}`).pipe(
+    return this.db.doc$<ReadSchedule>(`${this.collectionName}/${id}`).pipe(
+      map((schedule) => schedule ? {...schedule, id} : schedule),
       catchError((error: unknown) => {
         this.logger.error(`Error getting schedule by id: ${id}`, error);
 
@@ -37,11 +42,14 @@ export class SchedulesService {
   }
 
   async create(schedule: Schedule) {
+    // @ts-ignore
+    delete schedule.id;
+
     return this.db.add<Schedule>(this.collectionName, schedule)
       .catch((error: unknown) => {
         this.logger.error('Error creating schedule', error);
 
-        return error;
+        return null;
       });
   }
 
@@ -49,8 +57,6 @@ export class SchedulesService {
     return this.db.update<Schedule>(`${this.collectionName}/${id}`, schedule)
       .catch((error: unknown) => {
         this.logger.error(`Error updating schedule: ${id}`, error);
-
-        return error;
       });
   }
 
