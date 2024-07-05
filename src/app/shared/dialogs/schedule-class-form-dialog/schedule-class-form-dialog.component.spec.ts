@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScheduleClassFormDialogComponent } from './schedule-class-form-dialog.component';
+import { provideAnimations } from "@angular/platform-browser/animations";
 
 describe('ScheduleClassFormDialogComponent', () => {
   let component: ScheduleClassFormDialogComponent;
@@ -8,9 +9,11 @@ describe('ScheduleClassFormDialogComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScheduleClassFormDialogComponent]
-    })
-    .compileComponents();
+      imports: [ScheduleClassFormDialogComponent],
+      providers: [
+        provideAnimations(),
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ScheduleClassFormDialogComponent);
     component = fixture.componentInstance;

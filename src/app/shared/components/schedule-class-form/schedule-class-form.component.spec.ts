@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScheduleClassFormComponent } from './schedule-class-form.component';
+import { provideAnimations } from "@angular/platform-browser/animations";
 
 describe('ScheduleClassFormComponent', () => {
   let component: ScheduleClassFormComponent;
@@ -8,9 +9,11 @@ describe('ScheduleClassFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScheduleClassFormComponent]
-    })
-    .compileComponents();
+      imports: [ScheduleClassFormComponent],
+      providers: [
+        provideAnimations(),
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ScheduleClassFormComponent);
     component = fixture.componentInstance;

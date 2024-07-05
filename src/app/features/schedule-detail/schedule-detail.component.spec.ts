@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ScheduleDetailComponent } from './schedule-detail.component';
+import { SchedulesService } from "../../shared/services/schedules.service";
 
 describe('ScheduleDetailComponent', () => {
   let component: ScheduleDetailComponent;
@@ -8,9 +9,14 @@ describe('ScheduleDetailComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScheduleDetailComponent]
-    })
-    .compileComponents();
+      imports: [ScheduleDetailComponent],
+      providers: [
+        {
+          provide: SchedulesService,
+          useValue: {},
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(ScheduleDetailComponent);
     component = fixture.componentInstance;
