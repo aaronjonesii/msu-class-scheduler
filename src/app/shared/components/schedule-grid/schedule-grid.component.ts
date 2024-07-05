@@ -125,8 +125,6 @@ export class ScheduleGridComponent {
 
             const endRow = this._getGridRowFromTime(endTime);
 
-            const colSpan = endRow - startRow;
-
             tiles.push({
               id: `${scheduleClass.id}-${meeting.type}-${day}-${time.startTime}`,
               label: scheduleClass.name,
@@ -136,7 +134,7 @@ export class ScheduleGridComponent {
                 /** +1 for the single column span */
                 gridColumnEnd: dayIndex + 2 + 1,
                 gridRowStart: startRow,
-                gridRowEnd: startRow + colSpan,
+                gridRowEnd: endRow + 1,
               },
             });
           }
@@ -172,14 +170,18 @@ export class ScheduleGridComponent {
   private _getGridRowFromTime(time: Date): number {
     const start = this._parseTime(this.times().start);
 
-    const minutesDiff = this._getDateDifference(time, start, 'minutes');
+    /** Ensure the time is within the grid's time range */
+    if (time.getTime() < start.getTime()) {
+      /** Default to the first available row */
+      return 2;
+    }
 
-    console.debug('min diff', minutesDiff, time, start);
+    const minutesDiff = this._getDateDifference(time, start, 'minutes');
 
     const slotsDiff = minutesDiff / this.timeSlotIncrement();
 
     /** +2 to account for the label row and the first time slow row */
-    return slotsDiff + 2;
+    return Math.floor(slotsDiff) + 2;
   }
 
   private _getDateDifference(
