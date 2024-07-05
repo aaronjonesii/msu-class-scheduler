@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>Create Class</h1>
+<h1 mat-dialog-title>{{editing() ? 'Edit' : 'Create'}} Class</h1>
 
 <mat-dialog-content>
   <csb-schedule-class-form [classForm]="scheduleClassForm()" />
@@ -9,5 +9,7 @@
 
   <button mat-flat-button type="button"
           [disabled]="scheduleClassForm().formGroup.invalid"
-          [mat-dialog-close]="scheduleClassForm().scheduleClass">Create</button>
+          [mat-dialog-close]="scheduleClassForm().scheduleClass">
+    {{editing() ? 'Save' : 'Create'}}
+  </button>
 </mat-dialog-actions>

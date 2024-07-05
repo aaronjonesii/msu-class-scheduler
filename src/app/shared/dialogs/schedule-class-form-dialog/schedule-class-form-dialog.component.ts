@@ -1,5 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import {
+  ChangeDetectionStrategy,
+  Component,
+  inject, OnInit,
+  signal
+} from '@angular/core';
+import {
+  MAT_DIALOG_DATA,
   MatDialogActions, MatDialogClose,
   MatDialogContent,
   MatDialogTitle
@@ -9,6 +15,12 @@ import { ScheduleClassForm } from "../../forms/schedule-class-form";
 import {
   ScheduleClassFormComponent
 } from "../../components/schedule-class-form/schedule-class-form.component";
+import { ReadScheduleClass } from "../../interfaces/schedule-class";
+import { sign } from "node:crypto";
+
+export interface ScheduleClassFormDialogContract {
+  scheduleClass?: ReadScheduleClass,
+}
 
 @Component({
   selector: 'csb-schedule-class-form-dialog',
@@ -25,6 +37,20 @@ import {
   styleUrl: './schedule-class-form-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScheduleClassFormDialogComponent {
+export class ScheduleClassFormDialogComponent implements OnInit {
+  private contract = inject<ScheduleClassFormDialogContract>(MAT_DIALOG_DATA);
+
   scheduleClassForm = signal(new ScheduleClassForm());
+
+  editing = signal(false);
+
+  ngOnInit() {
+    if (!this.contract) return;
+
+    this.editing.set(true);
+
+    this.scheduleClassForm.set(
+      new ScheduleClassForm(this.contract.scheduleClass),
+    );
+  }
 }

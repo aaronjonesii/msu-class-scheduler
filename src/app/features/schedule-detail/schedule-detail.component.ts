@@ -6,16 +6,37 @@ import {
 } from '@angular/core';
 import { SchedulesService } from "../../shared/services/schedules.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
-import { of, switchMap } from "rxjs";
-import { MatButton } from "@angular/material/button";
+import { first, of, switchMap } from "rxjs";
+import { MatButton, MatIconButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
 import { appRoutes } from "../../app.routes";
-import { MatList, MatListItem, MatListItemTitle } from "@angular/material/list";
+import {
+  MatList,
+  MatListItem,
+  MatListItemLine, MatListItemMeta,
+  MatListItemTitle
+} from "@angular/material/list";
 import { MatDialog } from "@angular/material/dialog";
 import {
-  ScheduleClassFormDialogComponent
+  ScheduleClassFormDialogComponent, ScheduleClassFormDialogContract
 } from "../../shared/dialogs/schedule-class-form-dialog/schedule-class-form-dialog.component";
+import {
+  ReadScheduleClass,
+  ScheduleClass
+} from "../../shared/interfaces/schedule-class";
+import { TimePipe } from "../../shared/pipes/time.pipe";
+import { DatePipe } from "@angular/common";
+import {
+  ScheduleClassesService
+} from "../../shared/services/schedule-classes.service";
+import {
+  ScheduleClassesListComponent
+} from "../../shared/components/schedule-classes-list/schedule-classes-list.component";
+import { LoggerService } from "../../shared/services/logger.service";
+import {
+  ConfirmDialogComponent, ConfirmDialogContract
+} from "../../shared/components/confirm-dialog/confirm-dialog.component";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -26,14 +47,22 @@ import {
     MatButton,
     MatList,
     MatListItem,
-    MatListItemTitle
+    MatListItemTitle,
+    MatListItemLine,
+    TimePipe,
+    MatIconButton,
+    MatListItemMeta,
+    ScheduleClassesListComponent,
   ],
+  providers: [DatePipe],
   templateUrl: './schedule-detail.component.html',
   styleUrl: './schedule-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleDetailComponent {
   private schedulesService = inject(SchedulesService);
+  private scheduleClassesService = inject(ScheduleClassesService);
+  private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
 
   protected readonly appRoutes = appRoutes;
@@ -52,11 +81,19 @@ export class ScheduleDetailComponent {
     ),
   );
 
+  scheduleClasses = toSignal(
+    toObservable(this.scheduleId).pipe(
+      switchMap((scheduleId) => {
+        return scheduleId ? this.scheduleClassesService.getAll$(scheduleId) : of(null);
+      }),
+    ),
+  );
+
   @Input()
   set id(scheduleId: string) { this.scheduleId.set(scheduleId); }
 
   addClass() {
-    this.dialog.open(
+    const dialogRef = this.dialog.open(
       ScheduleClassFormDialogComponent,
       {
         id: 'add-schedule-class-form-dialog',
@@ -64,5 +101,61 @@ export class ScheduleDetailComponent {
         maxWidth: '600px',
       },
     );
+
+    dialogRef.afterClosed().pipe(first()).forEach(async (scheduleClass?: ScheduleClass) => {
+      if (!scheduleClass) return;
+
+      const scheduleId = this.scheduleId();
+
+      if (!scheduleId) return;
+
+      await this.scheduleClassesService.create(scheduleId, scheduleClass);
+    });
+  }
+
+  editScheduleClass(scheduleClass: ReadScheduleClass) {
+    const dialogRef = this.dialog.open(
+      ScheduleClassFormDialogComponent,
+      {
+        id: 'edit-schedule-class-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: <ScheduleClassFormDialogContract>{ scheduleClass },
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first()).forEach(async (scheduleClass?: ReadScheduleClass) => {
+      if (!scheduleClass) return;
+
+      const scheduleId = this.scheduleId();
+
+      if (!scheduleId) return;
+
+      await this.scheduleClassesService.update(scheduleId, scheduleClass.id, scheduleClass)
+        .then(() => this.logger.log('Updated schedule class'));
+    });
+  }
+
+  async deleteScheduleClass(classId: string) {
+    const scheduleId = this.scheduleId();
+
+    if (!scheduleId) return;
+
+    const dialogRef = this.dialog.open(
+      ConfirmDialogComponent,
+      {
+        id: 'confirm-delete-schedule-class-dialog',
+        data: <ConfirmDialogContract>{
+          title: 'Are you sure you want to delete this class?'
+        },
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first()).forEach(async (confirm: boolean) => {
+      if (!confirm) return;
+
+      await this.scheduleClassesService.delete(scheduleId, classId)
+        .then(() => this.logger.log('Deleted schedule class'));
+    });
   }
 }

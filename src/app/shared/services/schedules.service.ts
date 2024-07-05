@@ -3,7 +3,7 @@ import { FirestoreService } from "./firestore.service";
 import { where } from "@angular/fire/firestore";
 import { LoggerService } from "./logger.service";
 import { catchError, EMPTY, map } from "rxjs";
-import { ReadSchedule, Schedule } from "../interfaces/schedule";
+import { ReadSchedule, Schedule, WriteSchedule } from "../interfaces/schedule";
 
 @Injectable({ providedIn: 'root' })
 export class SchedulesService {
@@ -54,7 +54,7 @@ export class SchedulesService {
   }
 
   async update(id: string, schedule: Partial<Schedule>) {
-    return this.db.update<Schedule>(`${this.collectionName}/${id}`, schedule)
+    return this.db.update<WriteSchedule>(`${this.collectionName}/${id}`, schedule)
       .catch((error: unknown) => {
         this.logger.error(`Error updating schedule: ${id}`, error);
       });

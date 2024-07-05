@@ -13,6 +13,17 @@ service cloud.firestore {
       // users can only manage/view their own schedules
       allow read: if isSignedIn() && hasRsc(resource) && resource.data.userId == request.auth.uid;
       allow write: if isSignedIn() && hasRsc(request.resource) && request.resource.data.userId == request.auth.uid;
+
+      // schedule classes collection
+      match /classes/{classId} {
+        // schedule classes functions
+        function isUserSchedule() {
+          return get(/databases/$(database)/documents/schedules/$(scheduleId)).data.userId == request.auth.uid;
+        }
+        allow read: if isSignedIn() && hasRsc(resource) && isUserSchedule();
+        allow create, update: if isSignedIn() && hasRsc(request.resource) && isUserSchedule();
+        allow delete: if isSignedIn() && isUserSchedule();
+      }
     }
   }
 }

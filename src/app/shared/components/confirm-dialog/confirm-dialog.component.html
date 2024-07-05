@@ -1,0 +1,13 @@
+<!-- eslint-disable @angular-eslint/template/no-call-expression  -->
+@if (title()) {
+  <h1 mat-dialog-title>{{title()}}</h1>
+}
+
+<mat-dialog-content>{{description()}}</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+  <button mat-flat-button type="button" color="primary"
+          [mat-dialog-close]="true">{{buttonText()}}</button>
+</mat-dialog-actions>
+<!-- eslint-enable @angular-eslint/template/no-call-expression  -->

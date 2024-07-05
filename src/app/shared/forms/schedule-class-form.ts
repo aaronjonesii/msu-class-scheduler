@@ -108,36 +108,49 @@ export class ScheduleClassForm {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
-  newMeetingFormGroup() {
+  newMeetingFormGroup(scheduleClassMeeting?: ScheduleClassMeeting) {
+    const meetingTimesFormArray = new FormArray<FormGroup<ScheduleClassMeetingTimesFormGroup>>(
+      scheduleClassMeeting?.meetingTimes ?
+        scheduleClassMeeting.meetingTimes
+          .map((mt) => this.newMeetingTimeFormGroup(mt)) : [],
+    );
+
     return new FormGroup<ScheduleClassMeetingFormGroup>({
       type: new FormControl(
-        ScheduleClassMeetingType.LECTURE,
+        scheduleClassMeeting?.type || ScheduleClassMeetingType.LECTURE,
         { nonNullable: true, validators: Validators.required },
       ),
-      location: new FormControl(null),
-      instructor: new FormControl(null),
-      meetingTimes: new FormArray<FormGroup<ScheduleClassMeetingTimesFormGroup>>([]),
+      location: new FormControl(scheduleClassMeeting?.location || null),
+      instructor: new FormControl(scheduleClassMeeting?.instructor || null),
+      meetingTimes: meetingTimesFormArray,
     });
   }
 
-  newMeetingTimeFormGroup() {
+  newMeetingTimeFormGroup(meetingTime?: ScheduleClassMeetingTime) {
     return new FormGroup<ScheduleClassMeetingTimesFormGroup>({
       days: new FormControl(
-        [],
+        meetingTime?.days || [],
         { nonNullable: true, validators: Validators.required },
       ),
       startTime: new FormControl(
-        '15:00',
+        meetingTime?.startTime || '15:00',
         { nonNullable: true, validators: Validators.required },
       ),
       endTime: new FormControl(
-        '17:00',
+        meetingTime?.endTime || '17:00',
         { nonNullable: true, validators: Validators.required },
       ),
     });
   }
 
   private _buildForm(scheduleClass?: ReadScheduleClass | null) {
+    const meetingsFormArray =
+      new FormArray<FormGroup<ScheduleClassMeetingFormGroup>>(
+        scheduleClass?.meetings ?
+          scheduleClass?.meetings
+            .map((m) => this.newMeetingFormGroup(m)) : [],
+      );
+
     return new FormGroup<ScheduleClassFormGroup>({
       id: new FormControl(scheduleClass?.id || null),
       name: new FormControl(
@@ -149,7 +162,7 @@ export class ScheduleClassForm {
         scheduleClass?.status || ScheduleClassStatus.OPEN,
         { validators: Validators.required, nonNullable: true },
       ),
-      meetings: new FormArray<FormGroup<ScheduleClassMeetingFormGroup>>([]),
+      meetings: meetingsFormArray,
       startDate: new FormControl(scheduleClass?.startDate?.toDate() || null),
       endDate: new FormControl(scheduleClass?.endDate?.toDate() || null),
     });

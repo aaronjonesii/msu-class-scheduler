@@ -1,0 +1,56 @@
+<mat-list>
+  @defer (when !!scheduleClasses()) {
+    @for (scheduleClass of scheduleClasses(); track scheduleClass.id) {
+      <mat-list-item>
+        <span matListItemTitle>
+          @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
+            {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+            -
+          }
+          {{scheduleClass.name}}
+        </span>
+
+        <span matListItemLine>{{scheduleClass.status}}</span>
+
+        @for (meeting of scheduleClass.meetings; track meeting.type) {
+          <span matListItemLine>
+                {{meeting.type}}
+            -
+            @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
+              {{meetingTime.days.join(', ')}} {{meetingTime.startTime | time}} to {{meetingTime.endTime | time}}
+            }
+          </span>
+        }
+
+        <button mat-icon-button matListItemMeta class="primary-icon-btn"
+                (click)="editScheduleClass.emit(scheduleClass)">
+          <mat-icon fontIcon="edit" />
+        </button>
+
+        <button mat-icon-button matListItemMeta class="error-icon-btn"
+                (click)="deleteScheduleClass.emit(scheduleClass.id)">
+          <mat-icon fontIcon="delete" />
+        </button>
+      </mat-list-item>
+    } @empty {
+      No classes yet.
+    }
+  } @placeholder (minimum 500ms) {
+    @for (_ of [].constructor(5); track _) {
+      <mat-list-item>
+      <span matListItemTitle>
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '200px'}" />
+      </span>
+        <span matListItemLine>
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '50px'}" />
+      </span>
+        <span matListItemMeta>
+        <csb-skeleton appearance="circle" />
+      </span>
+        <span matListItemMeta>
+        <csb-skeleton appearance="circle" />
+      </span>
+      </mat-list-item>
+    }
+  }
+</mat-list>

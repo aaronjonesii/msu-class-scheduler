@@ -13,8 +13,7 @@
 
   csb-skeleton {
     .skeleton {
-      background: mat.get-theme-color($theme, surface);
-      //background: mat.get-color-from-palette($background-palette, 'app-bar');
+      background: mat.get-theme-color($theme, surface-dim);
 
       /** Styles for progress animation */
       &.progress {
@@ -22,7 +21,7 @@
           background-image: linear-gradient(
                           90deg,
                           transparent,
-                          mat.m2-get-color-from-palette(mat.$m2-grey-palette, 200),
+                          mat.get-theme-color($theme, surface-container),
                           transparent,
           );
         }
@@ -32,7 +31,7 @@
           background-image: linear-gradient(
                           90deg,
                           transparent,
-                          mat.m2-get-color-from-palette(mat.$m2-grey-palette, 400),
+                          mat.get-theme-color($theme, surface-container-high),
                           transparent,
           );
         }

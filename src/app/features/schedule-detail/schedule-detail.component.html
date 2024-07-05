@@ -17,15 +17,10 @@
         </button>
       </div>
 
-      <mat-list>
-        @for (scheduleClass of schedule.classes; track scheduleClass.id) {
-          <mat-list-item>
-            <span matListItemTitle>{{scheduleClass.name}}</span>
-          </mat-list-item>
-        } @empty {
-        No classes yet.
-      }
-      </mat-list>
+      <csb-schedule-classes-list
+            [scheduleClasses]="scheduleClasses()"
+            (editScheduleClass)="editScheduleClass($event)"
+            (deleteScheduleClass)="deleteScheduleClass($event)" />
     </section>
   } @else {
     <div class="not-found-container text-center">

@@ -7,13 +7,13 @@ export interface Schedule {
   userId: string,
   name: string,
   description: string | null,
-  classes: ScheduleClass[],
+  classes: ScheduleClass[] | FieldValue,
   created: DateTime,
   updated?: DateTime,
 }
 
 export interface WriteSchedule extends Schedule {
-  classes: WriteScheduleClass[],
+  classes: WriteScheduleClass[] | FieldValue,
   created: FieldValue,
   updated?: FieldValue,
 }
