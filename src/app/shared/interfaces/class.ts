@@ -8,19 +8,19 @@ import { DateTime } from "./date-time";
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
 
 export interface Class {
-  id?: string,
-  subjectCode: string,
-  courseNumber: number,
   name: string,
   status: ClassStatus,
   meetings: ClassMeeting[],
-  description?: string,
+  id?: string | null,
+  subjectCode?: string,
+  courseNumber?: number,
+  description?: string | null,
   term?: string,
   credits?: number,
   startDate?: DateTime,
   endDate?: DateTime,
   notes?: string,
-  created: DateTime,
+  created?: DateTime,
   updated?: DateTime,
 }
 
@@ -29,7 +29,7 @@ export interface ReadClass extends Class {
   meetings: ReadClassMeeting[],
   startDate?: Timestamp,
   endDate?: Timestamp,
-  created: Timestamp,
+  created?: Timestamp,
   updated?: Timestamp,
 }
 
