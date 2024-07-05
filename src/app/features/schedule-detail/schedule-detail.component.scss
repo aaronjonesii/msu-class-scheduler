@@ -1,0 +1,29 @@
+@mixin flexCol() {
+  display: flex;
+  flex-direction: column;
+}
+
+:host {
+  @include flexCol();
+  padding: var(--padding);
+}
+
+.classes {
+  @include flexCol();
+}
+.classes .header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.not-found-container, .error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.not-found-container ul {
+  text-align: left;
+}

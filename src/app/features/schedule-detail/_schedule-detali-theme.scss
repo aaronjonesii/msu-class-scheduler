@@ -2,19 +2,7 @@
 @use 'sass:map';
 @use '@angular/material' as mat;
 
-@use './sign-in/sign-in-theme' as signIn;
-@use './error/error-theme' as error;
-@use './home/home-theme' as home;
-@use './schedules/schedules-themes' as schedules;
-@use './schedule-detail/schedule-detali-theme' as scheduleDetail;
-
-@mixin componentThemeMixins($theme) {
-  @include signIn.theme($theme);
-  @include error.theme($theme);
-  @include home.theme($theme);
-  @include schedules.theme($theme);
-  @include scheduleDetail.theme($theme);
-}
+@mixin componentThemeMixins($theme) {}
 
 @mixin color($theme) {
   $has-base: mat.theme-has($theme, base);
@@ -24,7 +12,19 @@
   $theme-type: mat.get-theme-type($theme);
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+  csb-schedule-detail {
+    .title {
+      font: mat.get-theme-typography($theme, headline-large);
+    }
+    .name, .classes .header .title {
+      font: mat.get-theme-typography($theme, headline-medium);
+    }
+    .description {
+      font: mat.get-theme-typography($theme, headline-small);
+    }
+  }
+}
 
 @mixin theme($theme) {
   @if mat.theme-has($theme, color) { @include color($theme); }

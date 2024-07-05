@@ -1,0 +1,53 @@
+<h2 class="title">Schedule Detail</h2>
+
+@defer (when loaded()) {
+  @if (schedule(); as schedule) {
+    <section class="details">
+      <h3 class="name">{{schedule?.name || 'Unnamed schedule'}}</h3>
+      <p class="description">{{schedule?.description}}</p>
+    </section>
+
+    <section class="classes">
+      <div class="header">
+        <h4 class="title">Classes</h4>
+
+        <button mat-button type="button">
+          <mat-icon matButtonIcon fontIcon="add" />
+          Class
+        </button>
+      </div>
+
+      <mat-list>
+        @for (class of schedule.classes; track class.id) {
+          <mat-list-item>
+            <span matListItemTitle>{{class.name}}</span>
+          </mat-list-item>
+        } @empty {
+        No classes yet.
+      }
+      </mat-list>
+    </section>
+  } @else {
+    <div class="not-found-container text-center">
+      <p>
+        We couldn't find the schedule you were looking for. This is either because:
+      </p>
+
+      <ul>
+        <li>You do not have permission to view this schedule.</li>
+        <li>The schedule you are looking for has been moved or deleted.</li>
+        <li>
+          There is an error in the URL entered into your web browser.
+          Please check the URL and try again.
+        </li>
+      </ul>
+
+      <button mat-stroked-button type="button" [routerLink]="[appRoutes.schedules]">
+        <mat-icon matButtonIcon fontIcon="event" />
+        Go to Schedules
+      </button>
+    </div>
+  }
+} @placeholder (minimum 500ms) {
+  Loading...
+}
