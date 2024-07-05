@@ -1,16 +1,16 @@
-import { ClassStatus } from "../enums/class-status";
+import { ScheduleClassStatus } from "../enums/schedule-class-status";
 import {
-  ClassMeeting,
-  ReadClassMeeting,
-  WriteClassMeeting
-} from "./class-meeting";
+  ScheduleClassMeeting,
+  ReadScheduleClassMeeting,
+  WriteScheduleClassMeeting
+} from "./schedule-class-meeting";
 import { DateTime } from "./date-time";
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
 
-export interface Class {
+export interface ScheduleClass {
   name: string,
-  status: ClassStatus,
-  meetings: ClassMeeting[],
+  status: ScheduleClassStatus,
+  meetings: ScheduleClassMeeting[],
   id?: string | null,
   subjectCode?: string,
   courseNumber?: number,
@@ -24,17 +24,17 @@ export interface Class {
   updated?: DateTime,
 }
 
-export interface ReadClass extends Class {
+export interface ReadScheduleClass extends ScheduleClass {
   id: string,
-  meetings: ReadClassMeeting[],
+  meetings: ReadScheduleClassMeeting[],
   startDate?: Timestamp,
   endDate?: Timestamp,
   created?: Timestamp,
   updated?: Timestamp,
 }
 
-export interface WriteClass extends Class {
-  meetings: WriteClassMeeting[],
+export interface WriteScheduleClass extends ScheduleClass {
+  meetings: WriteScheduleClassMeeting[],
   startDate?: FieldValue,
   endDate?: FieldValue,
   created: FieldValue,

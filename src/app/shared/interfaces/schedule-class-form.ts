@@ -1,10 +1,10 @@
 import { FormArray, FormControl, FormGroup } from "@angular/forms";
-import { ClassStatus } from "../enums/class-status";
+import { ScheduleClassStatus } from "../enums/schedule-class-status";
 
-export interface ClassFormGroup {
+export interface ScheduleClassFormGroup {
   id: FormControl<string | null>,
   name: FormControl<string>,
   description: FormControl<string | null>,
-  status: FormControl<ClassStatus>,
+  status: FormControl<ScheduleClassStatus>,
   meetings: FormArray<FormGroup>,
 }

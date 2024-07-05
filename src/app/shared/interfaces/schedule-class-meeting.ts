@@ -1,9 +1,9 @@
-import { ClassMeetingType } from "../enums/class-meeting-type";
+import { ScheduleClassMeetingType } from "../enums/schedule-class-meeting-type";
 import { DateTime } from "./date-time";
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
 
-export interface ClassMeeting {
-  type: ClassMeetingType,
+export interface ScheduleClassMeeting {
+  type: ScheduleClassMeetingType,
   location?: string,
   instructor?: string,
   daysAndTimes: {
@@ -12,14 +12,14 @@ export interface ClassMeeting {
   }[],
 }
 
-export interface ReadClassMeeting extends ClassMeeting {
+export interface ReadScheduleClassMeeting extends ScheduleClassMeeting {
   daysAndTimes: {
     start: Timestamp,
     end: Timestamp,
   }[],
 }
 
-export interface WriteClassMeeting extends ClassMeeting {
+export interface WriteScheduleClassMeeting extends ScheduleClassMeeting {
   daysAndTimes: {
     start: FieldValue,
     end: FieldValue,

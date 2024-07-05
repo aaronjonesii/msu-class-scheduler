@@ -1,4 +1,4 @@
-export enum ClassMeetingType {
+export enum ScheduleClassMeetingType {
   LECTURE,
   RECITATION,
   LABORATORY,

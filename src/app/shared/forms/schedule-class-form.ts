@@ -1,12 +1,12 @@
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
-import { ClassFormGroup } from "../interfaces/class-form";
-import { Class } from "../interfaces/class";
-import { ClassStatus } from "../enums/class-status";
+import { ScheduleClass } from "../interfaces/schedule-class";
+import { ScheduleClassStatus } from "../enums/schedule-class-status";
+import { ScheduleClassFormGroup } from "../interfaces/schedule-class-form";
 
-export class ClassForm {
-  formGroup: FormGroup<ClassFormGroup>;
+export class ScheduleClassForm {
+  formGroup: FormGroup<ScheduleClassFormGroup>;
 
-  constructor(scheduleClass?: Class | null) {
+  constructor(scheduleClass?: ScheduleClass | null) {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
@@ -45,7 +45,7 @@ export class ClassForm {
     return this.meetingsCtrl.value;
   }
 
-  get scheduleClass(): Class {
+  get scheduleClass(): ScheduleClass {
     return {
       id: this.id || null,
       name: this.name,
@@ -55,12 +55,12 @@ export class ClassForm {
     };
   }
 
-  updateForm(scheduleClass?: Class | null) {
+  updateForm(scheduleClass?: ScheduleClass | null) {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
-  private _buildForm(scheduleClass?: Class | null) {
-    return new FormGroup<ClassFormGroup>({
+  private _buildForm(scheduleClass?: ScheduleClass | null) {
+    return new FormGroup<ScheduleClassFormGroup>({
       id: new FormControl(scheduleClass?.id || null),
       name: new FormControl(
         scheduleClass?.name || '',
@@ -68,7 +68,7 @@ export class ClassForm {
       ),
       description: new FormControl(scheduleClass?.description || null),
       status: new FormControl(
-        scheduleClass?.status || ClassStatus.OPEN,
+        scheduleClass?.status || ScheduleClassStatus.OPEN,
         { validators: Validators.required, nonNullable: true },
       ),
       meetings: new FormArray<FormGroup>([]),

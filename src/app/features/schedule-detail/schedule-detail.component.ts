@@ -14,8 +14,8 @@ import { appRoutes } from "../../app.routes";
 import { MatList, MatListItem, MatListItemTitle } from "@angular/material/list";
 import { MatDialog } from "@angular/material/dialog";
 import {
-  ClassFormDialogComponent
-} from "../../shared/dialogs/class-form-dialog/class-form-dialog.component";
+  ScheduleClassFormDialogComponent
+} from "../../shared/dialogs/schedule-class-form-dialog/schedule-class-form-dialog.component";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -57,7 +57,7 @@ export class ScheduleDetailComponent {
 
   addClass() {
     this.dialog.open(
-      ClassFormDialogComponent,
+      ScheduleClassFormDialogComponent,
       {
         id: 'add-schedule-class-form-dialog',
       },
