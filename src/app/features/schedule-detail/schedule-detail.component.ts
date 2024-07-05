@@ -12,6 +12,10 @@ import { RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
 import { appRoutes } from "../../app.routes";
 import { MatList, MatListItem, MatListItemTitle } from "@angular/material/list";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  ClassFormDialogComponent
+} from "../../shared/dialogs/class-form-dialog/class-form-dialog.component";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -30,6 +34,9 @@ import { MatList, MatListItem, MatListItemTitle } from "@angular/material/list";
 })
 export class ScheduleDetailComponent {
   private schedulesService = inject(SchedulesService);
+  private dialog = inject(MatDialog);
+
+  protected readonly appRoutes = appRoutes;
 
   scheduleId = signal<string | null>(null);
 
@@ -48,5 +55,12 @@ export class ScheduleDetailComponent {
   @Input()
   set id(scheduleId: string) { this.scheduleId.set(scheduleId); }
 
-  protected readonly appRoutes = appRoutes;
+  addClass() {
+    this.dialog.open(
+      ClassFormDialogComponent,
+      {
+        id: 'add-schedule-class-form-dialog',
+      },
+    );
+  }
 }

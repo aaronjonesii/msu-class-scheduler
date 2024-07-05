@@ -11,16 +11,16 @@
       <div class="header">
         <h4 class="title">Classes</h4>
 
-        <button mat-button type="button">
+        <button mat-button type="button" (click)="addClass()">
           <mat-icon matButtonIcon fontIcon="add" />
           Class
         </button>
       </div>
 
       <mat-list>
-        @for (class of schedule.classes; track class.id) {
+        @for (scheduleClass of schedule.classes; track scheduleClass.id) {
           <mat-list-item>
-            <span matListItemTitle>{{class.name}}</span>
+            <span matListItemTitle>{{scheduleClass.name}}</span>
           </mat-list-item>
         } @empty {
         No classes yet.
