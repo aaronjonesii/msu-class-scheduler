@@ -60,6 +60,8 @@ export class ScheduleDetailComponent {
       ScheduleClassFormDialogComponent,
       {
         id: 'add-schedule-class-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
       },
     );
   }

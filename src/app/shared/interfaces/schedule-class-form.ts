@@ -7,4 +7,6 @@ export interface ScheduleClassFormGroup {
   description: FormControl<string | null>,
   status: FormControl<ScheduleClassStatus>,
   meetings: FormArray<FormGroup>,
+  startDate: FormControl<Date | null>,
+  endDate: FormControl<Date | null>,
 }

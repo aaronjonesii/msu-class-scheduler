@@ -12,7 +12,7 @@ import {
 } from "@angular/material/list";
 import { MatMenuItem } from "@angular/material/menu";
 import { AuthService } from "../../shared/services/auth.service";
-import { of, switchMap, tap } from "rxjs";
+import { of, switchMap } from "rxjs";
 import { MatButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { Router, RouterLink } from "@angular/router";
@@ -51,7 +51,6 @@ export class SchedulesComponent {
       switchMap((user) => {
         return user ? this.schedulesService.getByUser$(user.uid) : of([]);
       }),
-      tap((s) => console.debug(s)),
     ),
   );
 

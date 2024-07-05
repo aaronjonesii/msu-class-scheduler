@@ -1,12 +1,13 @@
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
-import { ScheduleClass } from "../interfaces/schedule-class";
+import { ReadScheduleClass } from "../interfaces/schedule-class";
 import { ScheduleClassStatus } from "../enums/schedule-class-status";
 import { ScheduleClassFormGroup } from "../interfaces/schedule-class-form";
+import { Timestamp } from "@angular/fire/firestore";
 
 export class ScheduleClassForm {
   formGroup: FormGroup<ScheduleClassFormGroup>;
 
-  constructor(scheduleClass?: ScheduleClass | null) {
+  constructor(scheduleClass?: ReadScheduleClass | null) {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
@@ -45,21 +46,37 @@ export class ScheduleClassForm {
     return this.meetingsCtrl.value;
   }
 
-  get scheduleClass(): ScheduleClass {
+  get startDateCtrl() {
+    return this.formGroup.controls.startDate;
+  }
+  get startDate() {
+    return this.startDateCtrl.value;
+  }
+
+  get endDateCtrl() {
+    return this.formGroup.controls.endDate;
+  }
+  get endDate() {
+    return this.endDateCtrl.value;
+  }
+
+  get scheduleClass(): ReadScheduleClass {
     return {
-      id: this.id || null,
+      id: this.id || '',
       name: this.name,
       description: this.description || null,
       status: this.status,
       meetings: this.meetings,
+      startDate: this.startDate ? Timestamp.fromDate(this.startDate) : null,
+      endDate: this.endDate ? Timestamp.fromDate(this.endDate) : null,
     };
   }
 
-  updateForm(scheduleClass?: ScheduleClass | null) {
+  updateForm(scheduleClass?: ReadScheduleClass | null) {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
-  private _buildForm(scheduleClass?: ScheduleClass | null) {
+  private _buildForm(scheduleClass?: ReadScheduleClass | null) {
     return new FormGroup<ScheduleClassFormGroup>({
       id: new FormControl(scheduleClass?.id || null),
       name: new FormControl(
@@ -72,6 +89,8 @@ export class ScheduleClassForm {
         { validators: Validators.required, nonNullable: true },
       ),
       meetings: new FormArray<FormGroup>([]),
+      startDate: new FormControl(scheduleClass?.startDate?.toDate() || null),
+      endDate: new FormControl(scheduleClass?.endDate?.toDate() || null),
     });
   }
 }

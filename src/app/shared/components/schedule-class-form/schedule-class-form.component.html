@@ -9,4 +9,24 @@
     <textarea matInput rows="3" type="text" name="description"
               [formControl]="classForm().descriptionCtrl"></textarea>
   </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Meeting Days</mat-label>
+    <mat-date-range-input [rangePicker]="meetingDaysPicker">
+      <input matStartDate placeholder="Start date"
+             [formControl]="classForm().startDateCtrl" />
+      <input matEndDate placeholder="End date"
+             [formControl]="classForm().endDateCtrl" />
+    </mat-date-range-input>
+    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="meetingDaysPicker" />
+    <mat-date-range-picker #meetingDaysPicker />
+
+    @if (classForm().startDateCtrl.hasError('matStartDateInvalid')) {
+      <mat-error>Invalid start date</mat-error>
+    }
+    @if (classForm().endDateCtrl.hasError('matEndDateInvalid')) {
+      <mat-error>Invalid end date</mat-error>
+    }
+  </mat-form-field>
 </form>
