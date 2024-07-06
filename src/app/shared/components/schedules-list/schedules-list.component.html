@@ -2,7 +2,7 @@
   @for (schedule of schedules(); track schedule.id) {
     <mat-card>
       <div class="badge primary-card">
-        {{schedule.classes.length}} {{schedule.classes.length === 1 ? 'class' : 'classes'}}
+        {{scheduleCredits(schedule)}} {{scheduleCredits(schedule) === 1 ? 'credit' : 'credits'}}
       </div>
 
       <mat-card-header>
@@ -22,6 +22,7 @@
                           aria-label="Schedule classes selection">
               @for (scheduleClass of schedule.classes; track scheduleClass) {
                 <mat-chip [highlighted]="true"
+                          [matTooltip]="scheduleClass.name+' - '+scheduleClass.credits+' '+((scheduleClass.credits === 1) ? 'credit' : 'credits')"
                           [class]="scheduleClass.color | colorToClass: 'chip'">
                   @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
                     {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}

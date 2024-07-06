@@ -100,6 +100,34 @@ export class ScheduleClassForm {
     return this.colorCtrl.value;
   }
 
+  get isMSUCourseCtrl() {
+    return this.formGroup.controls.isMSUCourse;
+  }
+  get isMSUCourse() {
+    return this.isMSUCourseCtrl.value;
+  }
+
+  get subjectCodeCtrl() {
+    return this.formGroup.controls.subjectCode;
+  }
+  get subjectCode() {
+    return this.subjectCodeCtrl.value;
+  }
+
+  get courseNumberCtrl() {
+    return this.formGroup.controls.courseNumber;
+  }
+  get courseNumber() {
+    return this.courseNumberCtrl.value;
+  }
+
+  get creditsCtrl() {
+    return this.formGroup.controls.credits;
+  }
+  get credits() {
+    return this.creditsCtrl.value;
+  }
+
   get scheduleClass(): ReadScheduleClass {
     return {
       id: this.id || '',
@@ -110,6 +138,10 @@ export class ScheduleClassForm {
       startDate: this.startDate ? this._dateToTimestamp(this.startDate) : null,
       endDate: this.endDate ? this._dateToTimestamp(this.endDate) : null,
       color: this.color || null,
+      subjectCode: this.subjectCode?.toUpperCase() || null,
+      courseNumber: this.courseNumber || null,
+      isMSUCourse: this.isMSUCourse || false,
+      credits: this.credits || 0,
     };
   }
 
@@ -176,6 +208,16 @@ export class ScheduleClassForm {
       endDate: new FormControl(scheduleClass?.endDate?.toDate() || null),
       color: new FormControl(
         scheduleClass?.color || DefaultColor,
+        { validators: Validators.required, nonNullable: true },
+      ),
+      subjectCode: new FormControl(scheduleClass?.subjectCode || null),
+      courseNumber: new FormControl(scheduleClass?.courseNumber || null),
+      isMSUCourse: new FormControl(
+        scheduleClass?.isMSUCourse || false,
+        { validators: Validators.required, nonNullable: true },
+      ),
+      credits: new FormControl(
+        0,
         { validators: Validators.required, nonNullable: true },
       ),
     });

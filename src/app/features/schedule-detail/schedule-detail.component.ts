@@ -1,6 +1,6 @@
 import {
   ChangeDetectionStrategy,
-  Component,
+  Component, computed,
   inject,
   Input, signal
 } from '@angular/core';
@@ -43,6 +43,7 @@ import {
 import { DateAgoPipe } from "../../shared/pipes/date-ago.pipe";
 import { MatChip, MatChipSet } from "@angular/material/chips";
 import { ColorToClassPipe } from "../../shared/pipes/color-to-class.pipe";
+import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -59,6 +60,7 @@ import { ColorToClassPipe } from "../../shared/pipes/color-to-class.pipe";
     MatChipSet,
     MatChip,
     ColorToClassPipe,
+    MatTooltip,
   ],
   providers: [DatePipe],
   templateUrl: './schedule-detail.component.html',
@@ -96,6 +98,11 @@ export class ScheduleDetailComponent {
       }),
     ),
   );
+
+  scheduleClassesCredits = computed(() => {
+    return this.scheduleClasses()
+      ?.reduce((acc, c) => acc + (c.credits || 0), 0);
+  });
 
   @Input()
   set id(scheduleId: string) { this.scheduleId.set(scheduleId); }

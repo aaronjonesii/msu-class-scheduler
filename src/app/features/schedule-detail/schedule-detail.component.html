@@ -23,12 +23,15 @@
       <p class="schedule-description">{{schedule?.description}}</p>
 
       <div class="classes-chips">
-        <label for="schedule-classes-chips">Classes</label>
+        <label for="schedule-classes-chips">
+          Classes - {{scheduleClassesCredits()}} credits
+        </label>
 
         <mat-chip-set id="schedule-classes-chips"
                       aria-label="Schedule classes selection">
           @for (scheduleClass of scheduleClasses(); track scheduleClass) {
             <mat-chip class="cursor-pointer" [highlighted]="true"
+                      [matTooltip]="scheduleClass.name"
                       [class]="scheduleClass.color | colorToClass: 'chip'"
                       (click)="scrollToElementId(scheduleClass.id)">
               @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
@@ -36,6 +39,7 @@
               } @else {
                 {{scheduleClass.name}}
               }
+              - {{scheduleClass.credits || 0}} {{scheduleClass?.credits === 1 ? 'credit' : 'credits'}}
             </mat-chip>
           }
 

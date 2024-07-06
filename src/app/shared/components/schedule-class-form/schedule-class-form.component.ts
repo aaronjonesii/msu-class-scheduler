@@ -23,6 +23,7 @@ import { Color } from "../../enums/color";
 import { MatIcon } from "@angular/material/icon";
 import { MatListItemIcon } from "@angular/material/list";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
+import { MatCheckbox } from "@angular/material/checkbox";
 
 @Component({
   selector: 'csb-schedule-class-form',
@@ -36,7 +37,7 @@ import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
     MatInput, MatDatepickerModule, MatSelect,
     KeyValuePipe, MatOption,
     ScheduleClassMeetingsFormComponent,
-    MatIcon, MatListItemIcon, MatSelectTrigger, ColorToClassPipe,
+    MatIcon, MatListItemIcon, MatSelectTrigger, ColorToClassPipe, MatCheckbox,
   ],
 })
 export class ScheduleClassFormComponent {

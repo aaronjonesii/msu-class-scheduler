@@ -22,6 +22,7 @@ export interface ScheduleClass {
   created?: DateTime | null,
   updated?: DateTime | null,
   color?: Color | null,
+  isMSUCourse: boolean,
 }
 
 export interface ReadScheduleClass extends ScheduleClass {

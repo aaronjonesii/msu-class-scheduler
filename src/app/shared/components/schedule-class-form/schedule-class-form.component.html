@@ -1,4 +1,24 @@
 <form [formGroup]="classForm().formGroup">
+  <div class="flex-row align-items-center app-gap flex-wrap justify-content-center">
+    <mat-form-field class="flex-grow" [appearance]="formAppearance">
+      <mat-label>Subject Code</mat-label>
+      <input matInput type="text" name="subjectCode"
+             [formControl]="classForm().subjectCodeCtrl" />
+    </mat-form-field>
+
+    <mat-form-field class="flex-grow" [appearance]="formAppearance">
+      <mat-label>Course Number</mat-label>
+      <input matInput type="number" name="courseNumber"
+             [formControl]="classForm().courseNumberCtrl" />
+    </mat-form-field>
+  </div>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Credits</mat-label>
+    <input matInput type="number" name="credits"
+           [formControl]="classForm().creditsCtrl" />
+  </mat-form-field>
+
   <mat-form-field [appearance]="formAppearance">
     <mat-label>Name</mat-label>
     <input matInput type="text" name="name" [formControl]="classForm().nameCtrl" />
@@ -64,4 +84,8 @@
       }
     </mat-select>
   </mat-form-field>
+
+  <mat-checkbox [formControl]="classForm().isMSUCourseCtrl">
+    Is MSU Course
+  </mat-checkbox>
 </form>

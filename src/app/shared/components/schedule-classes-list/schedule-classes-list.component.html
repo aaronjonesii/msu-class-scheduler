@@ -1,9 +1,11 @@
 @defer (when !!scheduleClasses()) {
   @for (scheduleClass of scheduleClasses(); track scheduleClass.id) {
     <mat-card [id]="scheduleClass.id"
-              [matBadge]="scheduleClass.credits"
-              [matBadgeDescription]="scheduleClass.credits+ ' credits'"
               [class]="scheduleClass.color | colorToClass: 'card'">
+      <div class="badge secondary-card">
+        {{scheduleClass.credits || 0}} credits
+      </div>
+
       <mat-card-header>
         <mat-card-title-group>
           <mat-card-title>
@@ -37,15 +39,26 @@
       </mat-card-content>
 
       <mat-card-actions>
-        <button mat-button type="button" class="primary-button"
-                (click)="editScheduleClass.emit(scheduleClass)">
-          Edit
-        </button>
+        <div>
+          @if (scheduleClass.isMSUCourse) {
+            <a mat-button type="button" class="secondary-button" target="_blank"
+               [href]="msuCourseLink(scheduleClass)">
+              View on MSU
+            </a>
+          }
+        </div>
 
-        <button mat-button type="button" class="error-button"
-                (click)="deleteScheduleClass.emit(scheduleClass.id)">
-          Delete
-        </button>
+        <div>
+          <button mat-button type="button" class="primary-button"
+                  (click)="editScheduleClass.emit(scheduleClass)">
+            Edit
+          </button>
+
+          <button mat-button type="button" class="error-button"
+                  (click)="deleteScheduleClass.emit(scheduleClass.id)">
+            Delete
+          </button>
+        </div>
       </mat-card-actions>
     </mat-card>
   } @empty {

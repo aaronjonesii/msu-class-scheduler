@@ -1,5 +1,6 @@
 import { Component, inject, input } from '@angular/core';
 import {
+  ReadSchedule,
   ReadScheduleWithClasses
 } from "../../interfaces/schedule";
 import { appRoutes } from "../../../app.routes";
@@ -18,6 +19,7 @@ import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { SchedulesService } from "../../services/schedules.service";
 import { MatIcon } from "@angular/material/icon";
+import { MatTooltip } from "@angular/material/tooltip";
 
 @Component({
   selector: 'csb-schedules-list',
@@ -37,6 +39,7 @@ import { MatIcon } from "@angular/material/icon";
     MatButton,
     MatAnchor,
     MatIcon,
+    MatTooltip,
   ],
   templateUrl: './schedules-list.component.html',
   styleUrl: './schedules-list.component.scss'
@@ -53,4 +56,9 @@ export class SchedulesListComponent {
   editSchedule(schedule: ReadScheduleWithClasses) {
     this.scheduleService.openEditScheduleDialog(schedule);
   }
+
+  scheduleCredits = (schedule: ReadSchedule) => {
+    return schedule.classes
+      ?.reduce((acc, c) => acc + (c.credits || 0), 0);
+  };
 }
