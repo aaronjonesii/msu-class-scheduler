@@ -15,6 +15,7 @@ import {
 } from "../interfaces/schedule-class-meeting-time";
 import { Day } from "../enums/day";
 import { ScheduleClassMeeting } from "../interfaces/schedule-class-meeting";
+import { DefaultColor } from "../enums/color";
 
 export class ScheduleClassForm {
   formGroup: FormGroup<ScheduleClassFormGroup>;
@@ -92,6 +93,13 @@ export class ScheduleClassForm {
     return this.endDateCtrl.value;
   }
 
+  get colorCtrl() {
+    return this.formGroup.controls.color;
+  }
+  get color() {
+    return this.colorCtrl.value;
+  }
+
   get scheduleClass(): ReadScheduleClass {
     return {
       id: this.id || '',
@@ -101,6 +109,7 @@ export class ScheduleClassForm {
       meetings: this.meetings,
       startDate: this.startDate ? this._dateToTimestamp(this.startDate) : null,
       endDate: this.endDate ? this._dateToTimestamp(this.endDate) : null,
+      color: this.color || null,
     };
   }
 
@@ -165,6 +174,10 @@ export class ScheduleClassForm {
       meetings: meetingsFormArray,
       startDate: new FormControl(scheduleClass?.startDate?.toDate() || null),
       endDate: new FormControl(scheduleClass?.endDate?.toDate() || null),
+      color: new FormControl(
+        scheduleClass?.color || DefaultColor,
+        { validators: Validators.required, nonNullable: true },
+      ),
     });
   }
 

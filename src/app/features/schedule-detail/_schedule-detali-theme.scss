@@ -17,10 +17,10 @@
     .title {
       font: mat.get-theme-typography($theme, headline-large);
     }
-    .name, .classes .header .title {
+    .schedule-name, .classes .header .title {
       font: mat.get-theme-typography($theme, headline-medium);
     }
-    .description {
+    .schedule-description {
       font: mat.get-theme-typography($theme, headline-small);
     }
   }

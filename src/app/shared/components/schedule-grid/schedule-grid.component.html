@@ -1,17 +1,28 @@
 <div class="tile labels">
-  <span class="primary">Days</span>
+  <span [class]="this.dayTileColor() | colorToClass">Days</span>
 
-  <span class="orange">Times</span>
+  <span [class]="this.timeTileColor() | colorToClass">Times</span>
 </div>
 
 @for (dayTile of dayTiles(); track dayTile.id) {
-  <div class="tile primary" [ngStyle]="dayTile.styles">{{dayTile.label}}</div>
+  <div class="tile day" [class]="dayTile.color | colorToClass"
+       [ngStyle]="dayTile.styles">
+    {{dayTile.name}}
+  </div>
 }
 
 @for (timeTile of timeTiles(); track timeTile.id) {
-  <div class="tile orange" [ngStyle]="timeTile.styles">{{timeTile.label}}</div>
+  <div class="tile time" [class]="timeTile.color | colorToClass"
+       [ngStyle]="timeTile.styles">
+    {{timeTile.name}}
+  </div>
 }
 
 @for (classTile of classTiles(); track classTile.id) {
-  <div class="tile cyan" [ngStyle]="classTile.styles">{{classTile.label}}</div>
+  <div class="tile class" [class]="classTile.color | colorToClass"
+       [ngStyle]="classTile.styles">
+    <span class="name">{{classTile.name}}</span>
+    <span class="description">{{classTile.description}}</span>
+    <span class="times">{{classTile.times}}</span>
+  </div>
 }

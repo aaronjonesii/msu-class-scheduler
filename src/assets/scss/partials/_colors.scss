@@ -1,0 +1,137 @@
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+$red-theme: mat.define-theme((color: (primary: mat.$red-palette)));
+$green-theme: mat.define-theme((color: (primary: mat.$green-palette)));
+$blue-theme: mat.define-theme((color: (primary: mat.$blue-palette)));
+$yellow-theme: mat.define-theme((color: (primary: mat.$yellow-palette)));
+$cyan-theme: mat.define-theme((color: (primary: mat.$cyan-palette)));
+$magenta-theme: mat.define-theme((color: (primary: mat.$magenta-palette)));
+$orange-theme: mat.define-theme((color: (primary: mat.$orange-palette)));
+$chartreuse-theme: mat.define-theme((color: (primary: mat.$chartreuse-palette)));
+$spring-green-theme: mat.define-theme((color: (primary: mat.$spring-green-palette)));
+$azure-theme: mat.define-theme((color: (primary: mat.$azure-palette)));
+$violet-theme: mat.define-theme((color: (primary: mat.$violet-palette)));
+$rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
+
+:root {
+  .red-color {
+    color: mat.get-theme-color($red-theme, primary);
+  }
+  .red-icon {
+    @include mat.icon-color($red-theme, $color-variant: primary);
+  }
+  .red-option {
+    @include mat.option-color($red-theme, $color-variant: primary);
+  }
+
+  .green-color {
+    color: mat.get-theme-color($green-theme, primary);
+  }
+  .green-icon {
+    @include mat.icon-color($green-theme, $color-variant: primary);
+  }
+  .green-option {
+    @include mat.option-color($green-theme, $color-variant: primary);
+  }
+
+  .blue-color {
+    color: mat.get-theme-color($blue-theme, primary);
+  }
+  .blue-icon {
+    @include mat.icon-color($blue-theme, $color-variant: primary);
+  }
+  .blue-option {
+    @include mat.option-color($blue-theme, $color-variant: primary);
+  }
+
+  .yellow-color {
+    color: mat.get-theme-color($yellow-theme, primary);
+  }
+  .yellow-icon {
+    @include mat.icon-color($yellow-theme, $color-variant: primary);
+  }
+  .yellow-option {
+    @include mat.option-color($yellow-theme, $color-variant: primary);
+  }
+
+  .cyan-color {
+    color: mat.get-theme-color($cyan-theme, primary);
+  }
+  .cyan-icon {
+    @include mat.icon-color($cyan-theme, $color-variant: primary);
+  }
+  .cyan-option {
+    @include mat.option-color($cyan-theme, $color-variant: primary);
+  }
+
+  .magenta-color {
+    color: mat.get-theme-color($magenta-theme, primary);
+  }
+  .magenta-icon {
+    @include mat.icon-color($magenta-theme, $color-variant: primary);
+  }
+  .magenta-option {
+    @include mat.option-color($magenta-theme, $color-variant: primary);
+  }
+
+  .orange-color {
+    color: mat.get-theme-color($orange-theme, primary);
+  }
+  .orange-icon {
+    @include mat.icon-color($orange-theme, $color-variant: primary);
+  }
+  .orange-option {
+    @include mat.option-color($orange-theme, $color-variant: primary);
+  }
+
+  .chartreuse-color {
+    color: mat.get-theme-color($chartreuse-theme, primary);
+  }
+  .chartreuse-icon {
+    @include mat.icon-color($chartreuse-theme, $color-variant: primary);
+  }
+  .chartreuse-option {
+    @include mat.option-color($chartreuse-theme, $color-variant: primary);
+  }
+
+  .spring-green-color {
+    color: mat.get-theme-color($spring-green-theme, primary);
+  }
+  .spring-green-icon {
+    @include mat.icon-color($spring-green-theme, $color-variant: primary);
+  }
+  .spring-green-option {
+    @include mat.option-color($spring-green-theme, $color-variant: primary);
+  }
+
+  .azure-color {
+    color: mat.get-theme-color($azure-theme, primary);
+  }
+  .azure-icon {
+    @include mat.icon-color($azure-theme, $color-variant: primary);
+  }
+  .azure-option {
+    @include mat.option-color($azure-theme, $color-variant: primary);
+  }
+
+  .violet-color {
+    color: mat.get-theme-color($violet-theme, primary);
+  }
+  .violet-icon {
+    @include mat.icon-color($violet-theme, $color-variant: primary);
+  }
+  .violet-option {
+    @include mat.option-color($violet-theme, $color-variant: primary);
+  }
+
+  .rose-color {
+    color: mat.get-theme-color($rose-theme, primary);
+  }
+  .rose-icon {
+    @include mat.icon-color($rose-theme, $color-variant: primary);
+  }
+  .rose-option {
+    @include mat.option-color($rose-theme, $color-variant: primary);
+  }
+}

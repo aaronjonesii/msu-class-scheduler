@@ -3,8 +3,8 @@
 @defer (when loaded()) {
   @if (schedule(); as schedule) {
     <section class="details">
-      <h3 class="name">{{schedule?.name || 'Unnamed schedule'}}</h3>
-      <p class="description">{{schedule?.description}}</p>
+      <h3 class="schedule-name">{{schedule?.name || 'Unnamed schedule'}}</h3>
+      <p class="schedule-description">{{schedule?.description}}</p>
     </section>
 
     <mat-form-field>

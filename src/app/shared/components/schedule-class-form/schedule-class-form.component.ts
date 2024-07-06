@@ -13,12 +13,16 @@ import {
   MatDatepickerModule,
 } from "@angular/material/datepicker";
 import { MatOption, provideNativeDateAdapter } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
+import { MatSelect, MatSelectTrigger } from "@angular/material/select";
 import { ScheduleClassStatus } from "../../enums/schedule-class-status";
 import { KeyValuePipe } from "@angular/common";
 import {
   ScheduleClassMeetingsFormComponent
 } from "./components/schedule-class-meetings-form/schedule-class-meetings-form.component";
+import { Color } from "../../enums/color";
+import { MatIcon } from "@angular/material/icon";
+import { MatListItemIcon } from "@angular/material/list";
+import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 
 @Component({
   selector: 'csb-schedule-class-form',
@@ -29,13 +33,17 @@ import {
   providers: [provideNativeDateAdapter()],
   imports: [
     ReactiveFormsModule, MatFormFieldModule,
-    MatInput, MatDatepickerModule, MatSelect, KeyValuePipe,
-    MatOption, ScheduleClassMeetingsFormComponent,
+    MatInput, MatDatepickerModule, MatSelect,
+    KeyValuePipe, MatOption,
+    ScheduleClassMeetingsFormComponent,
+    MatIcon, MatListItemIcon, MatSelectTrigger, ColorToClassPipe,
   ],
 })
 export class ScheduleClassFormComponent {
+  protected readonly ScheduleClassStatus = ScheduleClassStatus;
+  protected readonly Color = Color;
+
   classForm = input<ScheduleClassForm>(new ScheduleClassForm());
 
   formAppearance: MatFormFieldAppearance = 'outline';
-  protected readonly ScheduleClassStatus = ScheduleClassStatus;
 }

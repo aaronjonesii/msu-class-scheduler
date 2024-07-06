@@ -4,6 +4,7 @@ import {
 } from "./schedule-class-meeting";
 import { DateTime } from "./date-time";
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
+import { Color } from "../enums/color";
 
 export interface ScheduleClass {
   name: string,
@@ -20,6 +21,7 @@ export interface ScheduleClass {
   notes?: string | null,
   created?: DateTime | null,
   updated?: DateTime | null,
+  color?: Color | null,
 }
 
 export interface ReadScheduleClass extends ScheduleClass {

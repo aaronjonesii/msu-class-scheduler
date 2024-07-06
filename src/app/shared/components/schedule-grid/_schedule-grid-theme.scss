@@ -2,6 +2,7 @@
 // https://material.angular.io/guide/theming-your-components
 @use 'sass:map';
 @use '@angular/material' as mat;
+@import '../../../../assets/scss/partials/colors';
 
 @mixin componentThemeMixins($theme) {}
 
@@ -11,30 +12,62 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
-  $yellow-theme: mat.define-theme((color: (primary: mat.$yellow-palette)));
-  $cyan-theme: mat.define-theme((color: (primary: mat.$cyan-palette)));
-  $orange-theme: mat.define-theme((color: (primary: mat.$orange-palette)));
-  $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
 
   csb-schedule-grid {
     .primary {
-      background: mat.get-theme-color($theme, primary, 95);
+      background: rgba(mat.get-theme-color($theme, primary, 95), 0.75);
       color: mat.get-theme-color($theme, primary);
     }
-    .cyan {
-      background: mat.get-theme-color($cyan-theme, primary, 95);
-      color: mat.get-theme-color($cyan-theme, primary);
+    .secondary {
+      background: rgba(mat.get-theme-color($theme, secondary, 95), 0.75);
+      color: mat.get-theme-color($theme, secondary);
+    }
+    .red {
+      background: rgba(mat.get-theme-color($red-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($red-theme, primary);
+    }
+    .green {
+      background: rgba(mat.get-theme-color($green-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($green-theme, primary);
+    }
+    .blue {
+      background: rgba(mat.get-theme-color($blue-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($blue-theme, primary);
     }
     .yellow {
-      background: mat.get-theme-color($yellow-theme, primary, 95);
+      background: rgba(mat.get-theme-color($yellow-theme, primary, 95), 0.75);
       color: mat.get-theme-color($yellow-theme, primary);
     }
+    .cyan {
+      background: rgba(mat.get-theme-color($cyan-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($cyan-theme, primary);
+    }
+    .magenta {
+      background: rgba(mat.get-theme-color($magenta-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($magenta-theme, primary);
+    }
     .orange {
-      background: mat.get-theme-color($orange-theme, primary, 95);
+      background: rgba(mat.get-theme-color($orange-theme, primary, 95), 0.75);
       color: mat.get-theme-color($orange-theme, primary);
     }
+    .chartreuse {
+      background: rgba(mat.get-theme-color($chartreuse-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($chartreuse-theme, primary);
+    }
+    .spring-green {
+      background: rgba(mat.get-theme-color($spring-green-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($spring-green-theme, primary);
+    }
+    .azure {
+      background: rgba(mat.get-theme-color($azure-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($azure-theme, primary);
+    }
+    .violet {
+      background: rgba(mat.get-theme-color($violet-theme, primary, 95), 0.75);
+      color: mat.get-theme-color($violet-theme, primary);
+    }
     .rose {
-      background: mat.get-theme-color($rose-theme, primary, 95);
+      background: rgba(mat.get-theme-color($rose-theme, primary, 95), 0.75);
       color: mat.get-theme-color($rose-theme, primary);
     }
   }
@@ -44,6 +77,9 @@
   csb-schedule-grid {
     .labels span {
       font: mat.get-theme-typography($theme, title-medium);
+    }
+    .tile span {
+      font: mat.get-theme-typography($theme, label-large);
     }
   }
 }

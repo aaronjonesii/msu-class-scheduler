@@ -1,6 +1,7 @@
 import { FormArray, FormControl, FormGroup } from "@angular/forms";
 import { ScheduleClassStatus } from "../enums/schedule-class-status";
 import { ScheduleClassMeetingFormGroup } from "./schedule-class-meeting-form";
+import { Color } from "../enums/color";
 
 export interface ScheduleClassFormGroup {
   id: FormControl<string | null>,
@@ -10,4 +11,5 @@ export interface ScheduleClassFormGroup {
   meetings: FormArray<FormGroup<ScheduleClassMeetingFormGroup>>,
   startDate: FormControl<Date | null>,
   endDate: FormControl<Date | null>,
+  color: FormControl<Color>,
 }

@@ -41,4 +41,27 @@
 
   <csb-schedule-class-meetings-form
         [meetingsFormArray]="classForm().meetingsFormArray" />
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Color</mat-label>
+    <mat-select [formControl]="classForm().colorCtrl">
+      <mat-select-trigger class="flex-row align-items-center app-gap">
+        <mat-icon fontIcon="circle"
+                  [class]="classForm().color | colorToClass:'icon'" />
+
+        <span [class]="classForm().color | colorToClass:'color'">
+          {{classForm().color}}
+        </span>
+      </mat-select-trigger>
+
+      @for (color of Color | keyvalue; track color.key) {
+        <mat-option class="option" [value]="color.value"
+                    [class]="color.value | colorToClass:'option'">
+          <mat-icon matListItemIcon fontIcon="circle"
+                    [class]="color.value | colorToClass:'icon'" />
+          {{color.value}}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
 </form>

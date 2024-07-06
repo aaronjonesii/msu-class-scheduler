@@ -6,11 +6,19 @@ import {
 } from '@angular/core';
 import { Day } from "../../enums/day";
 import { NgStyle } from "@angular/common";
-import { ReadScheduleClass } from "../../interfaces/schedule-class";
+import {
+  ReadScheduleClass,
+  ScheduleClass
+} from "../../interfaces/schedule-class";
+import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
+import { Color, DefaultColor } from "../../enums/color";
 
 export interface GridTile {
   id: string,
-  label: string,
+  name: string,
+  description?: string,
+  times?: string,
+  color: Color,
   styles: {
     gridColumnStart: number,
     gridColumnEnd: number,
@@ -27,7 +35,7 @@ export interface GridTimes {
 @Component({
   selector: 'csb-schedule-grid',
   standalone: true,
-  imports: [NgStyle],
+  imports: [NgStyle, ColorToClassPipe],
   templateUrl: './schedule-grid.component.html',
   styleUrl: './schedule-grid.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -42,23 +50,30 @@ export class ScheduleGridComponent {
   get gridTemplateRows() {
     const numTimeSlots = this.numTimeSlots();
 
-    return `${this.firstRowHeight()}px repeat(${numTimeSlots}, 50px)`;
+    return `${this.firstRowHeight()}px repeat(${numTimeSlots}, minmax(${this.rowHeight()}px, 1fr))`;
   }
 
   firstRowHeight = input(100);
 
+  rowHeight = input(100);
+
   days = input(Object.values(Day));
 
-  times = input<GridTimes>({start: '08:00', end: '20:00'});
+  times = input<GridTimes>({start: '08:00', end: '21:00'});
 
   scheduleClasses = input<ReadScheduleClass[]>([]);
+
+  dayTileColor = input(Color.SPRING_GREEN);
+
+  timeTileColor = input(Color.ORANGE);
 
   dayTiles = computed<GridTile[]>(() => {
     return this.days().map((day, i) => {
       const gridColumnStart = (i + 1) + 1;
       return {
         id: day,
-        label: day,
+        name: day,
+        color: this.dayTileColor(),
         styles: {
           gridColumnStart,
           gridColumnEnd: gridColumnStart + 1,
@@ -93,7 +108,8 @@ export class ScheduleGridComponent {
 
       tiles.push({
         id: startTime.toLocaleTimeString(),
-        label: this._formatTime(startTime),
+        name: this._formatTime(startTime),
+        color: this.timeTileColor(),
         styles: {
           gridColumnStart: 1,
           gridColumnEnd: 2,
@@ -127,7 +143,10 @@ export class ScheduleGridComponent {
 
             tiles.push({
               id: `${scheduleClass.id}-${meeting.type}-${day}-${time.startTime}`,
-              label: scheduleClass.name,
+              name: scheduleClass.name,
+              description: meeting.type,
+              times: `${this._formatTime(startTime)} - ${this._formatTime(endTime)}`,
+              color: scheduleClass.color || DefaultColor,
               styles: {
                 /** +2 to account for the time column and label column */
                 gridColumnStart: dayIndex + 2,

@@ -5,6 +5,8 @@
 @use './components/schedule-class-meetings-form/schedule-class-meetings-form-theme' as scheduleClassMeetingsForm;
 @use './components/schedule-class-meeting-form/schedule-class-meeting-form-theme' as scheduleClassMeetingForm;
 
+@import "../../../../assets/scss/partials/colors";
+
 @mixin componentThemeMixins($theme) {
   @include scheduleClassMeetingsForm.theme($theme);
   @include scheduleClassMeetingForm.theme($theme);
@@ -16,6 +18,8 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  csb-schedule-class-form {}
 }
 
 @mixin typography($theme) {}
