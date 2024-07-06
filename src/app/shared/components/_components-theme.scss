@@ -8,6 +8,7 @@
 @use './schedule-classes-list/schedule-classes-list-theme' as scheduleClassesList;
 @use './schedule-grid/schedule-grid-theme' as scheduleGrid;
 @use './schedules-list/schedules-list-theme' as schedulesList;
+@use './schedule-grid-view/schedule-grid-view-theme' as scheduleGridView;
 
 @mixin componentThemeMixins($theme) {
   @include skeleton.theme($theme);
@@ -16,6 +17,7 @@
   @include scheduleClassesList.theme($theme);
   @include scheduleGrid.theme($theme);
   @include schedulesList.theme($theme);
+  @include scheduleGridView.theme($theme);
 }
 
 @mixin color($theme) {

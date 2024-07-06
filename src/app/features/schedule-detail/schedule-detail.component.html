@@ -22,40 +22,7 @@
       <p class="schedule-description">{{schedule?.description}}</p>
     </section>
 
-    <mat-form-field>
-      <mat-label>Days Shown</mat-label>
-      <mat-select [(ngModel)]="days" [multiple]="true">
-        @for (day of Day | keyvalue: keepSameOrder; track day.key) {
-          <mat-option [value]="day.value">{{day.value}}</mat-option>
-        }
-      </mat-select>
-    </mat-form-field>
-
-    <div class="times">
-      <label for="startTime">Start time</label>
-      <input type="time" id="startTime" name="startTime"
-             [(ngModel)]="startTime" />
-
-      <label for="endTime">End time</label>
-      <input type="time" id="endTime" name="endTime"
-             [(ngModel)]="endTime" />
-    </div>
-
-    <mat-form-field>
-      <mat-label>Time Slot Increment</mat-label>
-      <mat-select [(ngModel)]="timeSlotIncrement">
-        <mat-option [value]="15">15 minutes</mat-option>
-        <mat-option [value]="30">30 minutes</mat-option>
-        <mat-option [value]="45">45 minutes</mat-option>
-        <mat-option [value]="60">1 hour</mat-option>
-        <mat-option [value]="120">2 hours</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <csb-schedule-grid [days]="days()"
-                       [timeSlotIncrement]="timeSlotIncrement()"
-                       [scheduleClasses]="scheduleClasses() || []"
-                       [times]="{start: startTime(), end: endTime()}" />
+    <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()" />
 
     <section class="classes">
       <div class="header">
@@ -87,12 +54,23 @@
         </li>
       </ul>
 
-      <button mat-stroked-button type="button" [routerLink]="[appRoutes.schedules]">
+      <button mat-stroked-button type="button"
+              [routerLink]="[appRoutes.schedules]">
         <mat-icon matButtonIcon fontIcon="event" />
         Go to Schedules
       </button>
     </div>
   }
 } @placeholder (minimum 500ms) {
-  Loading...
+  <section class="details">
+    <h3 class="schedule-name">
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '55%'}" />
+    </h3>
+    <p class="schedule-description">
+      <csb-skeleton [styles]="{width: '100%'}" />
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
+    </p>
+  </section>
+
+  <csb-schedule-grid-view [scheduleClasses]="[]" />
 }

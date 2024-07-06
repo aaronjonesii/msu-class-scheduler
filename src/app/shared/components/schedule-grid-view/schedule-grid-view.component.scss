@@ -1,0 +1,70 @@
+@import '../../../../assets/scss/partials/media_queries';
+
+@mixin flexAlignGap() {
+  display: flex;
+  align-items: center;
+  gap: var(--gap);
+}
+
+@mixin flexCol() {
+  display: flex;
+  flex-direction: column;
+}
+
+:host {
+  @include flexCol();
+  gap: var(--gap);
+}
+
+.grid-options-btn {
+  width: fit-content;
+}
+
+.grid-container {
+  @include flexCol();
+  gap: var(--gap);
+}
+
+.grid-options {
+  @include flexCol();
+  gap: var(--gap);
+  border-radius: var(--border-radius);
+  padding: var(--padding);
+  overflow: hidden;
+}
+
+.times {
+  @include flexCol();
+
+  .inputs-container {
+    @include flexAlignGap();
+    flex-wrap: wrap;
+  }
+
+  .startTime, .endTime {
+    @include flexAlignGap();
+  }
+}
+
+.time-slot-increment {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .labels {
+    @include flexAlignGap();
+  }
+
+  #timeSlotIncrement {
+   flex: 1;
+  }
+}
+
+@media (min-width: $tabletLandscape) {
+  .grid-container {
+    flex-direction: row;
+  }
+  .grid-options {
+    max-width: 300px;
+  }
+}

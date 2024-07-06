@@ -7,16 +7,10 @@ import {
 import { SchedulesService } from "../../shared/services/schedules.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { first, of, switchMap } from "rxjs";
-import { MatButton, MatIconButton } from "@angular/material/button";
+import { MatButton } from "@angular/material/button";
 import { Router, RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
 import { appRoutes } from "../../app.routes";
-import {
-  MatList,
-  MatListItem,
-  MatListItemLine, MatListItemMeta,
-  MatListItemTitle
-} from "@angular/material/list";
 import { MatDialog } from "@angular/material/dialog";
 import {
   ScheduleClassFormDialogComponent, ScheduleClassFormDialogContract
@@ -25,8 +19,7 @@ import {
   ReadScheduleClass,
   ScheduleClass
 } from "../../shared/interfaces/schedule-class";
-import { TimePipe } from "../../shared/pipes/time.pipe";
-import { DatePipe, KeyValuePipe } from "@angular/common";
+import { DatePipe } from "@angular/common";
 import {
   ScheduleClassesService
 } from "../../shared/services/schedule-classes.service";
@@ -37,17 +30,16 @@ import { LoggerService } from "../../shared/services/logger.service";
 import {
   ConfirmDialogComponent, ConfirmDialogContract
 } from "../../shared/components/confirm-dialog/confirm-dialog.component";
-import {
-  ScheduleGridComponent
-} from "../../shared/components/schedule-grid/schedule-grid.component";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { MatOption, MatSelect } from "@angular/material/select";
-import { FormsModule } from "@angular/forms";
-import { Day } from "../../shared/enums/day";
 import { ReadSchedule } from "../../shared/interfaces/schedule";
 import {
   ScheduleFormDialogComponent, ScheduleFormDialogContract
 } from "../../shared/dialogs/schedule-form-dialog/schedule-form-dialog.component";
+import {
+  SkeletonComponent
+} from "../../shared/components/skeleton/skeleton.component";
+import {
+  ScheduleGridViewComponent
+} from "../../shared/components/schedule-grid-view/schedule-grid-view.component";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -56,21 +48,9 @@ import {
     RouterLink,
     MatIcon,
     MatButton,
-    MatList,
-    MatListItem,
-    MatListItemTitle,
-    MatListItemLine,
-    TimePipe,
-    MatIconButton,
-    MatListItemMeta,
     ScheduleClassesListComponent,
-    ScheduleGridComponent,
-    MatFormField,
-    MatSelect,
-    FormsModule,
-    MatOption,
-    MatLabel,
-    KeyValuePipe,
+    SkeletonComponent,
+    ScheduleGridViewComponent,
   ],
   providers: [DatePipe],
   templateUrl: './schedule-detail.component.html',
@@ -85,21 +65,10 @@ export class ScheduleDetailComponent {
   private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
-  protected readonly Day = Day;
 
   scheduleId = signal<string | null>(null);
 
   loaded = signal(false);
-
-  timeSlotIncrement = signal(60);
-
-  days = signal(
-    Object.values(Day).filter((d) => ![Day.SATURDAY, Day.SUNDAY].includes(d)),
-  );
-
-  startTime = signal('08:00');
-
-  endTime = signal('19:00');
 
   schedule = toSignal(
     toObservable(this.scheduleId).pipe(
@@ -190,8 +159,6 @@ export class ScheduleDetailComponent {
         });
     });
   }
-
-  keepSameOrder = () => 1;
 
   deleteSchedule() {
     const scheduleId = this.scheduleId();

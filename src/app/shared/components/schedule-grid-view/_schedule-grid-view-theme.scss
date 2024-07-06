@@ -1,0 +1,36 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
+// https://material.angular.io/guide/theming-your-components
+@use 'sass:map';
+@use '@angular/material' as mat;
+
+@mixin componentThemeMixins($theme) {}
+
+@mixin color($theme) {
+  $has-base: mat.theme-has($theme, base);
+  $has-color: mat.theme-has($theme, color);
+  $has-typography: mat.theme-has($theme, typography);
+  $has-density: mat.theme-has($theme, density);
+  $theme-type: mat.get-theme-type($theme);
+
+  csb-schedule-grid-view {
+    .grid-options {
+      background: mat.get-theme-color($theme, surface-bright);
+    }
+  }
+}
+
+@mixin typography($theme) {
+  csb-schedule-grid-view {
+    .label {
+      font: mat.get-theme-typography($theme, title-medium);
+    }
+  }
+}
+
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) { @include color($theme); }
+
+  @if mat.theme-has($theme, typography) { @include typography($theme); }
+
+  @include componentThemeMixins($theme);
+}

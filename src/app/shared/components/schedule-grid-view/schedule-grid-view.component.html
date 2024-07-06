@@ -1,0 +1,62 @@
+@if (showGridOptions()) {
+  <button mat-stroked-button type="button" class="grid-options-btn"
+          (click)="showGridOptions.set(false)">
+    Hide gird options
+  </button>
+} @else {
+  <button mat-flat-button type="button" class="grid-options-btn"
+          (click)="showGridOptions.set(true)">
+    Show grid options
+  </button>
+}
+
+<div class="grid-container">
+  @if (showGridOptions()) {
+    <div class="grid-options">
+      <div class="daysShown">
+        <label for="daysShown" class="label">Days shown</label>
+
+        <mat-chip-listbox id="daysShown" [(ngModel)]="days" [multiple]="true">
+          @for (day of Day | keyvalue: keepSameOrder; track day.key) {
+            <mat-chip-option [value]="day.value">{{day.value}}</mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </div>
+
+      <div class="times">
+        <label class="label">Times</label>
+
+        <div class="inputs-container">
+          <div class="startTime">
+            <label for="startTime">Start time</label>
+            <input type="time" id="startTime" name="startTime"
+                   [(ngModel)]="startTime" />
+          </div>
+
+          <div class="endTime">
+            <label for="endTime">End time</label>
+            <input type="time" id="endTime" name="endTime"
+                   [(ngModel)]="endTime" />
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot-increment">
+        <div class="labels">
+          <label id="name-label" class="label">Time Slot Increment</label>
+          <label class="value">{{timeSlotIncrement()}} minutes</label>
+        </div>
+
+        <mat-slider id="timeSlotIncrement" [max]="60" [min]="1" [step]="1"
+                    [discrete]="true" [showTickMarks]="true">
+          <input matSliderThumb type="range" [(ngModel)]="timeSlotIncrement" />
+        </mat-slider>
+      </div>
+    </div>
+  }
+
+  <csb-schedule-grid [days]="days()"
+                     [timeSlotIncrement]="timeSlotIncrement()"
+                     [scheduleClasses]="scheduleClasses() || []"
+                     [times]="{start: startTime(), end: endTime()}" />
+</div>
