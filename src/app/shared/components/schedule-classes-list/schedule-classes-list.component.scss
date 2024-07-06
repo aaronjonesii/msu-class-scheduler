@@ -1,0 +1,9 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+}
+
+mat-card {
+  flex: 1 auto;
+}

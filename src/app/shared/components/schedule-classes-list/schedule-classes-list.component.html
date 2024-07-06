@@ -1,58 +1,71 @@
-<mat-list>
-  @defer (when !!scheduleClasses()) {
-    @for (scheduleClass of scheduleClasses(); track scheduleClass.id) {
-      <mat-list-item>
-        <span matListItemTitle>
-          @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
-            {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
-            -
-          }
-          {{scheduleClass.name}}
-        </span>
+@defer (when !!scheduleClasses()) {
+  @for (scheduleClass of scheduleClasses(); track scheduleClass.id) {
+    <mat-card [id]="scheduleClass.id"
+              [matBadge]="scheduleClass.credits"
+              [matBadgeDescription]="scheduleClass.credits+ ' credits'"
+              [class]="scheduleClass.color | colorToClass: 'card'">
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>
+            @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
+              {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+              -
+            }
+            {{scheduleClass.name}}
+          </mat-card-title>
 
-        <span matListItemLine>{{scheduleClass.status}}</span>
+          <mat-card-subtitle>{{scheduleClass.description}}</mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
 
+      <mat-card-content>
         @for (meeting of scheduleClass.meetings; track meeting.type) {
-          <span matListItemLine>
-                {{meeting.type}}
+          <div class="meeting-time">
+            {{meeting.type}}
             -
             @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
               {{meetingTime.days.join(', ')}} {{meetingTime.startTime | time}} to {{meetingTime.endTime | time}}
             } @empty {
               To Be Announced
             }
-          </span>
+          </div>
         }
 
-        <button mat-icon-button matListItemMeta class="primary-icon-btn"
+        <div class="status">{{scheduleClass.status}}</div>
+
+        <div class="notes">{{scheduleClass?.notes}}</div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <button mat-button type="button" class="primary-button"
                 (click)="editScheduleClass.emit(scheduleClass)">
-          <mat-icon fontIcon="edit" />
+          Edit
         </button>
 
-        <button mat-icon-button matListItemMeta class="error-icon-btn"
+        <button mat-button type="button" class="error-button"
                 (click)="deleteScheduleClass.emit(scheduleClass.id)">
-          <mat-icon fontIcon="delete" />
+          Delete
         </button>
-      </mat-list-item>
-    } @empty {
-      No classes yet.
-    }
-  } @placeholder (minimum 500ms) {
-    @for (_ of [].constructor(5); track _) {
-      <mat-list-item>
-      <span matListItemTitle>
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '200px'}" />
-      </span>
-        <span matListItemLine>
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '50px'}" />
-      </span>
-        <span matListItemMeta>
-        <csb-skeleton appearance="circle" />
-      </span>
-        <span matListItemMeta>
-        <csb-skeleton appearance="circle" />
-      </span>
-      </mat-list-item>
-    }
+      </mat-card-actions>
+    </mat-card>
+  } @empty {
+    No classes yet.
   }
-</mat-list>
+} @placeholder (minimum 500ms) {
+  @for (_ of [].constructor(5); track _) {
+    <mat-list-item>
+    <span matListItemTitle>
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '200px'}" />
+    </span>
+      <span matListItemLine>
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '50px'}" />
+    </span>
+      <span matListItemMeta>
+      <csb-skeleton appearance="circle" />
+    </span>
+      <span matListItemMeta>
+      <csb-skeleton appearance="circle" />
+    </span>
+    </mat-list-item>
+  }
+}
