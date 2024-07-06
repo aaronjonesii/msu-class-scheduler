@@ -19,7 +19,7 @@ import {
   ReadScheduleClass,
   ScheduleClass
 } from "../../shared/interfaces/schedule-class";
-import { DatePipe } from "@angular/common";
+import { DatePipe, DOCUMENT } from "@angular/common";
 import {
   ScheduleClassesService
 } from "../../shared/services/schedule-classes.service";
@@ -40,6 +40,9 @@ import {
 import {
   ScheduleGridViewComponent
 } from "../../shared/components/schedule-grid-view/schedule-grid-view.component";
+import { DateAgoPipe } from "../../shared/pipes/date-ago.pipe";
+import { MatChip, MatChipSet } from "@angular/material/chips";
+import { ColorToClassPipe } from "../../shared/pipes/color-to-class.pipe";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -51,6 +54,11 @@ import {
     ScheduleClassesListComponent,
     SkeletonComponent,
     ScheduleGridViewComponent,
+    DateAgoPipe,
+    DatePipe,
+    MatChipSet,
+    MatChip,
+    ColorToClassPipe,
   ],
   providers: [DatePipe],
   templateUrl: './schedule-detail.component.html',
@@ -62,6 +70,7 @@ export class ScheduleDetailComponent {
   private scheduleClassesService = inject(ScheduleClassesService);
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
+  private document = inject(DOCUMENT);
   private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
@@ -113,26 +122,11 @@ export class ScheduleDetailComponent {
   }
 
   editScheduleClass(scheduleClass: ReadScheduleClass) {
-    const dialogRef = this.dialog.open(
-      ScheduleClassFormDialogComponent,
-      {
-        id: 'edit-schedule-class-form-dialog',
-        width: '100%',
-        maxWidth: '600px',
-        data: <ScheduleClassFormDialogContract>{ scheduleClass },
-      },
-    );
+    const scheduleId = this.scheduleId();
 
-    dialogRef.afterClosed().pipe(first()).forEach(async (scheduleClass?: ReadScheduleClass) => {
-      if (!scheduleClass) return;
+    if (!scheduleId) return;
 
-      const scheduleId = this.scheduleId();
-
-      if (!scheduleId) return;
-
-      await this.scheduleClassesService.update(scheduleId, scheduleClass.id, scheduleClass)
-        .then(() => this.logger.log('Updated schedule class'));
-    });
+    this.scheduleClassesService.openEditScheduleDialog(scheduleId, scheduleClass);
   }
 
   async deleteScheduleClass(classId: string) {
@@ -192,25 +186,12 @@ export class ScheduleDetailComponent {
   editSchedule(schedule?: ReadSchedule | null) {
     if (!schedule) return;
 
-    const dialogRef = this.dialog.open(
-      ScheduleFormDialogComponent,
-      {
-        id: 'edit-schedule-form-dialog',
-        width: '100%',
-        maxWidth: '600px',
-        data: <ScheduleFormDialogContract>{ schedule },
-      },
-    );
+    this.schedulesService.openEditScheduleDialog(schedule);
+  }
 
-    dialogRef.afterClosed().pipe(first()).forEach(async (schedule?: ReadSchedule) => {
-      if (!schedule) return;
+  scrollToElementId(elementId: string) {
+    const el = this.document.getElementById(elementId);
 
-      const scheduleId = this.scheduleId();
-
-      if (!scheduleId) return;
-
-      await this.schedulesService.update(scheduleId, schedule)
-        .then(() => this.logger.log('Updated schedule'));
-    });
+    if (el) el.scrollIntoView({behavior: "smooth"});
   }
 }

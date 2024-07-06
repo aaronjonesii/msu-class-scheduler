@@ -19,16 +19,50 @@
   @if (schedule(); as schedule) {
     <section class="details">
       <h3 class="schedule-name">{{schedule?.name || 'Unnamed schedule'}}</h3>
+
       <p class="schedule-description">{{schedule?.description}}</p>
+
+      <div class="classes-chips">
+        <label for="schedule-classes-chips">Classes</label>
+
+        <mat-chip-set id="schedule-classes-chips"
+                      aria-label="Schedule classes selection">
+          @for (scheduleClass of scheduleClasses(); track scheduleClass) {
+            <mat-chip class="cursor-pointer" [highlighted]="true"
+                      [class]="scheduleClass.color | colorToClass: 'chip'"
+                      (click)="scrollToElementId(scheduleClass.id)">
+              @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
+                {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+              } @else {
+                {{scheduleClass.name}}
+              }
+            </mat-chip>
+          }
+
+          <mat-chip (click)="scrollToElementId('add-class-btn')">
+            Add new class
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+
+
+      @if (schedule?.updated) {
+        <div class="updated">Last updated {{schedule.updated?.toDate() | dateAgo}}</div>
+      }
+      <div class="created">
+        Created on {{schedule.created?.toDate() | date}}
+      </div>
     </section>
 
-    <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()" />
+    <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()"
+                            (classClicked)="scrollToElementId($event.id)" />
 
     <section class="classes">
       <div class="header">
         <h4 class="title">Classes</h4>
 
-        <button mat-button type="button" (click)="addClass()">
+        <button mat-button type="button" id="add-class-btn"
+                (click)="addClass()">
           <mat-icon matButtonIcon fontIcon="add" />
           Class
         </button>
@@ -66,10 +100,33 @@
     <h3 class="schedule-name">
       <csb-skeleton [styles]="{width: '100%', maxWidth: '55%'}" />
     </h3>
+
     <p class="schedule-description">
       <csb-skeleton [styles]="{width: '100%'}" />
       <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
     </p>
+
+    <div class="classes-chips">
+      <label for="schedule-classes-chips-placeholder">
+        Classes
+      </label>
+
+      <div id="schedule-classes-chips-placeholder">
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
+      </div>
+    </div>
+
+
+
+    <div class="updated">
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '45%'}" />
+    </div>
+
+    <div class="created">
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '35%'}" />
+    </div>
   </section>
 
   <csb-schedule-grid-view [scheduleClasses]="[]" />
