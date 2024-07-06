@@ -4,7 +4,7 @@ import { where } from "@angular/fire/firestore";
 import { LoggerService } from "./logger.service";
 import {
   catchError, combineLatest,
-  EMPTY, from,
+  EMPTY, first, from,
   map,
   mergeMap,
   Observable,
@@ -18,11 +18,17 @@ import {
   WriteSchedule
 } from "../interfaces/schedule";
 import { ReadScheduleClass } from "../interfaces/schedule-class";
+import {
+  ScheduleFormDialogComponent,
+  ScheduleFormDialogContract
+} from "../dialogs/schedule-form-dialog/schedule-form-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Injectable({ providedIn: 'root' })
 export class SchedulesService {
   private db = inject(FirestoreService);
   private logger = inject(LoggerService);
+  private dialog = inject(MatDialog);
 
   private readonly collectionName = 'schedules';
 
@@ -122,5 +128,25 @@ export class SchedulesService {
 
         return false;
       });
+  }
+
+  openEditScheduleDialog(schedule: ReadSchedule) {
+    const dialogRef = this.dialog.open(
+      ScheduleFormDialogComponent,
+      {
+        id: 'edit-schedule-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: <ScheduleFormDialogContract>{ schedule },
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first())
+      .forEach(async (schedule?: ReadSchedule) => {
+      if (!schedule) return;
+
+      await this.update(schedule.id, schedule)
+        .then(() => this.logger.log('Updated schedule'));
+    });
   }
 }
