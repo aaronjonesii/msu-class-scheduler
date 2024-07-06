@@ -13,7 +13,7 @@
       <a mat-menu-item [routerLink]="[appRoutes.scheduleDetail(schedule.id)]">
         <span matListItemTitle>{{schedule.name || 'Unnamed schedule'}}</span>
 
-        <span matListItemLine>{{schedule.created.toDate() | date}}</span>
+        <span matListItemLine>{{schedule.created?.toDate() | date}}</span>
       </a>
     } @empty {
       You have no schedules yet.

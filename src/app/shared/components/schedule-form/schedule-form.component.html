@@ -1,0 +1,13 @@
+<form [formGroup]="scheduleForm().formGroup">
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Name</mat-label>
+    <input matInput type="text" name="name"
+           [formControl]="scheduleForm().nameCtrl" />
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Description</mat-label>
+    <textarea matInput rows="3" type="text" name="description"
+              [formControl]="scheduleForm().descriptionCtrl"></textarea>
+  </mat-form-field>
+</form>

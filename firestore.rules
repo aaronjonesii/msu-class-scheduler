@@ -12,7 +12,8 @@ service cloud.firestore {
     match /schedules/{scheduleId} {
       // users can only manage/view their own schedules
       allow read: if isSignedIn() && hasRsc(resource) && resource.data.userId == request.auth.uid;
-      allow write: if isSignedIn() && hasRsc(request.resource) && request.resource.data.userId == request.auth.uid;
+      allow create, update: if isSignedIn() && hasRsc(request.resource) && request.resource.data.userId == request.auth.uid;
+      allow delete: if isSignedIn() && get(/databases/$(database)/documents/schedules/$(scheduleId)).data.userId == request.auth.uid;
 
       // schedule classes collection
       match /classes/{classId} {

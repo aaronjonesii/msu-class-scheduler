@@ -8,7 +8,7 @@ import { SchedulesService } from "../../shared/services/schedules.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { first, of, switchMap } from "rxjs";
 import { MatButton, MatIconButton } from "@angular/material/button";
-import { RouterLink } from "@angular/router";
+import { Router, RouterLink } from "@angular/router";
 import { MatIcon } from "@angular/material/icon";
 import { appRoutes } from "../../app.routes";
 import {
@@ -44,6 +44,10 @@ import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { FormsModule } from "@angular/forms";
 import { Day } from "../../shared/enums/day";
+import { ReadSchedule } from "../../shared/interfaces/schedule";
+import {
+  ScheduleFormDialogComponent, ScheduleFormDialogContract
+} from "../../shared/dialogs/schedule-form-dialog/schedule-form-dialog.component";
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -78,6 +82,7 @@ export class ScheduleDetailComponent {
   private scheduleClassesService = inject(ScheduleClassesService);
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
+  private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
   protected readonly Day = Day;
@@ -88,7 +93,9 @@ export class ScheduleDetailComponent {
 
   timeSlotIncrement = signal(60);
 
-  days = signal(Object.values(Day));
+  days = signal(
+    Object.values(Day).filter((d) => ![Day.SATURDAY, Day.SUNDAY].includes(d)),
+  );
 
   startTime = signal('08:00');
 
@@ -178,9 +185,65 @@ export class ScheduleDetailComponent {
       if (!confirm) return;
 
       await this.scheduleClassesService.delete(scheduleId, classId)
-        .then(() => this.logger.log('Deleted schedule class'));
+        .then((success) => {
+          if (success) this.logger.log('Deleted schedule class');
+        });
     });
   }
 
   keepSameOrder = () => 1;
+
+  deleteSchedule() {
+    const scheduleId = this.scheduleId();
+
+    if (!scheduleId) return;
+
+    const dialogRef = this.dialog.open(
+      ConfirmDialogComponent,
+      {
+        id: 'confirm-delete-schedule-dialog',
+        data: <ConfirmDialogContract>{
+          title: 'Are you sure you want to delete this schedule?',
+        },
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first()).forEach(async (confirm: boolean) => {
+      if (!confirm) return;
+
+      await this.schedulesService.delete(scheduleId)
+        .then((success) => {
+          if (!success) return;
+
+          this.logger.log('Deleted schedule');
+
+          this.router.navigate([appRoutes.schedules]);
+        });
+    });
+  }
+
+  editSchedule(schedule?: ReadSchedule | null) {
+    if (!schedule) return;
+
+    const dialogRef = this.dialog.open(
+      ScheduleFormDialogComponent,
+      {
+        id: 'edit-schedule-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: <ScheduleFormDialogContract>{ schedule },
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first()).forEach(async (schedule?: ReadSchedule) => {
+      if (!schedule) return;
+
+      const scheduleId = this.scheduleId();
+
+      if (!scheduleId) return;
+
+      await this.schedulesService.update(scheduleId, schedule)
+        .then(() => this.logger.log('Updated schedule'));
+    });
+  }
 }

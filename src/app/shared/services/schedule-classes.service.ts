@@ -83,13 +83,13 @@ export class ScheduleClassesService {
   async delete(scheduleId: string, classId: string) {
     return this.db.delete(
       `${this.classesCollectionName(scheduleId)}/${classId}`,
-    ).catch((error: unknown) => {
+    ).then(() => true).catch((error: unknown) => {
       this.logger.error(
         `Error deleting class, ${classId}, for schedule: ${scheduleId}`,
         error,
       );
 
-      return error;
+      return false;
     });
   }
 }

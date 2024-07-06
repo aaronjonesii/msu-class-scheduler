@@ -8,19 +8,19 @@ export interface Schedule {
   name: string,
   description: string | null,
   classes: ScheduleClass[] | FieldValue,
-  created: DateTime,
+  created?: DateTime,
   updated?: DateTime,
 }
 
 export interface WriteSchedule extends Schedule {
   classes: WriteScheduleClass[] | FieldValue,
-  created: FieldValue,
+  created?: FieldValue,
   updated?: FieldValue,
 }
 
 export interface ReadSchedule extends Schedule {
   id: string,
   classes: ReadScheduleClass[],
-  created: Timestamp,
+  created?: Timestamp,
   updated?: Timestamp,
 }

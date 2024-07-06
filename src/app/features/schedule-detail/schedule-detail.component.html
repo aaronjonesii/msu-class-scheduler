@@ -1,4 +1,19 @@
-<h2 class="title">Schedule Detail</h2>
+<div class="header">
+  <h2 class="title">Schedule Detail</h2>
+
+  <div class="btn-container">
+    <button mat-button type="button" (click)="editSchedule(schedule())">
+      <mat-icon matButtonIcon fontIcon="edit" />
+      Edit
+    </button>
+
+    <button mat-button type="button" class="error-button"
+            (click)="deleteSchedule()">
+      <mat-icon matButtonIcon fontIcon="delete" />
+      Delete
+    </button>
+  </div>
+</div>
 
 @defer (when loaded()) {
   @if (schedule(); as schedule) {
@@ -18,10 +33,12 @@
 
     <div class="times">
       <label for="startTime">Start time</label>
-      <input type="time" id="startTime" name="startTime" [(ngModel)]="startTime" />
+      <input type="time" id="startTime" name="startTime"
+             [(ngModel)]="startTime" />
 
       <label for="endTime">End time</label>
-      <input type="time" id="endTime" name="endTime" [(ngModel)]="endTime" />
+      <input type="time" id="endTime" name="endTime"
+             [(ngModel)]="endTime" />
     </div>
 
     <mat-form-field>

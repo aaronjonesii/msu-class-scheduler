@@ -62,10 +62,11 @@ export class SchedulesService {
 
   async delete(id: string) {
     return this.db.delete<Schedule>(`${this.collectionName}/${id}`)
+      .then(() => true)
       .catch((error: unknown) => {
         this.logger.error(`Error deleting schedule: ${id}`, error);
 
-        return error;
+        return false;
       });
   }
 }

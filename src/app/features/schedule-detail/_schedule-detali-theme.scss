@@ -10,6 +10,12 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  csb-schedule-detail {
+    .details {
+      background: mat.get-theme-color($theme, surface-variant);
+    }
+  }
 }
 
 @mixin typography($theme) {

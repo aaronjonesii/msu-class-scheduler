@@ -29,6 +29,19 @@ $class-schedule-builder-theme: mat.define-theme((
   @include mat.all-component-themes($class-schedule-builder-theme);
 
   @include app.theme($class-schedule-builder-theme);
+
+  .primary-button {
+    @include mat.button-color($class-schedule-builder-theme, $color-variant: primary);
+  }
+  .secondary-button {
+    @include mat.button-color($class-schedule-builder-theme, $color-variant: secondary);
+  }
+  .tertiary-button {
+    @include mat.button-color($class-schedule-builder-theme, $color-variant: tertiary);
+  }
+  .error-button {
+    @include mat.button-color($class-schedule-builder-theme, $color-variant: error);
+  }
 }
 
 // Comment out the line below if you want to use the pre-defined typography utility classes.

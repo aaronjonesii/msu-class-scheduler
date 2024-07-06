@@ -18,6 +18,8 @@
             -
             @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
               {{meetingTime.days.join(', ')}} {{meetingTime.startTime | time}} to {{meetingTime.endTime | time}}
+            } @empty {
+              To Be Announced
             }
           </span>
         }

@@ -1,11 +1,24 @@
 @mixin flexCol() {
   display: flex;
   flex-direction: column;
+  gap: var(--gap);
 }
 
 :host {
   @include flexCol();
   padding: var(--padding);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.details {
+  padding: var(--padding);
+  border-radius: var(--border-radius);
 }
 
 .classes {
