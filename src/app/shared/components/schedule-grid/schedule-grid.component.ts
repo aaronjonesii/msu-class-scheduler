@@ -2,7 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed, HostBinding,
-  input
+  input, output, viewChild
 } from '@angular/core';
 import { Day } from "../../enums/day";
 import { NgStyle } from "@angular/common";
@@ -12,6 +12,8 @@ import {
 } from "../../interfaces/schedule-class";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
+import { dateDifference } from "../../utils/date-difference";
+import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 
 export interface GridTile {
   id: string,
@@ -19,6 +21,7 @@ export interface GridTile {
   description?: string,
   times?: string,
   color: Color,
+  scheduleClass?: ReadScheduleClass,
   styles: {
     gridColumnStart: number,
     gridColumnEnd: number,
@@ -35,7 +38,7 @@ export interface GridTimes {
 @Component({
   selector: 'csb-schedule-grid',
   standalone: true,
-  imports: [NgStyle, ColorToClassPipe],
+  imports: [NgStyle, ColorToClassPipe, MatMenu, MatMenuItem, MatMenuTrigger],
   templateUrl: './schedule-grid.component.html',
   styleUrl: './schedule-grid.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -67,6 +70,10 @@ export class ScheduleGridComponent {
 
   timeTileColor = input(Color.ORANGE);
 
+  timeSlotIncrement = input(60);
+
+  classClicked = output<ReadScheduleClass>();
+
   dayTiles = computed<GridTile[]>(() => {
     return this.days().map((day, i) => {
       const gridColumnStart = (i + 1) + 1;
@@ -83,8 +90,6 @@ export class ScheduleGridComponent {
       };
     });
   });
-
-  timeSlotIncrement = input(60);
 
   numTimeSlots = computed(() => {
     const { start, end } = this.times();
@@ -147,6 +152,7 @@ export class ScheduleGridComponent {
               description: meeting.type,
               times: `${this._formatTime(startTime)} - ${this._formatTime(endTime)}`,
               color: scheduleClass.color || DefaultColor,
+              scheduleClass: scheduleClass,
               styles: {
                 /** +2 to account for the time column and label column */
                 gridColumnStart: dayIndex + 2,
@@ -195,32 +201,11 @@ export class ScheduleGridComponent {
       return 2;
     }
 
-    const minutesDiff = this._getDateDifference(time, start, 'minutes');
+    const minutesDiff = dateDifference(time, start, 'minutes');
 
     const slotsDiff = minutesDiff / this.timeSlotIncrement();
 
     /** +2 to account for the label row and the first time slow row */
     return Math.floor(slotsDiff) + 2;
-  }
-
-  private _getDateDifference(
-    date1: Date,
-    date2: Date,
-    unit: 'milliseconds' | 'seconds' | 'minutes' | 'hours' | 'days' = 'days',
-  ): number {
-    const diffInMilliseconds = Math.abs(date1.getTime() - date2.getTime());
-
-    switch (unit) {
-      case 'milliseconds':
-        return diffInMilliseconds;
-      case 'seconds':
-        return diffInMilliseconds / 1000;
-      case 'minutes':
-        return diffInMilliseconds / (1000 * 60);
-      case 'hours':
-        return diffInMilliseconds / (1000 * 60 * 60);
-      case 'days':
-        return diffInMilliseconds / (1000 * 60 * 60 * 24);
-    }
   }
 }

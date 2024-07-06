@@ -1,26 +1,27 @@
 <div class="tile labels">
-  <span [class]="this.dayTileColor() | colorToClass">Days</span>
+  <span [class]="this.dayTileColor() | colorToClass: 'card'">Days</span>
 
-  <span [class]="this.timeTileColor() | colorToClass">Times</span>
+  <span [class]="this.timeTileColor() | colorToClass: 'card'">Times</span>
 </div>
 
 @for (dayTile of dayTiles(); track dayTile.id) {
-  <div class="tile day" [class]="dayTile.color | colorToClass"
+  <div class="tile day" [class]="dayTile.color | colorToClass: 'card'"
        [ngStyle]="dayTile.styles">
     {{dayTile.name}}
   </div>
 }
 
 @for (timeTile of timeTiles(); track timeTile.id) {
-  <div class="tile time" [class]="timeTile.color | colorToClass"
+  <div class="tile time" [class]="timeTile.color | colorToClass: 'card'"
        [ngStyle]="timeTile.styles">
     {{timeTile.name}}
   </div>
 }
 
 @for (classTile of classTiles(); track classTile.id) {
-  <div class="tile class" [class]="classTile.color | colorToClass"
-       [ngStyle]="classTile.styles">
+  <div class="tile class" [class]="classTile.color | colorToClass: 'card'"
+       [ngStyle]="classTile.styles"
+       (click)=" classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined">
     <span class="name">{{classTile.name}}</span>
     <span class="description">{{classTile.description}}</span>
     <span class="times">{{classTile.times}}</span>
