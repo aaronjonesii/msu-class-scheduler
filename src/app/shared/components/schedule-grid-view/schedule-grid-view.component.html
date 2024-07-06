@@ -56,6 +56,7 @@
   }
 
   <csb-schedule-grid [days]="days()"
+                     (classClicked)="classClicked.emit($event)"
                      [timeSlotIncrement]="timeSlotIncrement()"
                      [scheduleClasses]="scheduleClasses() || []"
                      [times]="{start: startTime(), end: endTime()}" />

@@ -1,4 +1,4 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, output, signal } from '@angular/core';
 import { ReadScheduleClass } from "../../interfaces/schedule-class";
 import { Day } from "../../enums/day";
 import { FormsModule } from "@angular/forms";
@@ -50,6 +50,8 @@ export class ScheduleGridViewComponent {
   protected readonly Day = Day;
 
   scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
+
+  classClicked = output<ReadScheduleClass>();
 
   timeSlotIncrement = signal(60);
 
