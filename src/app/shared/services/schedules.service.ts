@@ -2,8 +2,22 @@ import { inject, Injectable } from '@angular/core';
 import { FirestoreService } from "./firestore.service";
 import { where } from "@angular/fire/firestore";
 import { LoggerService } from "./logger.service";
-import { catchError, EMPTY, map } from "rxjs";
-import { ReadSchedule, Schedule, WriteSchedule } from "../interfaces/schedule";
+import {
+  catchError, combineLatest,
+  EMPTY, from,
+  map,
+  mergeMap,
+  Observable,
+  of,
+  switchMap, take, toArray
+} from "rxjs";
+import {
+  ReadSchedule,
+  ReadScheduleWithClasses,
+  Schedule,
+  WriteSchedule
+} from "../interfaces/schedule";
+import { ReadScheduleClass } from "../interfaces/schedule-class";
 
 @Injectable({ providedIn: 'root' })
 export class SchedulesService {
@@ -16,7 +30,7 @@ export class SchedulesService {
     return this.db.timestamp;
   }
 
-  getByUser$(userId: string) {
+  getByUser$(userId: string): Observable<ReadSchedule[]> {
     return this.db.colQuery$<ReadSchedule>(
       this.collectionName,
       {idField: 'id'},
@@ -24,6 +38,46 @@ export class SchedulesService {
     ).pipe(
       catchError((error: unknown) => {
         this.logger.error('Error getting user schedules', error);
+
+        return EMPTY;
+      }),
+    );
+  }
+
+  getByUserWithClasses$(userId: string): Observable<ReadScheduleWithClasses[]> {
+    return this.getByUser$(userId).pipe(
+      switchMap((schedules: ReadSchedule[]) => {
+        return from(schedules).pipe(
+          mergeMap((s) => this.getScheduleWithClasses$(s)),
+          take(schedules.length),
+          toArray(),
+        );
+      }),
+    );
+  }
+
+  getScheduleWithClasses$(schedule: ReadSchedule): Observable<ReadScheduleWithClasses> {
+    return of(schedule).pipe(
+      switchMap((s) => {
+        return combineLatest([of(s), this.getScheduleClasses$(s.id)]).pipe(
+          map(([schedule, scheduleClasses]) => {
+            return {...schedule, classes: scheduleClasses};
+          }),
+        );
+      }),
+    );
+  }
+
+  getScheduleClasses$(scheduleId: string) {
+    return this.db.col$<ReadScheduleClass>(
+      `${this.collectionName}/${scheduleId}/classes`,
+      { idField: 'id' },
+    ).pipe(
+      catchError((error: unknown) => {
+        this.logger.error(
+          `Error getting classes for schedule: ${scheduleId}`,
+          error,
+        );
 
         return EMPTY;
       }),

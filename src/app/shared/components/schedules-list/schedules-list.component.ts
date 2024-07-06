@@ -1,5 +1,7 @@
 import { Component, input } from '@angular/core';
-import { ReadSchedule } from "../../interfaces/schedule";
+import {
+  ReadScheduleWithClasses
+} from "../../interfaces/schedule";
 import { appRoutes } from "../../../app.routes";
 import { DatePipe } from "@angular/common";
 import {
@@ -10,6 +12,7 @@ import {
 import { MatMenuItem } from "@angular/material/menu";
 import { RouterLink } from "@angular/router";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
+import { ReadScheduleClass } from "../../interfaces/schedule-class";
 
 @Component({
   selector: 'csb-schedules-list',
@@ -27,6 +30,17 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
   styleUrl: './schedules-list.component.scss'
 })
 export class SchedulesListComponent {
-  schedules = input<ReadSchedule[] | null | undefined>(null);
   protected readonly appRoutes = appRoutes;
+
+  schedules = input<ReadScheduleWithClasses[] | null | undefined>(null);
+
+  scheduleClassesText = (scheduleClasses: ReadScheduleClass[]) => {
+    if (!scheduleClasses.length) return 'Classes: No classes yet';
+
+    const scheduleClassesText = scheduleClasses.map((c) => {
+      return c?.subjectCode && c?.courseNumber ? `` : c.name;
+    });
+
+    return `Classes: ${scheduleClassesText.join(', ')}`;
+  };
 }

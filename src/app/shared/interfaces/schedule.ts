@@ -1,5 +1,5 @@
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
-import { ScheduleClass, ReadScheduleClass, WriteScheduleClass } from "./schedule-class";
+import { ScheduleClass, ReadScheduleClass } from "./schedule-class";
 import { DateTime } from "./date-time";
 
 export interface Schedule {
@@ -7,20 +7,22 @@ export interface Schedule {
   userId: string,
   name: string,
   description: string | null,
-  classes: ScheduleClass[] | FieldValue,
+  classes?: ScheduleClass[],
   created?: DateTime,
   updated?: DateTime,
 }
 
 export interface WriteSchedule extends Schedule {
-  classes: WriteScheduleClass[] | FieldValue,
   created?: FieldValue,
   updated?: FieldValue,
 }
 
 export interface ReadSchedule extends Schedule {
   id: string,
-  classes: ReadScheduleClass[],
   created?: Timestamp,
   updated?: Timestamp,
+}
+
+export interface ReadScheduleWithClasses extends ReadSchedule {
+  classes: ReadScheduleClass[],
 }
