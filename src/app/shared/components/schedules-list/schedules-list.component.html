@@ -1,0 +1,30 @@
+<mat-nav-list>
+  @defer (when !!schedules()) {
+    @for (schedule of schedules(); track schedule.id) {
+      <a mat-menu-item class="schedule" [routerLink]="[appRoutes.scheduleDetail(schedule.id)]">
+        <span matListItemTitle>{{schedule.name || 'Unnamed schedule'}}</span>
+
+        <span matListItemLine>
+          @if (schedule?.updated) {
+            Last updated on {{schedule.updated?.toDate() | date}}
+          } @else {
+            Created on {{schedule.created?.toDate() | date}}
+          }
+        </span>
+      </a>
+    } @empty {
+      You have no schedules yet.
+    }
+  } @placeholder (minimum 500ms) {
+    @for (_ of [0,1,2,3,4]; track _) {
+      <div mat-menu-item class="schedule">
+      <span matListItemTitle>
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '50%'}" />
+      </span>
+        <span matListItemLine>
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
+      </span>
+      </div>
+    }
+  }
+</mat-nav-list>

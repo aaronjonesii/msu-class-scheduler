@@ -1,3 +1,4 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
 // https://material.angular.io/guide/theming-your-components
 @use 'sass:map';
 @use '@angular/material' as mat;
@@ -11,20 +12,24 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  csb-schedules {
-    .count {
-      color: mat.get-theme-color($theme, on-surface-variant);
+  csb-schedules-list {
+    .schedule {
+      @include mat.elevation(2);
+
+      &:hover {
+        background: mat.get-theme-color($theme, surface-variant);
+        color: mat.get-theme-color($theme, on-surface-variant);
+      }
     }
   }
 }
 
 @mixin typography($theme) {
-  csb-schedules {
-    .title {
-      font: mat.get-theme-typography($theme, headline-large);
+  csb-schedules-list {
+    .schedule .mat-mdc-list-item-title {
+      font: mat.get-theme-typography($theme, headline-small);
     }
-
-    .count {
+    .schedule .mat-mdc-list-item-line {
       font: mat.get-theme-typography($theme, title-large);
     }
   }

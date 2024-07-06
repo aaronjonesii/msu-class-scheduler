@@ -7,16 +7,9 @@
   </button>
 </section>
 
-<section class="schedules">
-  <mat-nav-list>
-    @for (schedule of schedules(); track schedule.id) {
-      <a mat-menu-item [routerLink]="[appRoutes.scheduleDetail(schedule.id)]">
-        <span matListItemTitle>{{schedule.name || 'Unnamed schedule'}}</span>
+<p class="count">
+  {{schedules()?.length || 0}}
+  {{schedules()?.length === 1 ? 'Schedule' : 'Schedules'}}
+</p>
 
-        <span matListItemLine>{{schedule.created?.toDate() | date}}</span>
-      </a>
-    } @empty {
-      You have no schedules yet.
-    }
-  </mat-nav-list>
-</section>
+<csb-schedules-list [schedules]="schedules()" />

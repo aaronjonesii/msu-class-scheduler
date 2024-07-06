@@ -14,6 +14,7 @@
   csb-schedule-detail {
     .details {
       background: mat.get-theme-color($theme, surface-variant);
+      color: mat.get-theme-color($theme, on-surface-variant);
     }
   }
 }

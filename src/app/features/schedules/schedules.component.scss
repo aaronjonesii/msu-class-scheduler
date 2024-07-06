@@ -1,3 +1,10 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding: var(--padding);
+}
+
 .header {
   display: flex;
   flex-wrap: wrap;

@@ -1,0 +1,11 @@
+mat-nav-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.schedule {
+  text-decoration: none;
+  padding: var(--padding);
+  border-radius: var(--border-radius);
+}
