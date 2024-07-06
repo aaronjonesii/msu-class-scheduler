@@ -1,35 +1,84 @@
-<mat-nav-list>
-  @defer (when !!schedules()) {
-    @for (schedule of schedules(); track schedule.id) {
-      <a mat-menu-item class="schedule"
-         [routerLink]="[appRoutes.scheduleDetail(schedule.id)]">
-        <span matListItemTitle>{{schedule.name || 'Unnamed schedule'}}</span>
-
-        <span matListItemLine>
-          {{scheduleClassesText(schedule.classes)}}
-        </span>
-
-        <span matListItemLine>
-          @if (schedule?.updated) {
-            Last updated on {{schedule.updated?.toDate() | date}}
-          } @else {
-            Created on {{schedule.created?.toDate() | date}}
-          }
-        </span>
-      </a>
-    } @empty {
-      You have no schedules yet.
-    }
-  } @placeholder (minimum 500ms) {
-    @for (_ of [0,1,2,3,4]; track _) {
-      <div mat-menu-item class="schedule">
-      <span matListItemTitle>
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '50%'}" />
-      </span>
-        <span matListItemLine>
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
-      </span>
+@defer (when !!schedules()) {
+  @for (schedule of schedules(); track schedule.id) {
+    <mat-card>
+      <div class="badge primary-card">
+        {{schedule.classes.length}} {{schedule.classes.length === 1 ? 'class' : 'classes'}}
       </div>
-    }
+
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>{{schedule?.name || 'Unnamed schedule'}}</mat-card-title>
+
+          <mat-card-subtitle>{{schedule.description}}</mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
+
+      <mat-card-content>
+        @if (schedule.classes.length) {
+          <div class="classes">
+            <label for="schedule-classes">Classes</label>
+
+            <mat-chip-set id="schedule-classes"
+                          aria-label="Schedule classes selection">
+              @for (scheduleClass of schedule.classes; track scheduleClass) {
+                <mat-chip [highlighted]="true"
+                          [class]="scheduleClass.color | colorToClass: 'chip'">
+                  @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
+                    {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+                  } @else {
+                    {{scheduleClass.name}}
+                  }
+                </mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        }
+      </mat-card-content>
+
+      <mat-card-actions align="end">
+        <button mat-button type="button"
+                (click)="editSchedule(schedule)">
+          <mat-icon matButtonIcon fontIcon="edit" />
+          Edit
+        </button>
+
+        <a mat-button
+           [routerLink]="[appRoutes.scheduleDetail(schedule.id)]">
+          <mat-icon matButtonIcon fontIcon="calendar_view_week" />
+          View
+        </a>
+      </mat-card-actions>
+    </mat-card>
+  } @empty {
+    You have no
+    @if (filterText()) { {{filterText()}} }
+    schedules yet.
   }
-</mat-nav-list>
+} @placeholder (minimum 500ms) {
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title-group>
+        <mat-card-title>
+          <csb-skeleton [styles]="{width: '100%', maxWidth: '50%'}" />
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          <csb-skeleton [styles]="{width: '100%', maxWidth: '100%'}" />
+          <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
+        </mat-card-subtitle>
+      </mat-card-title-group>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="classes">
+        <label for="schedule-classes">Classes</label>
+
+        <div class="placeholder-chips">
+          <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
+          <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
+          <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+}
