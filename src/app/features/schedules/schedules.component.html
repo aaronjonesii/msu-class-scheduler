@@ -12,4 +12,13 @@
   {{schedules()?.length === 1 ? 'Schedule' : 'Schedules'}}
 </p>
 
-<csb-schedules-list [schedules]="schedules()" />
+<mat-chip-listbox [(ngModel)]="schedulesFilter">
+  @for (filterOption of ScheduleFilterOption | keyvalue: keepSameOrder;track filterOption.key) {
+    <mat-chip-option [value]="filterOption.value">
+      {{filterOption.value}}
+    </mat-chip-option>
+  }
+</mat-chip-listbox>
+
+<csb-schedules-list [schedules]="filteredSchedules()"
+                    [filterText]="schedulesFilter() === ScheduleFilterOption.ALL ? undefined : schedulesFilter()" />
