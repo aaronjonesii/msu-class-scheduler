@@ -6,12 +6,18 @@ import {
 } from "../interfaces/schedule-class";
 import { FirestoreService } from "./firestore.service";
 import { LoggerService } from "./logger.service";
-import { catchError, EMPTY } from "rxjs";
+import { catchError, EMPTY, first } from "rxjs";
+import {
+  ScheduleClassFormDialogComponent,
+  ScheduleClassFormDialogContract
+} from "../dialogs/schedule-class-form-dialog/schedule-class-form-dialog.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleClassesService {
   private db = inject(FirestoreService);
   private logger = inject(LoggerService);
+  private dialog = inject(MatDialog);
 
   private readonly schedulesCollectionName = 'schedules';
   private readonly classesCollectionName = (scheduleId: string) =>
@@ -91,5 +97,25 @@ export class ScheduleClassesService {
 
       return false;
     });
+  }
+
+  openEditScheduleDialog(scheduleId: string, scheduleClass: ReadScheduleClass) {
+    const dialogRef = this.dialog.open(
+      ScheduleClassFormDialogComponent,
+      {
+        id: 'edit-schedule-class-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: <ScheduleClassFormDialogContract>{ scheduleClass },
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first())
+      .forEach(async (scheduleClass?: ReadScheduleClass) => {
+        if (!scheduleClass) return;
+
+        await this.update(scheduleId, scheduleClass.id, scheduleClass)
+          .then(() => this.logger.log('Updated schedule class'));
+      });
   }
 }
