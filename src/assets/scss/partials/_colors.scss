@@ -1,3 +1,5 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
+// https://material.angular.io/guide/theming-your-components
 @use 'sass:map';
 @use '@angular/material' as mat;
 
@@ -24,6 +26,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   .red-option {
     @include mat.option-color($red-theme, $color-variant: primary);
   }
+  .red-chip {
+    @include mat.chips-color($red-theme, $color-variant: primary);
+  }
+  .red-card {
+    background: rgba(mat.get-theme-color($red-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($red-theme, primary);
+  }
 
   .green-color {
     color: mat.get-theme-color($green-theme, primary);
@@ -33,6 +42,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   }
   .green-option {
     @include mat.option-color($green-theme, $color-variant: primary);
+  }
+  .green-chip {
+    @include mat.chips-color($green-theme, $color-variant: primary);
+  }
+  .green-card {
+    background: rgba(mat.get-theme-color($green-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($green-theme, primary);
   }
 
   .blue-color {
@@ -44,6 +60,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   .blue-option {
     @include mat.option-color($blue-theme, $color-variant: primary);
   }
+  .blue-chip {
+    @include mat.chips-color($blue-theme, $color-variant: primary);
+  }
+  .blue-card {
+    background: rgba(mat.get-theme-color($blue-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($blue-theme, primary);
+  }
 
   .yellow-color {
     color: mat.get-theme-color($yellow-theme, primary);
@@ -53,6 +76,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   }
   .yellow-option {
     @include mat.option-color($yellow-theme, $color-variant: primary);
+  }
+  .yellow-chip {
+    @include mat.chips-color($yellow-theme, $color-variant: primary);
+  }
+  .yellow-card {
+    background: rgba(mat.get-theme-color($yellow-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($yellow-theme, primary);
   }
 
   .cyan-color {
@@ -64,6 +94,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   .cyan-option {
     @include mat.option-color($cyan-theme, $color-variant: primary);
   }
+  .cyan-chip {
+    @include mat.chips-color($cyan-theme, $color-variant: primary);
+  }
+  .cyan-card {
+    background: rgba(mat.get-theme-color($cyan-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($cyan-theme, primary);
+  }
 
   .magenta-color {
     color: mat.get-theme-color($magenta-theme, primary);
@@ -73,6 +110,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   }
   .magenta-option {
     @include mat.option-color($magenta-theme, $color-variant: primary);
+  }
+  .magenta-chip {
+    @include mat.chips-color($magenta-theme, $color-variant: primary);
+  }
+  .magenta-card {
+    background: rgba(mat.get-theme-color($magenta-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($magenta-theme, primary);
   }
 
   .orange-color {
@@ -84,6 +128,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   .orange-option {
     @include mat.option-color($orange-theme, $color-variant: primary);
   }
+  .orange-chip {
+    @include mat.chips-color($orange-theme, $color-variant: primary);
+  }
+  .orange-card {
+    background: rgba(mat.get-theme-color($orange-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($orange-theme, primary);
+  }
 
   .chartreuse-color {
     color: mat.get-theme-color($chartreuse-theme, primary);
@@ -93,6 +144,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   }
   .chartreuse-option {
     @include mat.option-color($chartreuse-theme, $color-variant: primary);
+  }
+  .chartreuse-chip {
+    @include mat.chips-color($chartreuse-theme, $color-variant: primary);
+  }
+  .chartreuse-card {
+    background: rgba(mat.get-theme-color($chartreuse-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($chartreuse-theme, primary);
   }
 
   .spring-green-color {
@@ -104,6 +162,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   .spring-green-option {
     @include mat.option-color($spring-green-theme, $color-variant: primary);
   }
+  .spring-green-chip {
+    @include mat.chips-color($spring-green-theme, $color-variant: primary);
+  }
+  .spring-green-card {
+    background: rgba(mat.get-theme-color($spring-green-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($spring-green-theme, primary);
+  }
 
   .azure-color {
     color: mat.get-theme-color($azure-theme, primary);
@@ -113,6 +178,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   }
   .azure-option {
     @include mat.option-color($azure-theme, $color-variant: primary);
+  }
+  .azure-chip {
+    @include mat.chips-color($azure-theme, $color-variant: primary);
+  }
+  .azure-card {
+    background: rgba(mat.get-theme-color($azure-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($azure-theme, primary);
   }
 
   .violet-color {
@@ -124,6 +196,13 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   .violet-option {
     @include mat.option-color($violet-theme, $color-variant: primary);
   }
+  .violet-chip {
+    @include mat.chips-color($violet-theme, $color-variant: primary);
+  }
+  .violet-card {
+    background: rgba(mat.get-theme-color($violet-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($violet-theme, primary);
+  }
 
   .rose-color {
     color: mat.get-theme-color($rose-theme, primary);
@@ -133,5 +212,12 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
   }
   .rose-option {
     @include mat.option-color($rose-theme, $color-variant: primary);
+  }
+  .rose-chip {
+    @include mat.chips-color($rose-theme, $color-variant: primary);
+  }
+  .rose-card {
+    background: rgba(mat.get-theme-color($rose-theme, primary, 95), 0.75);
+    color: mat.get-theme-color($rose-theme, primary);
   }
 }
