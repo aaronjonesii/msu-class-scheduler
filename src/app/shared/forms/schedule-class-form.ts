@@ -217,7 +217,7 @@ export class ScheduleClassForm {
         { validators: Validators.required, nonNullable: true },
       ),
       credits: new FormControl(
-        0,
+        scheduleClass?.credits || 0,
         { validators: Validators.required, nonNullable: true },
       ),
     });
