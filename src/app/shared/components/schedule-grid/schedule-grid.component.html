@@ -22,8 +22,22 @@
   <div class="tile class" [class]="classTile.color | colorToClass: 'card'"
        [ngStyle]="classTile.styles"
        (click)=" classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined">
-    <span class="name">{{classTile.name}}</span>
-    <span class="description">{{classTile.description}}</span>
-    <span class="times">{{classTile.times}}</span>
+    @if (classTile.scheduleClass?.status === ScheduleClassStatus.WAITlIST) {
+      <mat-chip class="error-chip waitlist-chip"
+                [highlighted]="true"
+                [matTooltip]="((classTile.scheduleClass?.subjectCode && classTile.scheduleClass?.courseNumber) ? (classTile.scheduleClass?.subjectCode+' '+classTile.scheduleClass?.courseNumber) : classTile.scheduleClass?.name)+' class has Waitlist status'">Waitlist</mat-chip>
+    }
+
+    @if (classTile.scheduleClass?.subjectCode && classTile.scheduleClass?.courseNumber) {
+      <span class="subject-code"
+            [title]="classTile.scheduleClass?.subjectCode+' '+classTile.scheduleClass?.courseNumber">
+        {{classTile.scheduleClass?.subjectCode}}
+        {{classTile.scheduleClass?.courseNumber}}
+      </span>
+    }
+
+    <span class="name truncate-text" [title]="classTile.name">{{classTile.name}}</span>
+
+    <span class="times" [title]="classTile.times">{{classTile.times}}</span>
   </div>
 }

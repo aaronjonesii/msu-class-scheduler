@@ -14,6 +14,9 @@ import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
 import { dateDifference } from "../../utils/date-difference";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
+import { ScheduleClassStatus } from "../../enums/schedule-class-status";
+import { MatChip } from "@angular/material/chips";
+import { MatTooltip } from "@angular/material/tooltip";
 
 export interface GridTile {
   id: string,
@@ -38,7 +41,7 @@ export interface GridTimes {
 @Component({
   selector: 'csb-schedule-grid',
   standalone: true,
-  imports: [NgStyle, ColorToClassPipe, MatMenu, MatMenuItem, MatMenuTrigger],
+  imports: [NgStyle, ColorToClassPipe, MatMenu, MatMenuItem, MatMenuTrigger, MatChip, MatTooltip],
   templateUrl: './schedule-grid.component.html',
   styleUrl: './schedule-grid.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -208,4 +211,6 @@ export class ScheduleGridComponent {
     /** +2 to account for the label row and the first time slow row */
     return Math.floor(slotsDiff) + 2;
   }
+
+  protected readonly ScheduleClassStatus = ScheduleClassStatus;
 }

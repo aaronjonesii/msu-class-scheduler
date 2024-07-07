@@ -40,6 +40,14 @@
   text-align: center;
 }
 
+.tile.class {
+  position: relative;
+
+  .waitlist-chip {
+    position: absolute;
+  }
+}
+
 .sticky {
   position: sticky;
   top: 0;
