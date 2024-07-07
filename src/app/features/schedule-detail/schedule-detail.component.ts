@@ -199,6 +199,6 @@ export class ScheduleDetailComponent {
   scrollToElementId(elementId: string) {
     const el = this.document.getElementById(elementId);
 
-    if (el) el.scrollIntoView({behavior: "smooth"});
+    if (el) el.scrollIntoView({behavior: "smooth", block: 'center'});
   }
 }
