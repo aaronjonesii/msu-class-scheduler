@@ -1,8 +1,8 @@
 {
-  "name": "msu-class-scheduler",
+  "name": "MSU Class Scheduler",
   "short_name": "msu-class-scheduler",
-  "theme_color": "#1976d2",
-  "background_color": "#fafafa",
+  "theme_color": "#18453B",
+  "background_color": "#ffffff",
   "display": "standalone",
   "scope": "./",
   "start_url": "./",
