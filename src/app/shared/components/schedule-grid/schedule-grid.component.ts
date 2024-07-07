@@ -46,7 +46,7 @@ export interface GridTimes {
 export class ScheduleGridComponent {
   @HostBinding('style.gridTemplateColumns')
   get gridTemplateColumns() {
-    return `repeat(${this.days().length + 1}, 1fr)`;
+    return `repeat(${this.days().length + 1}, minmax(100px, 1fr))`;
   }
 
   @HostBinding('style.gridTemplateRows')
