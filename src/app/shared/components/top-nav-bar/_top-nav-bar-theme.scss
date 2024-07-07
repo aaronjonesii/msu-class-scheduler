@@ -13,6 +13,10 @@
 
   csb-top-nav-bar {
     background: rgba(mat.get-theme-color($theme, primary, 70), 0.25);
+
+    .active-link {
+      background: mat.get-theme-color($theme, primary, 95);
+    }
   }
 }
 

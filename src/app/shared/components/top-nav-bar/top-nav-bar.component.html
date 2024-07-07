@@ -1,9 +1,14 @@
 <nav>
-  <a mat-button [routerLink]="[appRoutes.home]">
+  <a mat-button class="home-btn" routerLinkActive="active-link"
+     [routerLink]="[appRoutes.home]"
+     [routerLinkActiveOptions]="{exact: true}">
     Classes Schedule Builder
   </a>
 
-  <a mat-button type="button" [routerLink]="[appRoutes.schedules]">
+  <a mat-button class="hide-on-large-screens"
+     routerLinkActive="active-link"
+     [routerLink]="[appRoutes.schedules]"
+     [routerLinkActiveOptions]="{exact: true}">
     Schedules
   </a>
 
@@ -24,4 +29,13 @@
   } @placeholder (minimum 500ms) {
     <csb-skeleton [styles]="{width: '100px', height: '35px'}" />
   }
+</nav>
+
+<nav class="small-nav">
+  <a mat-button type="button" class="flex-grow"
+     routerLinkActive="active-link"
+     [routerLink]="[appRoutes.schedules]"
+     [routerLinkActiveOptions]="{exact: true}">
+    Schedules
+  </a>
 </nav>

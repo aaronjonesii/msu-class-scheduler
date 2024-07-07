@@ -5,7 +5,7 @@ import {
   signal
 } from '@angular/core';
 import { MatAnchor } from "@angular/material/button";
-import { RouterLink } from "@angular/router";
+import { RouterLink, RouterLinkActive } from "@angular/router";
 import { appRoutes } from "../../../app.routes";
 import { MatIcon } from "@angular/material/icon";
 import { AuthService } from "../../services/auth.service";
@@ -20,7 +20,8 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
     MatAnchor,
     RouterLink,
     MatIcon,
-    SkeletonComponent
+    SkeletonComponent,
+    RouterLinkActive
   ],
   templateUrl: './top-nav-bar.component.html',
   styleUrl: './top-nav-bar.component.scss',
