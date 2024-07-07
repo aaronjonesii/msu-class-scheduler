@@ -121,8 +121,18 @@ export class SchedulesService {
   }
 
   async delete(id: string) {
-    return this.db.delete<Schedule>(`${this.collectionName}/${id}`)
-      .then(() => true)
+    return this.db.batch(async (batch) => {
+      const scheduleRef = this.db.doc<Schedule>(`${this.collectionName}/${id}`);
+
+      batch.delete(scheduleRef);
+
+      const scheduleClassesQuery =
+        await this.db.colSnap(`${this.collectionName}/${id}/classes`);
+
+      if (!scheduleClassesQuery.empty) {
+        scheduleClassesQuery.docs.map((d) => batch.delete(d.ref));
+      }
+    }).then(() => true)
       .catch((error: unknown) => {
         this.logger.error(`Error deleting schedule: ${id}`, error);
 
