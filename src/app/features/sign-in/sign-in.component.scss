@@ -5,6 +5,7 @@
   display: flex;
   width: 100%;
   height: 100%;
+  padding: var(--padding);
 }
 
 .card {
@@ -37,6 +38,7 @@ button {
   :host {
     display: grid;
     place-content: center;
+    margin-top: calc(var(--margin) * 6);
   }
 
   .card {
