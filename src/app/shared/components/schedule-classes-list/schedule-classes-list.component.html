@@ -40,7 +40,7 @@
 
       <mat-card-actions>
         <div>
-          @if (scheduleClass.isMSUCourse) {
+          @if (!scheduleClass?.isNotMSUCourse) {
             <a mat-button type="button" class="secondary-button" target="_blank"
                [href]="msuCourseLink(scheduleClass)">
               View on MSU

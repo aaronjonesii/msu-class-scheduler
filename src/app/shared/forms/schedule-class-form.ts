@@ -100,11 +100,11 @@ export class ScheduleClassForm {
     return this.colorCtrl.value;
   }
 
-  get isMSUCourseCtrl() {
-    return this.formGroup.controls.isMSUCourse;
+  get isNotMSUCourseCtrl() {
+    return this.formGroup.controls.isNotMSUCourse;
   }
-  get isMSUCourse() {
-    return this.isMSUCourseCtrl.value;
+  get isNotMSUCourse() {
+    return this.isNotMSUCourseCtrl.value;
   }
 
   get subjectCodeCtrl() {
@@ -140,7 +140,7 @@ export class ScheduleClassForm {
       color: this.color || null,
       subjectCode: this.subjectCode?.toUpperCase() || null,
       courseNumber: this.courseNumber || null,
-      isMSUCourse: this.isMSUCourse || false,
+      isNotMSUCourse: this.isNotMSUCourse || null,
       credits: this.credits || 0,
     };
   }
@@ -212,9 +212,8 @@ export class ScheduleClassForm {
       ),
       subjectCode: new FormControl(scheduleClass?.subjectCode || null),
       courseNumber: new FormControl(scheduleClass?.courseNumber || null),
-      isMSUCourse: new FormControl(
-        scheduleClass?.isMSUCourse || false,
-        { validators: Validators.required, nonNullable: true },
+      isNotMSUCourse: new FormControl(
+        scheduleClass?.isNotMSUCourse || null,
       ),
       credits: new FormControl(
         scheduleClass?.credits || 0,

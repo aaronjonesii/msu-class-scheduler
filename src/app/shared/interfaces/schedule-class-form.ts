@@ -14,6 +14,6 @@ export interface ScheduleClassFormGroup {
   color: FormControl<Color>,
   subjectCode: FormControl<string | null>,
   courseNumber: FormControl<number | null>,
-  isMSUCourse: FormControl<boolean>,
+  isNotMSUCourse: FormControl<boolean | null>,
   credits: FormControl<number>,
 }
