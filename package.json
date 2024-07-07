@@ -1,13 +1,13 @@
 {
-  "name": "class-schedule-builder",
-  "version": "0.0.0",
+  "name": "msu-class-scheduler",
+  "version": "0.0.0-beta.1",
   "scripts": {
     "build": "ng build",
     "dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run start:development\"",
     "emulators": "firebase emulators:start --import=./seed --export-on-exit",
     "lint": "ng lint",
     "ng": "ng",
-    "serve:ssr:class-schedule-builder": "node dist/class-schedule-builder/server/server.mjs",
+    "serve:ssr:msu-class-scheduler": "node dist/msu-class-scheduler/server/server.mjs",
     "start:development": "ng serve",
     "start:production": "ng serve --configuration production",
     "test": "ng test",

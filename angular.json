@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "class-schedule-builder": {
+    "msu-class-scheduler": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -12,12 +12,12 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "csb",
+      "prefix": "mcs",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/class-schedule-builder",
+            "outputPath": "dist/msu-class-scheduler",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": [
@@ -76,10 +76,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "class-schedule-builder:build:production"
+              "buildTarget": "msu-class-scheduler:build:production"
             },
             "development": {
-              "buildTarget": "class-schedule-builder:build:development"
+              "buildTarget": "msu-class-scheduler:build:development"
             }
           },
           "defaultConfiguration": "development"
