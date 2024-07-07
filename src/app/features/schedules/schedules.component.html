@@ -21,4 +21,4 @@
 </mat-chip-listbox>
 
 <csb-schedules-list [schedules]="filteredSchedules()"
-                    [filterText]="schedulesFilter() === ScheduleFilterOption.ALL ? undefined : schedulesFilter()" />
+                    [filterText]="schedulesFilter() === ScheduleFilterOption.ALL ? undefined : schedulesFilter().toLowerCase()" />
