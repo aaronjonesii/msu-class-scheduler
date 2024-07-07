@@ -10,17 +10,20 @@ import {
   MatFormFieldAppearance,
   MatFormFieldModule
 } from "@angular/material/form-field";
-import { MatOption, MatSelect } from "@angular/material/select";
 import {
   ScheduleClassMeetingType
 } from "../../../../enums/schedule-class-meeting-type";
 import { KeyValuePipe } from "@angular/common";
 import { MatInput } from "@angular/material/input";
-import { MatDatepickerModule } from "@angular/material/datepicker";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { MatButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { Day } from "../../../../enums/day";
+import { MatChipListbox, MatChipOption } from "@angular/material/chips";
+import {
+  MatButtonToggle,
+  MatButtonToggleGroup
+} from "@angular/material/button-toggle";
 
 @Component({
   selector: 'csb-schedule-class-meeting-form',
@@ -28,13 +31,14 @@ import { Day } from "../../../../enums/day";
   imports: [
     ReactiveFormsModule,
     MatFormFieldModule,
-    MatSelect,
     KeyValuePipe,
-    MatOption,
     MatInput,
-    MatDatepickerModule,
     MatButton,
     MatIcon,
+    MatChipListbox,
+    MatChipOption,
+    MatButtonToggleGroup,
+    MatButtonToggle,
   ],
   providers: [provideNativeDateAdapter()],
   templateUrl: './schedule-class-meeting-form.component.html',

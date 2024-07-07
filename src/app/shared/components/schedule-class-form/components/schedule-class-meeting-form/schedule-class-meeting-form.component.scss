@@ -14,3 +14,10 @@ form {
   border-width: 1px;
   border-style: solid;
 }
+
+.type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap);
+}

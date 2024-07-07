@@ -1,12 +1,14 @@
 <form [formGroup]="meetingFormGroup()">
-  <mat-form-field [appearance]="formAppearance()">
-    <mat-label>Type</mat-label>
-    <mat-select [formControl]="meetingFormGroup().controls.type">
+  <div class="type">
+    <label for="type">Type</label>
+
+    <mat-button-toggle-group id="type" [multiple]="false"
+                             [formControl]="meetingFormGroup().controls.type">
       @for (type of ScheduleClassMeetingType | keyvalue; track type.key) {
-        <mat-option [value]="type.value">{{type.value}}</mat-option>
+        <mat-button-toggle [value]="type.value">{{type.value}}</mat-button-toggle>
       }
-    </mat-select>
-  </mat-form-field>
+    </mat-button-toggle-group>
+  </div>
 
   <mat-form-field [appearance]="formAppearance()">
     <mat-label>Location</mat-label>
@@ -25,14 +27,22 @@
           track meetingTime.value; let i = $index;
         ) {
     <div class="meeting-time">
-      <mat-form-field [appearance]="formAppearance()">
-        <mat-label>Days</mat-label>
-        <mat-select [formControl]="meetingTime.controls.days" [multiple]="true">
+      <div class="days">
+        <label for="days-chip-list">Days</label>
+
+        <mat-chip-listbox id="days-chip-list" [multiple]="true"
+                          [formControl]="meetingTime.controls.days">
           @for (day of Day | keyvalue: keepSameOrder; track day.key) {
-            <mat-option [value]="day.value">{{day.value}}</mat-option>
+            <mat-chip-option [value]="day.value">
+              {{day.value}}
+            </mat-chip-option>
           }
-        </mat-select>
-      </mat-form-field>
+        </mat-chip-listbox>
+
+        @if (!meetingTime.controls.days.value.length) {
+          <label class="error-color">Must select at least one day.</label>
+        }
+      </div>
 
       <label for="startTime">Start time</label>
       <input type="time" id="startTime" name="startTime"

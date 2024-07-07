@@ -49,6 +49,9 @@ $class-schedule-builder-theme: mat.define-theme((
     @include mat.button-color($class-schedule-builder-theme, $color-variant: tertiary);
   }
 
+  .error-color {
+    color: mat.get-theme-color($class-schedule-builder-theme, error);
+  }
   .error-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: error);
   }
