@@ -10,16 +10,33 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  csb-home {
+    .header {
+      background: rgba(mat.get-theme-color($theme, primary, 70), 0.25);
+    }
+  }
 }
 
 @mixin typography($theme) {
   csb-home {
     .title {
-      font: mat.get-theme-typography($theme, headline-large);
+      font: mat.get-theme-typography($theme, display-medium);
+      margin: 0;
     }
 
     .subtitle {
       font: mat.get-theme-typography($theme, title-large);
+    }
+
+    .feature {
+      h2 {
+        font: mat.get-theme-typography($theme, headline-small);
+      }
+
+      p {
+        font: mat.get-theme-typography($theme, body-large);
+      }
     }
   }
 }
