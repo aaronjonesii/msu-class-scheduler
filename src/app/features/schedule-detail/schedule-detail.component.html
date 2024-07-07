@@ -58,9 +58,6 @@
       </div>
     </section>
 
-    <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()"
-                            (classClicked)="scrollToElementId($event.id)" />
-
     <section class="classes">
       <div class="header">
         <h4 class="title">Classes</h4>
@@ -77,6 +74,9 @@
             (editScheduleClass)="editScheduleClass($event)"
             (deleteScheduleClass)="deleteScheduleClass($event)" />
     </section>
+
+    <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()"
+                            (classClicked)="scrollToElementId($event.id)" />
   } @else {
     <div class="not-found-container text-center">
       <p>
@@ -131,6 +131,16 @@
     <div class="created">
       <csb-skeleton [styles]="{width: '100%', maxWidth: '35%'}" />
     </div>
+  </section>
+
+  <section class="classes">
+    <div class="header">
+      <h4 class="title">Classes</h4>
+
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
+    </div>
+
+    <csb-schedule-classes-list [scheduleClasses]="[]" />
   </section>
 
   <csb-schedule-grid-view [scheduleClasses]="[]" />
