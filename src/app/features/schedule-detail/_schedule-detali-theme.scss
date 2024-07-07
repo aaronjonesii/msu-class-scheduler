@@ -26,6 +26,7 @@
     }
     .schedule-name, .classes .header .title {
       font: mat.get-theme-typography($theme, headline-medium);
+      margin: 0;
     }
     .schedule-description {
       font: mat.get-theme-typography($theme, headline-small);
