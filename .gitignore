@@ -5,6 +5,7 @@ firebase-debug.log
 firestore-debug.log
 ui-debug.log
 seed
+.firebase
 
 # Keys
 keys.ts

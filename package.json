@@ -2,7 +2,8 @@
   "name": "msu-class-scheduler",
   "version": "0.0.0-beta.1",
   "scripts": {
-    "build": "ng build",
+    "build:development": "ng build --configuration development",
+    "build:production": "ng build",
     "dev": "firebase emulators:exec --import=./seed --export-on-exit --ui \"npm run start:development\"",
     "emulators": "firebase emulators:start --import=./seed --export-on-exit",
     "lint": "ng lint",
