@@ -45,6 +45,7 @@
 .display-block { display: block; }
 .display-grid { display: grid; }
 .margin-top-auto { margin-top: auto; }
+.app-margin-right { margin-right: var(--margin); }
 .opacity-half { opacity: 0.5; }
 .opacity-full, .opacity-1 { opacity: 1; }
 .hidden, .visibility-hidden { visibility: hidden; }

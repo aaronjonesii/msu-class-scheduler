@@ -2,7 +2,11 @@
   <a mat-button class="home-btn" routerLinkActive="active-link"
      [routerLink]="[appRoutes.home]"
      [routerLinkActiveOptions]="{exact: true}">
-    Classes Schedule Builder
+    <img matButtonIcon priority class="app-margin-right"
+         width="25" height="25"
+         ngSrc="assets/svgs/logo.svg" alt="MSU Class Scheduler Logo" />
+
+    <span>MSU Class Scheduler</span>
   </a>
 
   <a mat-button class="hide-on-large-screens"

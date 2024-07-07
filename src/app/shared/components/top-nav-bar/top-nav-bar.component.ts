@@ -12,6 +12,7 @@ import { AuthService } from "../../services/auth.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { map } from "rxjs";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
+import { NgOptimizedImage } from "@angular/common";
 
 @Component({
   selector: 'csb-top-nav-bar',
@@ -21,7 +22,8 @@ import { SkeletonComponent } from "../skeleton/skeleton.component";
     RouterLink,
     MatIcon,
     SkeletonComponent,
-    RouterLinkActive
+    RouterLinkActive,
+    NgOptimizedImage
   ],
   templateUrl: './top-nav-bar.component.html',
   styleUrl: './top-nav-bar.component.scss',

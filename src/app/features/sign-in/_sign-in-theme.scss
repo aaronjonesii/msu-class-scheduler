@@ -21,6 +21,7 @@
 @mixin typography($theme) {
   .title {
     font: mat.get-theme-typography($theme, headline-medium, font);
+    margin: 0;
   }
 }
 

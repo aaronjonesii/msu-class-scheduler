@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import { appRoutes } from "../../app.routes";
+import { NgOptimizedImage } from "@angular/common";
 
 @Component({
   selector: 'csb-home',
@@ -9,7 +10,8 @@ import { appRoutes } from "../../app.routes";
   imports: [
     MatButton,
     MatAnchor,
-    RouterLink
+    RouterLink,
+    NgOptimizedImage
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',

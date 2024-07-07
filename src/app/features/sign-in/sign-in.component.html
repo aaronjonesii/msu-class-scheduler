@@ -3,16 +3,22 @@
     <mat-progress-bar class="loading-bar" mode="indeterminate" />
   }
 
-  <h1 class="title">Welcome to Classes Schedule Builder!</h1>
+  <picture>
+    <img priority width="100" height="100"
+         ngSrc="assets/svgs/logo.svg" alt="MSU Class Scheduler Logo" />
+  </picture>
+
+  <h1 class="title">Welcome to MSU Class Scheduler!</h1>
 
   <p>
-    <span class="font-weight-600">Streamline your class scheduling</span> with our visual,
-    user-friendly platform. Designed by a student for students, we're
-    here to make your academic life easier.
-    <br />
-    Have feedback or feature requests? Share them with us
-    <a href="#">here</a>. We're always looking for ways to improve!
+    Craft conflict-free schedules and maximize your time.
+    Designed by a student for students.
   </p>
+
+<!--  <p>-->
+<!--    Have feedback or feature requests? Share them with us-->
+<!--    <a href="#">here</a>. We're always looking for ways to improve!-->
+<!--  </p>-->
 
   <button mat-stroked-button type="button" (click)="signIn()">
     <img matButtonIcon class="google-logo" ngSrc="assets/svgs/google-superg.svg"
