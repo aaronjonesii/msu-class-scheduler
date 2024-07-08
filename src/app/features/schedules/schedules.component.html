@@ -7,18 +7,22 @@
   </button>
 </section>
 
-<p class="count">
-  {{schedules()?.length || 0}}
-  {{schedules()?.length === 1 ? 'Schedule' : 'Schedules'}}
-</p>
+<div class="count-filter-container">
+  <p class="count">
+    {{schedules()?.length || 0}}
+    {{schedules()?.length === 1 ? 'Schedule' : 'Schedules'}}
+  </p>
 
-<mat-chip-listbox [(ngModel)]="schedulesFilter">
-  @for (filterOption of ScheduleFilterOption | keyvalue: keepSameOrder;track filterOption.key) {
-    <mat-chip-option [value]="filterOption.value">
-      {{filterOption.value}}
-    </mat-chip-option>
-  }
-</mat-chip-listbox>
+  <mat-chip-listbox [(ngModel)]="schedulesFilter">
+    @for (filterOption of ScheduleFilterOption | keyvalue: keepSameOrder;track filterOption.key) {
+      <mat-chip-option [value]="filterOption.value">
+        {{filterOption.value}}
+      </mat-chip-option>
+    }
+  </mat-chip-listbox>
+</div>
+
+<p class="filter-description">{{filterDescription()}}</p>
 
 <csb-schedules-list [schedules]="filteredSchedules()"
                     [filterText]="schedulesFilter() === ScheduleFilterOption.ALL ? undefined : schedulesFilter().toLowerCase()" />

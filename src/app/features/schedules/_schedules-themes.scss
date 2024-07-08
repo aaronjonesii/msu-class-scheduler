@@ -12,7 +12,7 @@
   $theme-type: mat.get-theme-type($theme);
 
   csb-schedules {
-    .count {
+    .filter-description {
       color: mat.get-theme-color($theme, on-surface-variant);
     }
   }
@@ -26,6 +26,12 @@
 
     .count {
       font: mat.get-theme-typography($theme, title-large);
+      margin: 0;
+    }
+
+    .filter-description {
+      font: mat.get-theme-typography($theme, headline-small);
+      margin: 0;
     }
   }
 }

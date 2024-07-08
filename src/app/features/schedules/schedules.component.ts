@@ -69,6 +69,16 @@ export class SchedulesComponent {
     ),
   );
 
+  filterDescription = computed(() => {
+    switch (this.schedulesFilter()) {
+      case ScheduleFilterOption.MOST_RECENT:
+        return 'Recently updated schedules (within 30 days).';
+      case ScheduleFilterOption.ALL:
+      default:
+        return 'All schedules.';
+    }
+  })
+
   filteredSchedules = computed(() => {
     switch (this.schedulesFilter()) {
       case ScheduleFilterOption.MOST_RECENT:
@@ -81,7 +91,7 @@ export class SchedulesComponent {
 
           return differenceInDays <= 30;
         });
-      case ScheduleFilterOption.ALL: return this.schedules();
+      case ScheduleFilterOption.ALL:
       default: return this.schedules();
     }
   });
