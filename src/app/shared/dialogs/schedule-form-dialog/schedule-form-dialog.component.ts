@@ -18,6 +18,7 @@ import {
 
 export interface ScheduleFormDialogContract {
   schedule?: ReadSchedule,
+  userId: string,
 }
 
 @Component({
@@ -44,6 +45,12 @@ export class ScheduleFormDialogComponent implements OnInit {
 
   ngOnInit() {
     if (!this.contract) return;
+
+    if (this.contract.userId) {
+      this.scheduleForm().userId = this.contract.userId;
+    }
+
+    if (!this.contract.schedule) return;
 
     this.editing.set(true);
 

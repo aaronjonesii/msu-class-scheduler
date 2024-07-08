@@ -6,13 +6,13 @@ import {
 import { SchedulesService } from "../../shared/services/schedules.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../shared/services/auth.service";
-import { of, switchMap } from "rxjs";
+import { first, of, switchMap } from "rxjs";
 import { MatButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
 import { LoggerService } from "../../shared/services/logger.service";
-import { WriteSchedule } from "../../shared/interfaces/schedule";
+import { ReadSchedule } from "../../shared/interfaces/schedule";
 import {
   SchedulesListComponent
 } from "../../shared/components/schedules-list/schedules-list.component";
@@ -21,6 +21,10 @@ import { KeyValuePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Timestamp } from "@angular/fire/firestore";
 import { dateDifference } from "../../shared/utils/date-difference";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  ScheduleFormDialogComponent, ScheduleFormDialogContract
+} from "../../shared/dialogs/schedule-form-dialog/schedule-form-dialog.component";
 
 export enum ScheduleFilterOption {
   MOST_RECENT = 'Most recent',
@@ -47,6 +51,7 @@ export class SchedulesComponent {
   private schedulesService = inject(SchedulesService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
+  private dialog = inject(MatDialog);
   private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
@@ -90,19 +95,26 @@ export class SchedulesComponent {
       return;
     }
 
-    const schedule: WriteSchedule = {
-      name: '',
-      description: '',
-      userId: user.uid,
-      created: this.schedulesService.timestamp,
-      classes: [],
-    };
+    const dialogRef = this.dialog.open(
+      ScheduleFormDialogComponent,
+      {
+        id: 'create-schedule-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: <ScheduleFormDialogContract>{ userId: user.uid },
+      },
+    );
 
-    await this.schedulesService.create(schedule)
-      .then((newDoc) => {
-        if (!newDoc) return;
+    dialogRef.afterClosed().pipe(first())
+      .forEach(async (schedule?: ReadSchedule) => {
+        if (!schedule) return;
 
-        this.router.navigate([appRoutes.scheduleDetail(newDoc.id)]);
+        await this.schedulesService.create(schedule)
+          .then((newDoc) => {
+            if (!newDoc) return;
+
+            this.router.navigate([appRoutes.scheduleDetail(newDoc.id)]);
+          });
       });
   }
 

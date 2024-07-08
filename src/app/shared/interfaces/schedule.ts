@@ -4,7 +4,7 @@ import { DateTime } from "./date-time";
 
 export interface Schedule {
   id?: string,
-  userId: string,
+  userId?: string,
   name: string,
   description: string | null,
   classes?: ScheduleClass[],
@@ -13,12 +13,14 @@ export interface Schedule {
 }
 
 export interface WriteSchedule extends Schedule {
+  userId: string,
   created?: FieldValue,
   updated?: FieldValue,
 }
 
 export interface ReadSchedule extends Schedule {
   id: string,
+  userId: string,
   created?: Timestamp,
   updated?: Timestamp,
 }

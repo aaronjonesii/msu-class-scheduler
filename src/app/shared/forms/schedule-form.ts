@@ -36,6 +36,9 @@ export class ScheduleForm {
   get userId() {
     return this.userIdCtrl.value;
   }
+  set userId(userId: string) {
+    this.userIdCtrl.setValue(userId);
+  }
 
   get schedule(): ReadSchedule {
     return {
