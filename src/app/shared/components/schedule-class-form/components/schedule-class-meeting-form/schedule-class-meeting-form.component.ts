@@ -55,7 +55,7 @@ export class ScheduleClassMeetingFormComponent {
 
   formAppearance = input<MatFormFieldAppearance>('outline');
 
-  removeMeeting = output();
+  readonly removeMeeting = output();
 
   addMeetingTime() {
     this.meetingFormGroup().controls.meetingTimes.push(

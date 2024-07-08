@@ -1,4 +1,9 @@
-import { Component, inject, input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input
+} from '@angular/core';
 import {
   ReadSchedule,
   ReadScheduleWithClasses
@@ -42,7 +47,8 @@ import { MatTooltip } from "@angular/material/tooltip";
     MatTooltip,
   ],
   templateUrl: './schedules-list.component.html',
-  styleUrl: './schedules-list.component.scss'
+  styleUrl: './schedules-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SchedulesListComponent {
   private scheduleService = inject(SchedulesService);

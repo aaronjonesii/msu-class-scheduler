@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import {
   ReadScheduleClass,
-  ScheduleClass,
   WriteScheduleClass
 } from "../interfaces/schedule-class";
 import { FirestoreService } from "./firestore.service";
@@ -106,7 +105,7 @@ export class ScheduleClassesService {
         id: 'edit-schedule-class-form-dialog',
         width: '100%',
         maxWidth: '600px',
-        data: <ScheduleClassFormDialogContract>{ scheduleClass },
+        data: { scheduleClass } as ScheduleClassFormDialogContract,
       },
     );
 

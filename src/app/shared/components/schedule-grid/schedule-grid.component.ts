@@ -2,13 +2,12 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed, HostBinding,
-  input, output, viewChild
+  input, output,
 } from '@angular/core';
 import { Day } from "../../enums/day";
 import { NgStyle } from "@angular/common";
 import {
   ReadScheduleClass,
-  ScheduleClass
 } from "../../interfaces/schedule-class";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
@@ -75,7 +74,7 @@ export class ScheduleGridComponent {
 
   timeSlotIncrement = input(60);
 
-  classClicked = output<ReadScheduleClass>();
+  readonly classClicked = output<ReadScheduleClass>();
 
   dayTiles = computed<GridTile[]>(() => {
     return this.days().map((day, i) => {

@@ -24,7 +24,7 @@
       </div>
 
       <div class="times">
-        <label class="label">Times</label>
+        <span class="label">Times</span>
 
         <div class="inputs-container">
           <div class="startTime">
@@ -43,8 +43,8 @@
 
       <div class="time-slot-increment">
         <div class="labels">
-          <label id="name-label" class="label">Time Slot Increment</label>
-          <label class="value">{{timeSlotIncrement()}} minutes</label>
+          <span id="name-label" class="label">Time Slot Increment</span>
+          <span class="value">{{timeSlotIncrement()}} minutes</span>
         </div>
 
         <mat-slider id="timeSlotIncrement" [max]="60" [min]="1" [step]="1"

@@ -14,7 +14,7 @@ import { NgClass, NgStyle } from '@angular/common';
 })
 export class SkeletonComponent {
   /** More details in https://angular.io/api/common/NgStyle */
-  styles = input<{ [k: string]: unknown; } | null>(null);
+  styles = input<Record<string, unknown> | null>(null);
 
   ariaLabel = input('loading');
 
@@ -26,7 +26,7 @@ export class SkeletonComponent {
   loadingText = input('Loading...');
 
   /** More details in https://angular.io/api/common/NgClass */
-  classes = input<{ [k: string]: unknown; } | null>(null);
+  classes = input<Record<string, unknown> | null>(null);
 
   computedClasses = computed(() => {
     return {

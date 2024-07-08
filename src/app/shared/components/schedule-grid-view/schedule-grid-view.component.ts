@@ -1,4 +1,10 @@
-import { Component, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  input,
+  output,
+  signal
+} from '@angular/core';
 import { ReadScheduleClass } from "../../interfaces/schedule-class";
 import { Day } from "../../enums/day";
 import { FormsModule } from "@angular/forms";
@@ -44,14 +50,15 @@ import { MatSlider, MatSliderThumb } from "@angular/material/slider";
     MatSliderThumb
   ],
   templateUrl: './schedule-grid-view.component.html',
-  styleUrl: './schedule-grid-view.component.scss'
+  styleUrl: './schedule-grid-view.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleGridViewComponent {
   protected readonly Day = Day;
 
   scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
 
-  classClicked = output<ReadScheduleClass>();
+  readonly classClicked = output<ReadScheduleClass>();
 
   timeSlotIncrement = signal(60);
 

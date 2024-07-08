@@ -37,9 +37,9 @@ import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 export class ScheduleClassesListComponent {
   scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
 
-  editScheduleClass = output<ReadScheduleClass>();
+  readonly editScheduleClass = output<ReadScheduleClass>();
 
-  deleteScheduleClass = output<string>();
+  readonly deleteScheduleClass = output<string>();
 
   msuCourseLink = (scheduleClass: ReadScheduleClass) => {
     const today = new Date();

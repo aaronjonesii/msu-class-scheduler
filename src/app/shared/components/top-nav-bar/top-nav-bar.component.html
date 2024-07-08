@@ -20,7 +20,7 @@
 
   @defer (when isSignedIn() !== undefined) {
     @if (isSignedIn()) {
-      <a mat-button (click)="signOut()">
+      <a mat-button tabindex="0" (keyup)="signOut()" (click)="signOut()">
         <mat-icon matButtonIcon fontIcon="logout" />
         Sign out
       </a>

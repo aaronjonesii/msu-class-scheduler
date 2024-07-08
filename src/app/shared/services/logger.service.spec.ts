@@ -2,7 +2,7 @@ import { LoggerService } from "./logger.service";
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { TestBed } from '@angular/core/testing';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { MatSnackBarHarness } from '@angular/material/snack-bar/testing';
 
@@ -10,6 +10,7 @@ import { MatSnackBarHarness } from '@angular/material/snack-bar/testing';
   selector: 'csb-test-logger',
   template: undefined,
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 class TestConsoleLoggerComponent {}
 

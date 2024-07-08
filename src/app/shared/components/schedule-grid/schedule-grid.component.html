@@ -19,8 +19,10 @@
 }
 
 @for (classTile of classTiles(); track classTile.id) {
-  <div class="tile class" [class]="classTile.color | colorToClass: 'card'"
+  <div class="tile class" tabindex="0"
+       [class]="classTile.color | colorToClass: 'card'"
        [ngStyle]="classTile.styles"
+       (keyup)="classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined"
        (click)=" classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined">
     @if (classTile.scheduleClass?.status === ScheduleClassStatus.WAITlIST) {
       <mat-chip class="error-chip waitlist-chip"

@@ -375,7 +375,7 @@ export class FirestoreService {
     ref: DocumentPredicate<AppModelType, DbModelType>,
     data: PartialWithFieldValue<DbModelType>,
     options: SetOptions = {},
-    overwriteOperation: boolean = false,
+    overwriteOperation = false,
   ): Promise<void> {
     const timestamp = this.timestamp;
     data = Object.assign(

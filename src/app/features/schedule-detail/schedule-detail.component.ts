@@ -13,7 +13,7 @@ import { MatIcon } from "@angular/material/icon";
 import { appRoutes } from "../../app.routes";
 import { MatDialog } from "@angular/material/dialog";
 import {
-  ScheduleClassFormDialogComponent, ScheduleClassFormDialogContract
+  ScheduleClassFormDialogComponent,
 } from "../../shared/dialogs/schedule-class-form-dialog/schedule-class-form-dialog.component";
 import {
   ReadScheduleClass,
@@ -31,9 +31,6 @@ import {
   ConfirmDialogComponent, ConfirmDialogContract
 } from "../../shared/components/confirm-dialog/confirm-dialog.component";
 import { ReadSchedule } from "../../shared/interfaces/schedule";
-import {
-  ScheduleFormDialogComponent, ScheduleFormDialogContract
-} from "../../shared/dialogs/schedule-form-dialog/schedule-form-dialog.component";
 import {
   SkeletonComponent
 } from "../../shared/components/skeleton/skeleton.component";
@@ -145,9 +142,9 @@ export class ScheduleDetailComponent {
       ConfirmDialogComponent,
       {
         id: 'confirm-delete-schedule-class-dialog',
-        data: <ConfirmDialogContract>{
+        data: {
           title: 'Are you sure you want to delete this class?'
-        },
+        } as ConfirmDialogContract,
       },
     );
 
@@ -170,9 +167,9 @@ export class ScheduleDetailComponent {
       ConfirmDialogComponent,
       {
         id: 'confirm-delete-schedule-dialog',
-        data: <ConfirmDialogContract>{
+        data: {
           title: 'Are you sure you want to delete this schedule?',
-        },
+        } as ConfirmDialogContract,
       },
     );
 

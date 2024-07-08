@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   inject,
-  signal
 } from '@angular/core';
 import { MatAnchor } from "@angular/material/button";
 import { RouterLink, RouterLinkActive } from "@angular/router";

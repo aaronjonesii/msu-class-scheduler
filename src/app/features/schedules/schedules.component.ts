@@ -111,7 +111,7 @@ export class SchedulesComponent {
         id: 'create-schedule-form-dialog',
         width: '100%',
         maxWidth: '600px',
-        data: <ScheduleFormDialogContract>{ userId: user.uid },
+        data: { userId: user.uid } as ScheduleFormDialogContract,
       },
     );
 

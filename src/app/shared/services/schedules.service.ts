@@ -102,7 +102,6 @@ export class SchedulesService {
   }
 
   async create(schedule: Schedule) {
-    // @ts-ignore
     delete schedule.id;
 
     return this.db.add<Schedule>(this.collectionName, schedule)
@@ -147,7 +146,7 @@ export class SchedulesService {
         id: 'edit-schedule-form-dialog',
         width: '100%',
         maxWidth: '600px',
-        data: <ScheduleFormDialogContract>{ schedule },
+        data: { schedule } as ScheduleFormDialogContract,
       },
     );
 
