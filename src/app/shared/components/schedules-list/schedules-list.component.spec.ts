@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SchedulesListComponent } from './schedules-list.component';
+import { SchedulesService } from "../../services/schedules.service";
 
 describe('SchedulesListComponent', () => {
   let component: SchedulesListComponent;
@@ -8,9 +9,14 @@ describe('SchedulesListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SchedulesListComponent]
-    })
-    .compileComponents();
+      imports: [SchedulesListComponent],
+      providers: [
+        {
+          provide: SchedulesService,
+          useValue: {},
+        },
+      ],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SchedulesListComponent);
     component = fixture.componentInstance;
