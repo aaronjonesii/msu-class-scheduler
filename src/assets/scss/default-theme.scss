@@ -36,6 +36,9 @@ $class-schedule-builder-theme: mat.define-theme((
     background: rgba(mat.get-theme-color($class-schedule-builder-theme, primary, 95), 0.75);
     color: mat.get-theme-color($class-schedule-builder-theme, primary);
   }
+  .primary-chip {
+    @include mat.chips-color($class-schedule-builder-theme, $color-variant: primary);
+  }
 
   .secondary-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: secondary);
@@ -44,9 +47,15 @@ $class-schedule-builder-theme: mat.define-theme((
     background: rgba(mat.get-theme-color($class-schedule-builder-theme, secondary, 95), 0.75);
     color: mat.get-theme-color($class-schedule-builder-theme, secondary);
   }
+  .secondary-chip {
+    @include mat.chips-color($class-schedule-builder-theme, $color-variant: secondary);
+  }
 
   .tertiary-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: tertiary);
+  }
+  .tertiary-chip {
+    @include mat.chips-color($class-schedule-builder-theme, $color-variant: tertiary);
   }
 
   .error-color {
