@@ -1,6 +1,6 @@
 {
   "name": "msu-class-scheduler",
-  "version": "0.0.0-beta.1",
+  "version": "1.0.0",
   "scripts": {
     "build:development": "ng build --configuration development",
     "build:production": "ng build",

@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import {
   TopNavBarComponent
 } from "./shared/components/top-nav-bar/top-nav-bar.component";
+import { SwUpdateService } from "./shared/services/sw-update.service";
 
 @Component({
   selector: 'csb-root',
@@ -11,4 +12,10 @@ import {
   templateUrl: './app.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AppComponent {}
+export class AppComponent {
+  private swUpdateService = inject(SwUpdateService);
+
+  constructor() {
+    this.swUpdateService.checkForSwUpdate();
+  }
+}
