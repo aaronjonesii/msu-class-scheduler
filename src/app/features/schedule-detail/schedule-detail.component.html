@@ -76,6 +76,7 @@
     </section>
 
     <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()"
+                            [(shownClasses)]="shownClasses"
                             (classClicked)="scrollToElementId($event.id)" />
   } @else {
     <div class="not-found-container text-center">

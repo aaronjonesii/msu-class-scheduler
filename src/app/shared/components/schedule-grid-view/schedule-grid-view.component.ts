@@ -1,7 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  input,
+  input, model,
   output,
   signal
 } from '@angular/core';
@@ -47,7 +47,7 @@ import { MatSlider, MatSliderThumb } from "@angular/material/slider";
     MatChipListbox,
     MatChipOption,
     MatSlider,
-    MatSliderThumb
+    MatSliderThumb,
   ],
   templateUrl: './schedule-grid-view.component.html',
   styleUrl: './schedule-grid-view.component.scss',
@@ -57,6 +57,8 @@ export class ScheduleGridViewComponent {
   protected readonly Day = Day;
 
   scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
+
+  shownClasses = model<string[]>([]);
 
   readonly classClicked = output<ReadScheduleClass>();
 

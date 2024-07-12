@@ -68,6 +68,8 @@ export class ScheduleGridComponent {
 
   scheduleClasses = input<ReadScheduleClass[]>([]);
 
+  shownClasses = model<string[]>([]);
+
   dayTileColor = input(Color.SPRING_GREEN);
 
   timeTileColor = input(Color.ORANGE);
@@ -141,6 +143,7 @@ export class ScheduleGridComponent {
             if (dayIndex === -1) continue;
 
             const startTime = this._parseTime(time.startTime);
+      if (!this.shownClasses().includes(scheduleClass.id)) continue;
 
             const startRow = this._getGridRowFromTime(startTime);
 
