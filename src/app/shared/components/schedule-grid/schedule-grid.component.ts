@@ -22,6 +22,8 @@ export interface GridTile {
   name: string,
   description?: string,
   times?: string,
+  location?: string,
+  instructor?: string,
   color: Color,
   scheduleClass?: ReadScheduleClass,
   styles: {

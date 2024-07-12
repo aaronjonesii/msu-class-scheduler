@@ -48,6 +48,10 @@
   }
 }
 
+.tile.class.waitlist {
+  padding-top: calc(var(--padding) * 2);
+}
+
 .sticky {
   position: sticky;
   top: 0;
