@@ -2,10 +2,10 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed, HostBinding,
-  input, output,
+  input, model, output,
 } from '@angular/core';
 import { Day } from "../../enums/day";
-import { NgStyle } from "@angular/common";
+import { NgClass, NgStyle } from "@angular/common";
 import {
   ReadScheduleClass,
 } from "../../interfaces/schedule-class";
@@ -16,13 +16,14 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { ScheduleClassStatus } from "../../enums/schedule-class-status";
 import { MatChip } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
+import { ScheduleClassMeeting } from '../../interfaces/schedule-class-meeting';
 
 export interface GridTile {
   id: string,
   name: string,
-  description?: string,
   times?: string,
   color: Color,
+  meeting?: ScheduleClassMeeting,
   scheduleClass?: ReadScheduleClass,
   styles: {
     gridColumnStart: number,
@@ -40,12 +41,17 @@ export interface GridTimes {
 @Component({
   selector: 'csb-schedule-grid',
   standalone: true,
-  imports: [NgStyle, ColorToClassPipe, MatMenu, MatMenuItem, MatMenuTrigger, MatChip, MatTooltip],
+  imports: [
+    NgStyle, ColorToClassPipe, MatMenu, MatMenuItem,
+    MatMenuTrigger, MatChip, MatTooltip, NgClass,
+  ],
   templateUrl: './schedule-grid.component.html',
   styleUrl: './schedule-grid.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleGridComponent {
+  protected readonly ScheduleClassStatus = ScheduleClassStatus;
+
   @HostBinding('style.gridTemplateColumns')
   get gridTemplateColumns() {
     return `repeat(${this.days().length + 1}, minmax(100px, 1fr))`;
@@ -68,6 +74,8 @@ export class ScheduleGridComponent {
 
   scheduleClasses = input<ReadScheduleClass[]>([]);
 
+  shownClasses = model<string[]>([]);
+
   dayTileColor = input(Color.SPRING_GREEN);
 
   timeTileColor = input(Color.ORANGE);
@@ -89,7 +97,7 @@ export class ScheduleGridComponent {
           gridRowStart: 1,
           gridRowEnd: 2,
         },
-      };
+      } satisfies GridTile;
     });
   });
 
@@ -132,28 +140,63 @@ export class ScheduleGridComponent {
   classTiles = computed<GridTile[]>(() => {
     const tiles: GridTile[] = [];
 
+    const nextAvailableRow: Record<string, number> = {};
+
+    this.days().map((day) => nextAvailableRow[day] = this.numTimeSlots() + 2);
+
     for (const scheduleClass of this.scheduleClasses()) {
+      if (!this.shownClasses().includes(scheduleClass.id)) continue;
+
       for (const meeting of scheduleClass.meetings) {
-        for (const time of meeting.meetingTimes) {
-          for (const day of time.days) {
+        let hasMeetingTimes = false;
+
+        hasMeetingTimes = !!meeting.meetingTimes.length;
+
+        if (hasMeetingTimes) {
+          for (const time of meeting.meetingTimes) {
+            for (const day of time.days) {
+              const dayIndex = this.days().indexOf(day);
+
+              const startTime = this._parseTime(time.startTime);
+
+              const startRow = this._getGridRowFromTime(startTime);
+
+              const endTime = this._parseTime(time.endTime);
+
+              const endRow = this._getGridRowFromTime(endTime);
+
+              tiles.push({
+                id: `${scheduleClass.id}-${meeting.type}-${day}-${time.startTime}`,
+                name: scheduleClass.name,
+                times: `${this._formatTime(startTime)} - ${this._formatTime(endTime)}`,
+                color: scheduleClass.color || DefaultColor,
+                meeting,
+                scheduleClass: scheduleClass,
+                styles: {
+                  /** +2 to account for the time column and label column */
+                  gridColumnStart: dayIndex + 2,
+                  /** +1 for the single column span */
+                  gridColumnEnd: dayIndex + 2 + 1,
+                  gridRowStart: startRow,
+                  gridRowEnd: endRow + 1,
+                },
+              });
+            }
+          }
+        } else {
+          for (const day of this.days()) {
+            const startRow = nextAvailableRow[day];
+
+            const endRow = nextAvailableRow[day] + 1;
+
             const dayIndex = this.days().indexOf(day);
 
-            if (dayIndex === -1) continue;
-
-            const startTime = this._parseTime(time.startTime);
-
-            const startRow = this._getGridRowFromTime(startTime);
-
-            const endTime = this._parseTime(time.endTime);
-
-            const endRow = this._getGridRowFromTime(endTime);
-
             tiles.push({
-              id: `${scheduleClass.id}-${meeting.type}-${day}-${time.startTime}`,
+              id: `${scheduleClass.id}-${meeting.type}-${day}-TBA`,
               name: scheduleClass.name,
-              description: meeting.type,
-              times: `${this._formatTime(startTime)} - ${this._formatTime(endTime)}`,
+              times: 'To Be Announced',
               color: scheduleClass.color || DefaultColor,
+              meeting,
               scheduleClass: scheduleClass,
               styles: {
                 /** +2 to account for the time column and label column */
@@ -161,9 +204,11 @@ export class ScheduleGridComponent {
                 /** +1 for the single column span */
                 gridColumnEnd: dayIndex + 2 + 1,
                 gridRowStart: startRow,
-                gridRowEnd: endRow + 1,
+                gridRowEnd: endRow,
               },
             });
+
+            nextAvailableRow[day]++;
           }
         }
       }
@@ -210,6 +255,4 @@ export class ScheduleGridComponent {
     /** +2 to account for the label row and the first time slow row */
     return Math.floor(slotsDiff) + 2;
   }
-
-  protected readonly ScheduleClassStatus = ScheduleClassStatus;
 }

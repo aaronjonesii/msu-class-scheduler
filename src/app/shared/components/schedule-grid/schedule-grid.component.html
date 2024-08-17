@@ -22,6 +22,7 @@
   <div class="tile class" tabindex="0"
        [class]="classTile.color | colorToClass: 'card'"
        [ngStyle]="classTile.styles"
+       [ngClass]="{'waitlist': classTile.scheduleClass?.status === ScheduleClassStatus.WAITlIST}"
        (keyup)="classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined"
        (click)=" classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined">
     @if (classTile.scheduleClass?.status === ScheduleClassStatus.WAITlIST) {
@@ -40,6 +41,14 @@
 
     <span class="name truncate-text" [title]="classTile.name">{{classTile.name}}</span>
 
+    <!-- <span class="description truncate-text" [title]="classTile.scheduleClass?.description">{{classTile.scheduleClass?.description}}</span> -->
+
+    <span class="type" [title]="classTile.meeting?.type">{{classTile.meeting?.type}}</span>
+
     <span class="times" [title]="classTile.times">{{classTile.times}}</span>
+
+    <span class="location" [title]="classTile.meeting?.location">{{classTile.meeting?.location}}</span>
+
+    <span class="instructor truncate-text" [title]="classTile.meeting?.instructor">{{classTile.meeting?.instructor}}</span>
   </div>
 }

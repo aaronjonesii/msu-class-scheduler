@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
-  Component, computed,
-  inject,
-  Input, signal
+  Component, computed, effect,
+  inject, Input, signal,
 } from '@angular/core';
 import { SchedulesService } from "../../shared/services/schedules.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
@@ -95,6 +94,14 @@ export class ScheduleDetailComponent {
       }),
     ),
   );
+
+  scheduleClassesEffect = effect(() => {
+    const classIds = this.scheduleClasses()?.map((c) => c.id);
+
+    return this.shownClasses.set(classIds || []);
+  }, { allowSignalWrites: true });
+
+  shownClasses = signal<string[]>([]);
 
   scheduleClassesCredits = computed(() => {
     return this.scheduleClasses()

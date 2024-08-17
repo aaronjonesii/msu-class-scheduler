@@ -13,6 +13,24 @@
 <div class="grid-container">
   @if (showGridOptions()) {
     <div class="grid-options">
+      <div class="classesShown">
+        <div class="label">Classes shown</div>
+
+        <mat-chip-listbox id="classesShown"
+                          [multiple]="true"
+                          [(ngModel)]="shownClasses">
+          @for (scheduleClass of scheduleClasses(); track scheduleClass.id) {
+            <mat-chip-option [value]="scheduleClass.id">
+              @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
+                {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+              } @else {
+                {{scheduleClass.name}}
+              }
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+      </div>
+
       <div class="daysShown">
         <label for="daysShown" class="label">Days shown</label>
 
@@ -56,6 +74,7 @@
   }
 
   <csb-schedule-grid [days]="days()"
+                     [(shownClasses)]="shownClasses"
                      (classClicked)="classClicked.emit($event)"
                      [timeSlotIncrement]="timeSlotIncrement()"
                      [scheduleClasses]="scheduleClasses() || []"
