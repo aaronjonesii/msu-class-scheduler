@@ -41,12 +41,14 @@
 
     <span class="name truncate-text" [title]="classTile.name">{{classTile.name}}</span>
 
-    <span class="description truncate-text" [title]="classTile.description">{{classTile.description}}</span>
+    <!-- <span class="description truncate-text" [title]="classTile.scheduleClass?.description">{{classTile.scheduleClass?.description}}</span> -->
+
+    <span class="type" [title]="classTile.meeting?.type">{{classTile.meeting?.type}}</span>
 
     <span class="times" [title]="classTile.times">{{classTile.times}}</span>
 
-    <span class="location" [title]="classTile.location">{{classTile.location}}</span>
+    <span class="location" [title]="classTile.meeting?.location">{{classTile.meeting?.location}}</span>
 
-    <span class="instructor" [title]="classTile.instructor">{{classTile.instructor}}</span>
+    <span class="instructor truncate-text" [title]="classTile.meeting?.instructor">{{classTile.meeting?.instructor}}</span>
   </div>
 }

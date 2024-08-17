@@ -7,7 +7,7 @@ import {
 import { Day } from "../../enums/day";
 import { NgClass, NgStyle } from "@angular/common";
 import {
-  ReadScheduleClass, ScheduleClass,
+  ReadScheduleClass,
 } from "../../interfaces/schedule-class";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
@@ -16,19 +16,14 @@ import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { ScheduleClassStatus } from "../../enums/schedule-class-status";
 import { MatChip } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
-import { ScheduleClassMeeting } from "../../interfaces/schedule-class-meeting";
-import {
-  ScheduleClassMeetingTime
-} from "../../interfaces/schedule-class-meeting-time";
+import { ScheduleClassMeeting } from '../../interfaces/schedule-class-meeting';
 
 export interface GridTile {
   id: string,
   name: string,
-  description?: string,
   times?: string,
-  location?: string,
-  instructor?: string,
   color: Color,
+  meeting?: ScheduleClassMeeting,
   scheduleClass?: ReadScheduleClass,
   styles: {
     gridColumnStart: number,
@@ -102,7 +97,7 @@ export class ScheduleGridComponent {
           gridRowStart: 1,
           gridRowEnd: 2,
         },
-      };
+      } satisfies GridTile;
     });
   });
 
@@ -145,7 +140,7 @@ export class ScheduleGridComponent {
   classTiles = computed<GridTile[]>(() => {
     const tiles: GridTile[] = [];
 
-    const nextAvailableRow: { [day: string]: number } = {};
+    const nextAvailableRow: Record<string, number> = {};
 
     this.days().map((day) => nextAvailableRow[day] = this.numTimeSlots() + 2);
 
@@ -160,22 +155,22 @@ export class ScheduleGridComponent {
         if (hasMeetingTimes) {
           for (const time of meeting.meetingTimes) {
             for (const day of time.days) {
-              let dayIndex = this.days().indexOf(day);
+              const dayIndex = this.days().indexOf(day);
 
               const startTime = this._parseTime(time.startTime);
 
-              let startRow = this._getGridRowFromTime(startTime);
+              const startRow = this._getGridRowFromTime(startTime);
 
               const endTime = this._parseTime(time.endTime);
 
-              let endRow = this._getGridRowFromTime(endTime);
+              const endRow = this._getGridRowFromTime(endTime);
 
               tiles.push({
                 id: `${scheduleClass.id}-${meeting.type}-${day}-${time.startTime}`,
                 name: scheduleClass.name,
-                description: meeting.type,
                 times: `${this._formatTime(startTime)} - ${this._formatTime(endTime)}`,
                 color: scheduleClass.color || DefaultColor,
+                meeting,
                 scheduleClass: scheduleClass,
                 styles: {
                   /** +2 to account for the time column and label column */
@@ -199,9 +194,9 @@ export class ScheduleGridComponent {
             tiles.push({
               id: `${scheduleClass.id}-${meeting.type}-${day}-TBA`,
               name: scheduleClass.name,
-              description: meeting.type,
               times: 'To Be Announced',
               color: scheduleClass.color || DefaultColor,
+              meeting,
               scheduleClass: scheduleClass,
               styles: {
                 /** +2 to account for the time column and label column */
