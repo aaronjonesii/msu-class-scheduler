@@ -74,15 +74,27 @@ export class ScheduleClassesService {
     classId: string,
     scheduleClass: Partial<WriteScheduleClass>,
   ) {
-    return this.db.update<WriteScheduleClass>(
-      `${this.classesCollectionName(scheduleId)}/${classId}`,
-      scheduleClass,
-    ).catch((error: unknown) => {
+    return this.db.batch(async (batch) => {
+      // Update 'updated' property on schedule document
+      const scheduleRef = this.db.doc(`${this.schedulesCollectionName}/${scheduleId}`);
+
+      batch.update(scheduleRef, 'updated', this.db.timestamp);
+
+      // Update schedule class document
+      const classRef = this.db.doc(
+        `${this.classesCollectionName(scheduleId)}/${classId}`,
+      );
+
+      batch.update(
+        classRef,
+        Object.assign(scheduleClass, {updated: this.db.timestamp}),
+      );
+    }).catch((error: unknown) => {
       this.logger.error(
         `Error updating class, ${classId}, for schedule: ${scheduleId}`,
         error,
       );
-    });
+    });;
   }
 
   async delete(scheduleId: string, classId: string) {
