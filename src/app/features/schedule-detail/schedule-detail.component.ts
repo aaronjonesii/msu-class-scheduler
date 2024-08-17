@@ -1,8 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component, computed, effect,
-  inject,
-  Input, model, OnInit, signal
+  inject, Input, signal,
 } from '@angular/core';
 import { SchedulesService } from "../../shared/services/schedules.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
