@@ -10,6 +10,7 @@ export const appRoutes = {
   scheduleDetail: (id: string) => `/schedule/${id}`,
   schedules: '/schedules',
   signIn: '/sign-in',
+  semesterPlans: '/semester-plans',
 };
 
 export const routes: Routes = [
@@ -38,6 +39,13 @@ export const routes: Routes = [
     title: 'Schedules',
     loadComponent: () => import('./features/schedules/schedules.component')
       .then((c) => c.SchedulesComponent),
+    canActivate: [AuthGuard],
+  },
+  {
+    path: 'semester-plans',
+    title: 'Semester Plans',
+    loadComponent: () => import('./features/semester-plans/semester-plans.component')
+      .then((c) => c.SemesterPlansComponent),
     canActivate: [AuthGuard],
   },
   {

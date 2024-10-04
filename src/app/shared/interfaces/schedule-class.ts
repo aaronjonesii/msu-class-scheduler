@@ -23,6 +23,7 @@ export interface ScheduleClass {
   updated?: DateTime | null,
   color?: Color | null,
   isNotMSUCourse: boolean | null,
+  sections?: ScheduleClassSection[],
 }
 
 export interface ReadScheduleClass extends ScheduleClass {
@@ -38,4 +39,9 @@ export interface WriteScheduleClass extends ScheduleClass {
   endDate?: FieldValue | null,
   created?: FieldValue | null,
   updated?: FieldValue | null,
+}
+
+export interface ScheduleClassSection {
+  id: string,
+  meetings: ScheduleClassMeeting[],
 }
