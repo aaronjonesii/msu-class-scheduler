@@ -11,6 +11,7 @@ export const appRoutes = {
   schedules: '/schedules',
   signIn: '/sign-in',
   semesterPlans: '/semester-plans',
+  semesterPlanDetail: (id: string) => `/semester-plan/${id}`,
 };
 
 export const routes: Routes = [
