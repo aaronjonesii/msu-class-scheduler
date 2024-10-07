@@ -57,10 +57,10 @@ export class SchedulesListComponent {
 
   schedules = input<ReadScheduleWithClasses[] | null | undefined>(null);
 
-  filterText  = input<string>();
+  filterText = input<string>();
 
   editSchedule(schedule: ReadScheduleWithClasses) {
-    this.scheduleService.openEditScheduleDialog(schedule);
+    this.scheduleService.openEditDialog(schedule);
   }
 
   scheduleCredits = (schedule: ReadSchedule) => {
