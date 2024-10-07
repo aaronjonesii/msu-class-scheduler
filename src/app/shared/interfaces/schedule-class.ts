@@ -43,5 +43,7 @@ export interface WriteScheduleClass extends ScheduleClass {
 
 export interface ScheduleClassSection {
   id: string,
+  startDate?: DateTime | null,
+  endDate?: DateTime | null,
   meetings: ScheduleClassMeeting[],
 }
