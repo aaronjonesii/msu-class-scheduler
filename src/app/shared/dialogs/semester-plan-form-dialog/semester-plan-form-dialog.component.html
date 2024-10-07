@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{ editing() ? "Edit" : "Create" }} Semester Plan</h1>
+
+<mat-dialog-content>
+  <csb-semester-plan-form [semesterPlanForm]="semesterPlanForm()" />
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+
+  <button
+    mat-flat-button
+    type="button"
+    [disabled]="semesterPlanForm().formGroup.invalid"
+    [mat-dialog-close]="semesterPlanForm().semesterPlan"
+  >
+    {{ editing() ? "Save" : "Create" }}
+  </button>
+</mat-dialog-actions>
