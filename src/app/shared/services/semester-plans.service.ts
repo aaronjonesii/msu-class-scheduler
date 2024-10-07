@@ -1,0 +1,159 @@
+import { inject, Injectable } from '@angular/core';
+import { FirestoreService } from './firestore.service';
+import { LoggerService } from './logger.service';
+import { catchError, combineLatest, EMPTY, first, from, map, mergeMap, Observable, of, switchMap, take, tap, toArray } from 'rxjs';
+import { ReadSemesterPlan, ReadSemesterPlanWithClasses, SemesterPlan, WriteSemesterPlan } from '../interfaces/semester-plan';
+import { where } from '@angular/fire/firestore';
+import { User } from '@angular/fire/auth';
+import { MatDialog } from '@angular/material/dialog';
+import { SemesterPlanFormDialogComponent, SemesterPlanFormDialogContract } from '../dialogs/semester-plan-form-dialog/semester-plan-form-dialog.component';
+import { appRoutes } from '../../app.routes';
+import { Router } from '@angular/router';
+import { ReadScheduleClass } from '../interfaces/schedule-class';
+
+@Injectable({ providedIn: 'root' })
+export class SemesterPlansService {
+  private db = inject(FirestoreService);
+  private logger = inject(LoggerService);
+  private dialog = inject(MatDialog);
+  private router = inject(Router);
+
+  private readonly collectionName = 'semester-plans';
+
+  getByUser$(userId: string): Observable<ReadSemesterPlan[]> {
+    return this.db.colQuery$<ReadSemesterPlan>(
+      this.collectionName,
+      { idField: 'id' },
+      where('userId', '==', userId),
+    ).pipe(
+      catchError((error: unknown) => {
+        this.logger.error('Error getting user semester plans', error);
+
+        return EMPTY;
+      }),
+    );
+  }
+
+  getByUserWithClasses$(userId: string): Observable<ReadSemesterPlanWithClasses[]> {
+    return this.getByUser$(userId).pipe(
+      switchMap((semesterPlans: ReadSemesterPlan[]) => {
+        return from(semesterPlans).pipe(
+          mergeMap((s) => this.getScheduleWithClasses$(s)),
+          take(semesterPlans.length),
+          toArray(),
+        );
+      }),
+    );
+  }
+
+  getScheduleWithClasses$(semesterPlan: ReadSemesterPlan): Observable<ReadSemesterPlanWithClasses> {
+    return of(semesterPlan).pipe(
+      switchMap((s) => {
+        debugger;
+        return combineLatest([of(s), this.getSemesterPlanClasses$(s.id)]).pipe(
+          map(([semesterPlan, semesterPlanClasses]) => {
+            return { ...semesterPlan, classes: semesterPlanClasses };
+          }),
+        );
+      }),
+    );
+  }
+
+  getSemesterPlanClasses$(semseterPlanId: string) {
+    return this.db.col$<ReadScheduleClass>(
+      `${this.collectionName}/${semseterPlanId}/classes`,
+      { idField: 'id' },
+    ).pipe(
+      catchError((error: unknown) => {
+        this.logger.error(
+          `Error getting classes for semester plan: ${semseterPlanId}`,
+          error,
+        );
+
+        return EMPTY;
+      }),
+    );
+  }
+
+  async create(semesterPlan: SemesterPlan) {
+    delete semesterPlan.id;
+
+    return this.db.add<SemesterPlan>(this.collectionName, semesterPlan)
+      .catch((error: unknown) => {
+        this.logger.error('Error creating semester plan', error);
+
+        return null;
+      });
+  }
+
+  async update(id: string, semesterPlan: Partial<SemesterPlan>) {
+    return this.db.update<WriteSemesterPlan>(`${this.collectionName}/${id}`, semesterPlan)
+      .catch((error: unknown) => {
+        this.logger.error(`Error updating semester plan: ${id}`, error);
+      });
+  }
+
+  async delete(id: string) {
+    return this.db.batch(async (batch) => {
+      const semesterPlanRef = this.db.doc<SemesterPlan>(`${this.collectionName}/${id}`);
+
+      batch.delete(semesterPlanRef);
+
+      const semesterPlanClassesQuery =
+        await this.db.colSnap(`${this.collectionName}/${id}/classes`);
+
+      if (!semesterPlanClassesQuery.empty) {
+        semesterPlanClassesQuery.docs.map((d) => batch.delete(d.ref));
+      }
+    }).then(() => true)
+      .catch((error: unknown) => {
+        this.logger.error(`Error deleting semester plan: ${id}`, error);
+
+        return false;
+      });
+  }
+
+  async openCreateDialog(userId: string) {
+    const dialogRef = this.dialog.open(
+      SemesterPlanFormDialogComponent,
+      {
+        id: 'create-semester-plan-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: { userId } as SemesterPlanFormDialogContract,
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first())
+      .forEach(async (semesterPlan?: ReadSemesterPlan) => {
+        if (!semesterPlan) return;
+
+        await this.create(semesterPlan)
+          .then((newDoc) => {
+            if (!newDoc) return;
+
+            this.router.navigate([appRoutes.semesterPlanDetail(newDoc.id)]);
+          });
+      });
+  }
+
+  openEditDialog(semesterPlan: ReadSemesterPlan) {
+    const dialogRef = this.dialog.open(
+      SemesterPlanFormDialogComponent,
+      {
+        id: 'edit-semester-plan-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: { semesterPlan } as SemesterPlanFormDialogContract,
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first())
+      .forEach(async (semesterPlan?: ReadSemesterPlan) => {
+        if (!semesterPlan) return;
+
+        await this.update(semesterPlan.id, semesterPlan)
+          .then(() => this.logger.log('Updated semester plan'));
+      });
+  }
+}
