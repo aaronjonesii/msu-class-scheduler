@@ -1,12 +1,13 @@
 // https://material.angular.io/guide/theming-your-components
-@use 'sass:map';
-@use '@angular/material' as mat;
+@use "sass:map";
+@use "@angular/material" as mat;
 
-@use './sign-in/sign-in-theme' as signIn;
-@use './error/error-theme' as error;
-@use './home/home-theme' as home;
-@use './schedules/schedules-themes' as schedules;
-@use './schedule-detail/schedule-detali-theme' as scheduleDetail;
+@use "./sign-in/sign-in-theme" as signIn;
+@use "./error/error-theme" as error;
+@use "./home/home-theme" as home;
+@use "./schedules/schedules-themes" as schedules;
+@use "./schedule-detail/schedule-detali-theme" as scheduleDetail;
+@use "./semester-plans/semester-plans-theme" as semesterPlans;
 
 @mixin componentThemeMixins($theme) {
   @include signIn.theme($theme);
@@ -14,6 +15,7 @@
   @include home.theme($theme);
   @include schedules.theme($theme);
   @include scheduleDetail.theme($theme);
+  @include semesterPlans.theme($theme);
 }
 
 @mixin color($theme) {
@@ -24,12 +26,17 @@
   $theme-type: mat.get-theme-type($theme);
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+}
 
 @mixin theme($theme) {
-  @if mat.theme-has($theme, color) { @include color($theme); }
+  @if mat.theme-has($theme, color) {
+    @include color($theme);
+  }
 
-  @if mat.theme-has($theme, typography) { @include typography($theme); }
+  @if mat.theme-has($theme, typography) {
+    @include typography($theme);
+  }
 
   @include componentThemeMixins($theme);
 }
