@@ -197,12 +197,12 @@ export class ScheduleDetailComponent {
   editSchedule(schedule?: ReadSchedule | null) {
     if (!schedule) return;
 
-    this.schedulesService.openEditScheduleDialog(schedule);
+    this.schedulesService.openEditDialog(schedule);
   }
 
   scrollToElementId(elementId: string) {
     const el = this.document.getElementById(elementId);
 
-    if (el) el.scrollIntoView({behavior: "smooth", block: 'center'});
+    if (el) el.scrollIntoView({ behavior: "smooth", block: 'center' });
   }
 }
