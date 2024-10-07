@@ -6,7 +6,7 @@
 @use "./error/error-theme" as error;
 @use "./home/home-theme" as home;
 @use "./schedules/schedules-themes" as schedules;
-@use "./schedule-detail/schedule-detali-theme" as scheduleDetail;
+@use "./schedule-detail/schedule-detail-theme" as scheduleDetail;
 @use "./semester-plans/semester-plans-theme" as semesterPlans;
 
 @mixin componentThemeMixins($theme) {
