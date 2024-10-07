@@ -1,8 +1,35 @@
 <section class="header">
   <h2 class="title">Semester Plans</h2>
 
-  <button mat-button type="button">
+  <button mat-button type="button" (click)="createSemesterPlan()">
     <mat-icon matButtonIcon fontIcon="add" />
     Plan
   </button>
 </section>
+
+<div class="count-filter-container">
+  <p class="count">
+    {{ semesterPlans()?.length || 0 }}
+    {{ semesterPlans()?.length === 1 ? "Semester Plan" : "Semester Plans" }}
+  </p>
+
+  <mat-chip-listbox [(ngModel)]="semesterPlansFilter">
+    @for (filterOption of SemesterPlanFilterOption |
+    keyvalue:keepSameOrder;track filterOption.key) {
+    <mat-chip-option [value]="filterOption.value">
+      {{ filterOption.value }}
+    </mat-chip-option>
+    }
+  </mat-chip-listbox>
+</div>
+
+<p class="filter-description">{{ filterDescription() }}</p>
+
+<csb-semester-plans-list
+  [semesterPlans]="filteredSemesterPlans()"
+  [filterText]="
+    semesterPlansFilter() === SemesterPlanFilterOption.ALL
+      ? undefined
+      : semesterPlansFilter().toLowerCase()
+  "
+/>
