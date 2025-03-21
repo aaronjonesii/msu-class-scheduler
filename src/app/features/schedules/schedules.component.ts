@@ -27,8 +27,8 @@ import {
 } from "../../shared/dialogs/schedule-form-dialog/schedule-form-dialog.component";
 
 export enum ScheduleFilterOption {
-  MOST_RECENT = 'Most recent',
   ALL = 'All',
+  MOST_RECENT = 'Most recent',
 }
 
 @Component({
@@ -57,7 +57,7 @@ export class SchedulesComponent {
   protected readonly appRoutes = appRoutes;
   protected readonly ScheduleFilterOption = ScheduleFilterOption;
 
-  schedulesFilter = signal(ScheduleFilterOption.MOST_RECENT);
+  schedulesFilter = signal(ScheduleFilterOption.ALL);
 
   user = toSignal(this.authService.authState$());
 
@@ -72,7 +72,7 @@ export class SchedulesComponent {
   filterDescription = computed(() => {
     switch (this.schedulesFilter()) {
       case ScheduleFilterOption.MOST_RECENT:
-        return 'Recently updated schedules (within 30 days).';
+        return 'Most recent schedules (updated within 30 days).';
       case ScheduleFilterOption.ALL:
       default:
         return 'All schedules.';
