@@ -21,8 +21,8 @@ import { Timestamp } from "@angular/fire/firestore";
 import { dateDifference } from "../../shared/utils/date-difference";
 
 export enum ScheduleFilterOption {
-  MOST_RECENT = 'Most recent',
   ALL = 'All',
+  MOST_RECENT = 'Most recent',
 }
 
 @Component({
@@ -66,7 +66,7 @@ export class SchedulesComponent {
   filterDescription = computed(() => {
     switch (this.schedulesFilter()) {
       case ScheduleFilterOption.MOST_RECENT:
-        return `Your ecently updated schedules (within ${this.mostRecentDays} days).`;
+        return 'Most recent schedules (updated within 30 days).';
       case ScheduleFilterOption.ALL:
       default:
         return 'All your schedules.';
