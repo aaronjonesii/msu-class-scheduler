@@ -14,8 +14,8 @@ import { KeyValuePipe } from '@angular/common';
 import { SemesterPlansListComponent } from '../../shared/components/semester-plans-list/semester-plans-list.component';
 
 export enum SemesterPlanFilterOption {
-  MOST_RECENT = 'Most recent',
   ALL = 'All',
+  MOST_RECENT = 'Most recent',
 }
 
 @Component({
