@@ -3,7 +3,6 @@ import { CourseMeetingFormGroup } from "./course-meeting-form-group";
 
 export interface CourseSectionFormGroup {
   id: FormControl<string | null>,
-  startDate: FormControl<Date | null>,
-  endDate: FormControl<Date | null>,
+  name: FormControl<string>,
   meetings: FormArray<FormGroup<CourseMeetingFormGroup>>,
 }
