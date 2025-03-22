@@ -40,6 +40,7 @@ import { DateAgoPipe } from "../../shared/pipes/date-ago.pipe";
 import { MatChip, MatChipSet } from "@angular/material/chips";
 import { ColorToClassPipe } from "../../shared/pipes/color-to-class.pipe";
 import { MatTooltip } from "@angular/material/tooltip";
+import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 
 @Component({
   selector: 'csb-schedule-detail',
@@ -137,7 +138,7 @@ export class ScheduleDetailComponent {
 
     if (!scheduleId) return;
 
-    this.scheduleClassesService.openEditScheduleDialog(scheduleId, scheduleClass);
+    this.scheduleClassesService.openEditScheduleClassDialog(scheduleId, scheduleClass);
   }
 
   async deleteScheduleClass(classId: string) {
@@ -200,9 +201,6 @@ export class ScheduleDetailComponent {
     this.schedulesService.openEditDialog(schedule);
   }
 
-  scrollToElementId(elementId: string) {
-    const el = this.document.getElementById(elementId);
-
-    if (el) el.scrollIntoView({ behavior: "smooth", block: 'center' });
-  }
+  scrollToElementId = (elementId: string) =>
+    scrollToElementId(elementId, this.document);
 }

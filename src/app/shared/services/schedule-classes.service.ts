@@ -94,7 +94,7 @@ export class ScheduleClassesService {
         `Error updating class, ${classId}, for schedule: ${scheduleId}`,
         error,
       );
-    });;
+    });
   }
 
   async delete(scheduleId: string, classId: string) {
@@ -110,14 +110,14 @@ export class ScheduleClassesService {
     });
   }
 
-  openEditScheduleDialog(scheduleId: string, scheduleClass: ReadScheduleClass) {
+  openEditScheduleClassDialog(scheduleId: string, scheduleClass: ReadScheduleClass) {
     const dialogRef = this.dialog.open(
       ScheduleClassFormDialogComponent,
       {
         id: 'edit-schedule-class-form-dialog',
         width: '100%',
         maxWidth: '600px',
-        data: { scheduleClass } as ScheduleClassFormDialogContract,
+        data: { scheduleClass } satisfies ScheduleClassFormDialogContract,
       },
     );
 
@@ -126,7 +126,7 @@ export class ScheduleClassesService {
         if (!scheduleClass) return;
 
         await this.update(scheduleId, scheduleClass.id, scheduleClass)
-          .then(() => this.logger.log('Updated schedule class'));
+          .then(() => this.logger.info('Updated schedule class'));
       });
   }
 }
