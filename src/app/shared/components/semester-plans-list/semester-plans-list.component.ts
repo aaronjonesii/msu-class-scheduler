@@ -12,7 +12,10 @@ import { ColorToClassPipe } from '../../pipes/color-to-class.pipe';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 import { SemesterPlansService } from '../../services/semester-plans.service';
 import { appRoutes } from '../../../app.routes';
-import { ReadSemesterPlan, ReadSemesterPlanWithClasses } from '../../interfaces/semester-plan';
+import {
+  ReadSemesterPlan,
+  ReadSemesterPlanWithClasses
+} from '../../interfaces/semester-plan';
 
 @Component({
   selector: 'csb-semester-plans-list',
@@ -46,6 +49,8 @@ export class SemesterPlansListComponent {
   semesterPlans = input<ReadSemesterPlanWithClasses[] | null | undefined>(null);
 
   filterText = input<string>();
+
+  formatSemesterPlanName = this.semesterPlansService.formatSemesterPlanName;
 
   editSemesterPlan(semesterPlan: ReadSemesterPlan) {
     this.semesterPlansService.openEditDialog(semesterPlan);

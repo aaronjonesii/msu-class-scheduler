@@ -8,9 +8,7 @@ semesterPlan.id) {
 
   <mat-card-header>
     <mat-card-title-group>
-      <mat-card-title>{{
-        semesterPlan?.name || "Unnamed semester plan"
-      }}</mat-card-title>
+      <mat-card-title>{{ formatSemesterPlanName(semesterPlan) }}</mat-card-title>
 
       <mat-card-subtitle>{{ semesterPlan.description }}</mat-card-subtitle>
     </mat-card-title-group>
@@ -58,7 +56,10 @@ semesterPlan.id) {
       Edit
     </button>
 
-    <a mat-button [routerLink]="[appRoutes.scheduleDetail(semesterPlan.id)]">
+    <a
+      mat-button
+      [routerLink]="[appRoutes.semesterPlanDetail(semesterPlan.id)]"
+    >
       <mat-icon matButtonIcon fontIcon="calendar_view_week" />
       View
     </a>
