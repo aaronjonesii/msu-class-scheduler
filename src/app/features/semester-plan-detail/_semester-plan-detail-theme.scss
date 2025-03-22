@@ -1,23 +1,9 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
 // https://material.angular.io/guide/theming-your-components
 @use "sass:map";
 @use "@angular/material" as mat;
 
-@use "./sign-in/sign-in-theme" as signIn;
-@use "./error/error-theme" as error;
-@use "./home/home-theme" as home;
-@use "./schedules/schedules-themes" as schedules;
-@use "./schedule-detail/schedule-detail-theme" as scheduleDetail;
-@use "./semester-plans/semester-plans-theme" as semesterPlans;
-@use "./semester-plan-detail/semester-plan-detail-theme" as semesterPlanDetail;
-
 @mixin componentThemeMixins($theme) {
-  @include signIn.theme($theme);
-  @include error.theme($theme);
-  @include home.theme($theme);
-  @include schedules.theme($theme);
-  @include scheduleDetail.theme($theme);
-  @include semesterPlans.theme($theme);
-  @include semesterPlanDetail.theme($theme);
 }
 
 @mixin color($theme) {
@@ -26,9 +12,29 @@
   $has-typography: mat.theme-has($theme, typography);
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
+
+  csb-semester-plan-detail {
+    .details {
+      background: mat.get-theme-color($theme, surface-variant);
+      color: mat.get-theme-color($theme, on-surface-variant);
+    }
+  }
 }
 
 @mixin typography($theme) {
+  csb-semester-plan-detail {
+    .title {
+      font: mat.get-theme-typography($theme, headline-large);
+    }
+    .semester-plan-name,
+    .classes .header .title {
+      font: mat.get-theme-typography($theme, headline-medium);
+      margin: 0;
+    }
+    .semester-plan-description {
+      font: mat.get-theme-typography($theme, headline-small);
+    }
+  }
 }
 
 @mixin theme($theme) {

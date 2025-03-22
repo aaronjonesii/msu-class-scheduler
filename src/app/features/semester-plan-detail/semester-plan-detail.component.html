@@ -1,0 +1,148 @@
+<div class="header">
+  <h2 class="title">Semester Plan Detail</h2>
+
+  @if (semesterPlan(); as semesterPlan) {
+  <div class="btn-container">
+    <button mat-button type="button" (click)="editSemesterPlan(semesterPlan)">
+      <mat-icon matButtonIcon fontIcon="edit" />
+      Edit
+    </button>
+
+    <button
+      mat-button
+      type="button"
+      class="error-button"
+      (click)="deleteSemesterPlan()"
+    >
+      <mat-icon matButtonIcon fontIcon="delete" />
+      Delete
+    </button>
+  </div>
+  }
+</div>
+
+@defer (when loaded()) { @if (semesterPlan(); as semesterPlan) {
+<section class="details">
+  <h3 class="semester-plan-name">
+    {{ formattedSemesterPlanName() }}
+  </h3>
+
+  <p class="semester-plan-description">{{ semesterPlan?.description }}</p>
+
+  <div class="classes-chips">
+    <label for="semester-plan-classes-chips">
+      Classes - {{ scheduleClassesCredits() }} credits
+    </label>
+
+    <mat-chip-set
+      id="semester-plan-classes-chips"
+      aria-label="Schedule classes selection"
+    >
+      @for (semesterPlanCourse of semesterPlanCourses(); track semesterPlanCourse)
+      {
+      <mat-chip
+        class="cursor-pointer"
+        [highlighted]="true"
+        [matTooltip]="semesterPlanCourse.name"
+        [class]="semesterPlanCourse.color | colorToClass : 'chip'"
+        (click)="scrollToElementId(semesterPlanCourse.id)"
+      >
+        @if (semesterPlanCourse?.subjectCode && semesterPlanCourse?.courseNumber)
+        {
+        {{ semesterPlanCourse.subjectCode }} {{ semesterPlanCourse.courseNumber }}
+        } @else {
+        {{ semesterPlanCourse.name }}
+        } - {{ semesterPlanCourse.credits || 0 }}
+        {{ semesterPlanCourse?.credits === 1 ? "credit" : "credits" }}
+      </mat-chip>
+      }
+
+      <mat-chip (click)="addCourse()"> Add new course </mat-chip>
+    </mat-chip-set>
+  </div>
+
+  @if (semesterPlan?.updated) {
+  <div class="updated">
+    Last updated {{ semesterPlan.updated?.toDate() | dateAgo }}
+  </div>
+  }
+  <div class="created">
+    Created on {{ semesterPlan.created?.toDate() | date }}
+  </div>
+</section>
+
+<section class="courses">
+  <div class="header">
+    <h4 class="title">Courses</h4>
+
+    <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
+      <mat-icon matButtonIcon fontIcon="add" />
+      Course
+    </button>
+  </div>
+
+  <csb-semester-plan-courses-list
+    [semesterPlanCourses]="semesterPlanCourses()"
+    [term]="semesterPlan.term"
+    [year]="semesterPlan.year"
+    [semesterPlanId]="semesterPlan.id"
+    (editSemesterPlanCourse)="editSemesterPlanCourse($event)"
+    (deleteSemesterPlanCourse)="deleteSemesterPlanCourse($event)"
+    (addSemesterPlanCourseSection)="addSemesterPlanCourseSection($event)"
+  />
+</section>
+} @else {
+<div class="not-found-container text-center">
+  <p>
+    We couldn't find the semester plan you were looking for. This is either
+    because:
+  </p>
+
+  <ul>
+    <li>You do not have permission to view this semester plan.</li>
+    <li>The semester plan you are looking for has been moved or deleted.</li>
+    <li>
+      There is an error in the URL entered into your web browser. Please check
+      the URL and try again.
+    </li>
+  </ul>
+
+  <button
+    mat-stroked-button
+    type="button"
+    [routerLink]="[appRoutes.semesterPlans]"
+  >
+    <mat-icon matButtonIcon fontIcon="event" />
+    Go to Semester Plans
+  </button>
+</div>
+} } @placeholder (minimum 500ms) {
+<section class="details">
+  <h3 class="semester-plan-name">
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '55%' }" />
+  </h3>
+
+  <p class="semester-plan-description">
+    <csb-skeleton [styles]="{ width: '100%' }" />
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+  </p>
+
+  <div class="classes-chips">
+    <label for="semester-plan-classes-chips-placeholder"> Classes </label>
+
+    <div id="semester-plan-classes-chips-placeholder">
+      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+    </div>
+  </div>
+
+  <div class="updated">
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '45%' }" />
+  </div>
+
+  <div class="created">
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '35%' }" />
+  </div>
+</section>
+}
