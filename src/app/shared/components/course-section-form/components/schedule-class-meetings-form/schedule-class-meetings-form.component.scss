@@ -1,0 +1,13 @@
+.meetings {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+csb-schedule-class-meeting-form {
+  display: block;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--border-radius);
+  padding: var(--padding);
+}

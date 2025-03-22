@@ -1,0 +1,19 @@
+<h3 class="title">Meetings</h3>
+
+<div class="meetings">
+  @for (
+          meetingFormGroup of meetingsFormArray().controls;
+      track meetingFormGroup.value; let i = $index;
+        ) {
+    <csb-schedule-class-meeting-form
+          [meetingFormGroup]="meetingFormGroup"
+          (removeMeeting)="meetingsFormArray().removeAt(i)" />
+  } @empty {
+    No meetings for this class yet.
+  }
+</div>
+
+<button mat-button type="button" (click)="addMeeting()">
+  <mat-icon matButtonIcon fontIcon="add" />
+  Meeting
+</button>

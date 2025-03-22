@@ -1,0 +1,73 @@
+<form [formGroup]="meetingFormGroup()">
+  <div class="type">
+    <label for="type">Type</label>
+
+    <mat-button-toggle-group id="type" [multiple]="false"
+                             [formControl]="meetingFormGroup().controls.type">
+      @for (type of ScheduleClassMeetingType | keyvalue; track type.key) {
+        <mat-button-toggle [value]="type.value">{{type.value}}</mat-button-toggle>
+      }
+    </mat-button-toggle-group>
+  </div>
+
+  <mat-form-field [appearance]="formAppearance()">
+    <mat-label>Location</mat-label>
+    <input matInput type="text" name="location"
+           [formControl]="meetingFormGroup().controls.location" />
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance()">
+    <mat-label>Instructor</mat-label>
+    <input matInput type="text" name="instructor"
+           [formControl]="meetingFormGroup().controls.instructor" />
+  </mat-form-field>
+
+  @for (
+          meetingTime of meetingFormGroup().controls.meetingTimes.controls;
+          track meetingTime.value; let i = $index;
+        ) {
+    <div class="meeting-time">
+      <div class="days">
+        <label for="days-chip-list">Days</label>
+
+        <mat-chip-listbox id="days-chip-list" [multiple]="true"
+                          [formControl]="meetingTime.controls.days">
+          @for (day of Day | keyvalue: keepSameOrder; track day.key) {
+            <mat-chip-option [value]="day.value">
+              {{day.value}}
+            </mat-chip-option>
+          }
+        </mat-chip-listbox>
+
+        @if (!meetingTime.controls.days.value.length) {
+          <span class="error-color">Must select at least one day.</span>
+        }
+      </div>
+
+      <label for="startTime">Start time</label>
+      <input type="time" id="startTime" name="startTime"
+             [formControl]="meetingTime.controls.startTime" />
+
+      <label for="endTime">End time</label>
+      <input type="time" id="endTime" name="endTime"
+             [formControl]="meetingTime.controls.endTime" />
+
+      <button mat-button type="button" class="error-btn"
+              (click)="meetingFormGroup().controls.meetingTimes.removeAt(i)">
+        <mat-icon matButtonIcon fontIcon="delete" />
+        Remove meeting time
+      </button>
+    </div>
+  }
+
+  <button mat-button type="button" (click)="addMeetingTime()">
+    <mat-icon matButtonIcon fontIcon="add" />
+    Meeting time
+  </button>
+
+  <button mat-button type="button" class="error-btn"
+          (click)="removeMeeting.emit()">
+    <mat-icon matButtonIcon fontIcon="delete" />
+    Remove Meeting
+  </button>
+</form>
