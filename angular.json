@@ -12,7 +12,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "mcs",
+      "prefix": "csb",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:application",
