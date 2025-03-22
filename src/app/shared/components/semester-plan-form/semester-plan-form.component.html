@@ -1,5 +1,26 @@
 <form [formGroup]="semesterPlanForm().formGroup">
   <mat-form-field [appearance]="formAppearance">
+    <mat-label>Semester Year</mat-label>
+    <input
+      matInput
+      type="number"
+      name="year"
+      min="1850"
+      [formControl]="semesterPlanForm().yearCtrl" />
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Semester Term</mat-label>
+    <mat-select [formControl]="semesterPlanForm().termCtrl">
+      @for (term of semesterTerms | keyvalue; track term.key) {
+        <mat-option [value]="term.value">{{term.value}}</mat-option>
+      } @empty {
+        <p>No semester term options.</p>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
     <mat-label>Name</mat-label>
     <input
       matInput

@@ -1,6 +1,7 @@
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { SemesterPlanFormGroup } from "../interfaces/semester-plan-form";
 import { ReadSemesterPlan } from "../interfaces/semester-plan";
+import { SemesterTerm } from "../enums/semester-term";
 
 export class SemesterPlanForm {
   formGroup: FormGroup<SemesterPlanFormGroup>;
@@ -30,6 +31,20 @@ export class SemesterPlanForm {
     return this.formGroup.controls.description.value;
   }
 
+  get yearCtrl() {
+    return this.formGroup.controls.year;
+  }
+  get year() {
+    return this.yearCtrl.value;
+  }
+
+  get termCtrl() {
+    return this.formGroup.controls.term;
+  }
+  get term() {
+    return this.termCtrl.value;
+  }
+
   get userIdCtrl() {
     return this.formGroup.controls.userId;
   }
@@ -46,6 +61,8 @@ export class SemesterPlanForm {
       userId: this.userId || '',
       name: this.name,
       description: this.description || null,
+      year: this.year,
+      term: this.term,
       classes: [],
     };
   }
@@ -66,6 +83,14 @@ export class SemesterPlanForm {
         { validators: Validators.required, nonNullable: true },
       ),
       description: new FormControl(schedule?.description || null),
+      year: new FormControl(
+        schedule?.year ?? new Date().getFullYear(),
+        { validators: Validators.required, nonNullable: true },
+      ),
+      term: new FormControl(
+        schedule?.term ?? SemesterTerm.SUMMER,
+        { validators: Validators.required, nonNullable: true },
+      )
     });
   }
 }
