@@ -1,0 +1,35 @@
+<mat-accordion>
+  @for (section of sections(); track section.id) {
+    <mat-expansion-panel
+      [hideToggle]="section.meetings.length === 0"
+    >
+      <mat-expansion-panel-header>
+        <mat-panel-title>Section: {{section.name}}</mat-panel-title>
+        <mat-panel-description>
+          @if (section.meetings.length > 0) {
+            {{section.meetings.length}} meetings
+          } @else {
+            No meetings
+          }
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+
+      @for (meeting of section.meetings; track meeting) {
+        <div>
+          <p>{{meeting.type}} - {{meeting.location}}</p>
+          <p>{{meeting.instructor}}</p>
+          @for (meetingTime of meeting.meetingTimes; track meetingTime) {
+            <p>{{meetingTime.days.join(', ')}}</p>
+            <p>{{meetingTime.startTime}} - {{meetingTime.endTime}}</p>
+          } @empty {
+            No meeting times added to this meeting.
+          }
+        </div>
+      } @empty {
+        No meetings added to this section.
+      }
+    </mat-expansion-panel>
+  } @empty {
+    No sections to display.
+  }
+</mat-accordion>
