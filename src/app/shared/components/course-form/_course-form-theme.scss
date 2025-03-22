@@ -1,0 +1,37 @@
+// https://v17.material.angular.io/guide/material-3#using-component-color-variants
+// https://material.angular.io/guide/theming-your-components
+@use "sass:map";
+@use "@angular/material" as mat;
+
+@import "../../../../assets/scss/partials/colors";
+
+@mixin componentThemeMixins($theme) {
+}
+
+@mixin color($theme) {
+  $has-base: mat.theme-has($theme, base);
+  $has-color: mat.theme-has($theme, color);
+  $has-typography: mat.theme-has($theme, typography);
+  $has-density: mat.theme-has($theme, density);
+  $theme-type: mat.get-theme-type($theme);
+
+  csb-course-form {
+  }
+}
+
+@mixin typography($theme) {
+  csb-course-form {
+  }
+}
+
+@mixin theme($theme) {
+  @if mat.theme-has($theme, color) {
+    @include color($theme);
+  }
+
+  @if mat.theme-has($theme, typography) {
+    @include typography($theme);
+  }
+
+  @include componentThemeMixins($theme);
+}

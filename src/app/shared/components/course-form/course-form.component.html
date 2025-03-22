@@ -1,0 +1,119 @@
+<form [formGroup]="courseForm().formGroup">
+  <div
+    class="flex-row align-items-center app-gap flex-wrap justify-content-center"
+  >
+    <mat-form-field class="flex-grow" [appearance]="formAppearance">
+      <mat-label>Subject Code</mat-label>
+      <input
+        matInput
+        type="text"
+        name="subjectCode"
+        [formControl]="courseForm().subjectCodeCtrl"
+      />
+    </mat-form-field>
+
+    <mat-form-field class="flex-grow" [appearance]="formAppearance">
+      <mat-label>Course Number</mat-label>
+      <input
+        matInput
+        type="number"
+        name="courseNumber"
+        [formControl]="courseForm().courseNumberCtrl"
+      />
+    </mat-form-field>
+  </div>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Credits</mat-label>
+    <input
+      matInput
+      type="number"
+      name="credits"
+      [formControl]="courseForm().creditsCtrl"
+    />
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Name</mat-label>
+    <input
+      matInput
+      type="text"
+      name="name"
+      [formControl]="courseForm().nameCtrl"
+    />
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Description</mat-label>
+    <textarea
+      matInput
+      rows="3"
+      type="text"
+      name="description"
+      [formControl]="courseForm().descriptionCtrl"
+    ></textarea>
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Meeting Days</mat-label>
+    <mat-date-range-input [rangePicker]="meetingDaysPicker">
+      <input matStartDate placeholder="Start date"
+             [formControl]="courseForm().startDateCtrl" />
+      <input matEndDate placeholder="End date"
+             [formControl]="courseForm().endDateCtrl" />
+    </mat-date-range-input>
+    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="meetingDaysPicker" />
+    <mat-date-range-picker #meetingDaysPicker />
+    @if (courseForm().startDateCtrl.hasError('matStartDateInvalid')) {
+      <mat-error>Invalid start date</mat-error>
+    }
+    @if (courseForm().endDateCtrl.hasError('matEndDateInvalid')) {
+      <mat-error>Invalid end date</mat-error>
+    }
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Status</mat-label>
+    <mat-select [formControl]="courseForm().statusCtrl">
+      @for (status of CourseStatus | keyvalue; track status.key) {
+      <mat-option [value]="status.value">{{ status.value }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Color</mat-label>
+    <mat-select [formControl]="courseForm().colorCtrl">
+      <mat-select-trigger class="flex-row align-items-center app-gap">
+        <mat-icon
+          fontIcon="circle"
+          [class]="courseForm().color | colorToClass : 'icon'"
+        />
+
+        <span [class]="courseForm().color | colorToClass : 'color'">
+          {{ courseForm().color }}
+        </span>
+      </mat-select-trigger>
+
+      @for (color of Color | keyvalue; track color.key) {
+      <mat-option
+        class="option"
+        [value]="color.value"
+        [class]="color.value | colorToClass : 'option'"
+      >
+        <mat-icon
+          matListItemIcon
+          fontIcon="circle"
+          [class]="color.value | colorToClass : 'icon'"
+        />
+        {{ color.value }}
+      </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-checkbox [formControl]="courseForm().isNotMSUCourseCtrl">
+    Is Not MSU Course
+  </mat-checkbox>
+</form>
