@@ -1,14 +1,16 @@
 // https://material.angular.io/guide/theming-your-components
-@use 'sass:map';
-@use '@angular/material' as mat;
+@use "sass:map";
+@use "@angular/material" as mat;
 
-@use './skeleton/skeleton-theme' as skeleton;
-@use './top-nav-bar/top-nav-bar-theme' as topAppBar;
-@use './schedule-class-form/schedule-class-form-theme' as scheduleClassForm;
-@use './schedule-classes-list/schedule-classes-list-theme' as scheduleClassesList;
-@use './schedule-grid/schedule-grid-theme' as scheduleGrid;
-@use './schedules-list/schedules-list-theme' as schedulesList;
-@use './schedule-grid-view/schedule-grid-view-theme' as scheduleGridView;
+@use "./skeleton/skeleton-theme" as skeleton;
+@use "./top-nav-bar/top-nav-bar-theme" as topAppBar;
+@use "./schedule-class-form/schedule-class-form-theme" as scheduleClassForm;
+@use "./schedule-classes-list/schedule-classes-list-theme" as
+  scheduleClassesList;
+@use "./schedule-grid/schedule-grid-theme" as scheduleGrid;
+@use "./schedules-list/schedules-list-theme" as schedulesList;
+@use "./schedule-grid-view/schedule-grid-view-theme" as scheduleGridView;
+@use "./course-form/course-form-theme" as courseForm;
 
 @mixin componentThemeMixins($theme) {
   @include skeleton.theme($theme);
@@ -18,6 +20,7 @@
   @include scheduleGrid.theme($theme);
   @include schedulesList.theme($theme);
   @include scheduleGridView.theme($theme);
+  @include courseForm.theme($theme);
 }
 
 @mixin color($theme) {
@@ -28,12 +31,17 @@
   $theme-type: mat.get-theme-type($theme);
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+}
 
 @mixin theme($theme) {
-  @if mat.theme-has($theme, color) { @include color($theme); }
+  @if mat.theme-has($theme, color) {
+    @include color($theme);
+  }
 
-  @if mat.theme-has($theme, typography) { @include typography($theme); }
+  @if mat.theme-has($theme, typography) {
+    @include typography($theme);
+  }
 
   @include componentThemeMixins($theme);
 }
