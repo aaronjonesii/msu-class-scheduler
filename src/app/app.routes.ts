@@ -43,6 +43,13 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
   },
   {
+    path: 'semester-plan/:id',
+    title: 'Semester plan details',
+    loadComponent: () => import('./features/semester-plan-detail/semester-plan-detail.component')
+      .then((c) => c.SemesterPlanDetailComponent),
+    canActivate: [AuthGuard],
+  },
+  {
     path: 'semester-plans',
     title: 'Semester Plans',
     loadComponent: () => import('./features/semester-plans/semester-plans.component')
