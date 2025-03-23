@@ -1,15 +1,16 @@
 import { inject, Injectable } from '@angular/core';
 import { FirestoreService } from './firestore.service';
 import { LoggerService } from './logger.service';
-import { catchError, combineLatest, EMPTY, first, from, map, mergeMap, Observable, of, switchMap, take, tap, toArray } from 'rxjs';
+import { catchError, combineLatest, EMPTY, first, from, map, mergeMap, Observable, of, switchMap, take, toArray } from 'rxjs';
 import { ReadSemesterPlan, ReadSemesterPlanWithClasses, SemesterPlan, WriteSemesterPlan } from '../interfaces/semester-plan';
 import { where } from '@angular/fire/firestore';
-import { User } from '@angular/fire/auth';
 import { MatDialog } from '@angular/material/dialog';
 import { SemesterPlanFormDialogComponent, SemesterPlanFormDialogContract } from '../dialogs/semester-plan-form-dialog/semester-plan-form-dialog.component';
 import { appRoutes } from '../../app.routes';
 import { Router } from '@angular/router';
 import { ReadScheduleClass } from '../interfaces/schedule-class';
+import { ReadCourse } from '../interfaces/course';
+import { SemesterTerm } from "../enums/semester-term";
 
 @Injectable({ providedIn: 'root' })
 export class SemesterPlansService {
@@ -18,11 +19,29 @@ export class SemesterPlansService {
   private dialog = inject(MatDialog);
   private router = inject(Router);
 
-  private readonly collectionName = 'semester-plans';
+  private readonly semesterPlansCollectionName = 'semester-plans';
+  private readonly classesCollectionName = (semesterPlanId: string) =>
+    `${this.semesterPlansCollectionName}/${semesterPlanId}/classes`;
+
+  getAll$(semesterPlanId: string) {
+    return this.db.col$<ReadCourse>(
+      this.classesCollectionName(semesterPlanId),
+      { idField: 'id' },
+    ).pipe(
+      catchError((error: unknown) => {
+        this.logger.error(
+          `Error getting classes for semester plan: ${semesterPlanId}`,
+          error,
+        );
+
+        return EMPTY;
+      }),
+    );
+  }
 
   getByUser$(userId: string): Observable<ReadSemesterPlan[]> {
     return this.db.colQuery$<ReadSemesterPlan>(
-      this.collectionName,
+      this.semesterPlansCollectionName,
       { idField: 'id' },
       where('userId', '==', userId),
     ).pipe(
@@ -38,7 +57,7 @@ export class SemesterPlansService {
     return this.getByUser$(userId).pipe(
       switchMap((semesterPlans: ReadSemesterPlan[]) => {
         return from(semesterPlans).pipe(
-          mergeMap((s) => this.getScheduleWithClasses$(s)),
+          mergeMap((s) => this.getSemesterPlanWithClasses$(s)),
           take(semesterPlans.length),
           toArray(),
         );
@@ -46,10 +65,9 @@ export class SemesterPlansService {
     );
   }
 
-  getScheduleWithClasses$(semesterPlan: ReadSemesterPlan): Observable<ReadSemesterPlanWithClasses> {
+  getSemesterPlanWithClasses$(semesterPlan: ReadSemesterPlan): Observable<ReadSemesterPlanWithClasses> {
     return of(semesterPlan).pipe(
       switchMap((s) => {
-        debugger;
         return combineLatest([of(s), this.getSemesterPlanClasses$(s.id)]).pipe(
           map(([semesterPlan, semesterPlanClasses]) => {
             return { ...semesterPlan, classes: semesterPlanClasses };
@@ -61,7 +79,7 @@ export class SemesterPlansService {
 
   getSemesterPlanClasses$(semseterPlanId: string) {
     return this.db.col$<ReadScheduleClass>(
-      `${this.collectionName}/${semseterPlanId}/classes`,
+      `${this.semesterPlansCollectionName}/${semseterPlanId}/courses`,
       { idField: 'id' },
     ).pipe(
       catchError((error: unknown) => {
@@ -75,10 +93,21 @@ export class SemesterPlansService {
     );
   }
 
+  getById$(id: string) {
+    return this.db.doc$<ReadSemesterPlan>(`${this.semesterPlansCollectionName}/${id}`).pipe(
+      map((semesterPlan) => semesterPlan ? { ...semesterPlan, id } : semesterPlan),
+      catchError((error: unknown) => {
+        this.logger.error(`Error getting semester plan by id: ${id}`, error);
+
+        return EMPTY;
+      }),
+    );
+  }
+
   async create(semesterPlan: SemesterPlan) {
     delete semesterPlan.id;
 
-    return this.db.add<SemesterPlan>(this.collectionName, semesterPlan)
+    return this.db.add<SemesterPlan>(this.semesterPlansCollectionName, semesterPlan)
       .catch((error: unknown) => {
         this.logger.error('Error creating semester plan', error);
 
@@ -87,7 +116,7 @@ export class SemesterPlansService {
   }
 
   async update(id: string, semesterPlan: Partial<SemesterPlan>) {
-    return this.db.update<WriteSemesterPlan>(`${this.collectionName}/${id}`, semesterPlan)
+    return this.db.update<WriteSemesterPlan>(`${this.semesterPlansCollectionName}/${id}`, semesterPlan)
       .catch((error: unknown) => {
         this.logger.error(`Error updating semester plan: ${id}`, error);
       });
@@ -95,12 +124,12 @@ export class SemesterPlansService {
 
   async delete(id: string) {
     return this.db.batch(async (batch) => {
-      const semesterPlanRef = this.db.doc<SemesterPlan>(`${this.collectionName}/${id}`);
+      const semesterPlanRef = this.db.doc<SemesterPlan>(`${this.semesterPlansCollectionName}/${id}`);
 
       batch.delete(semesterPlanRef);
 
       const semesterPlanClassesQuery =
-        await this.db.colSnap(`${this.collectionName}/${id}/classes`);
+        await this.db.colSnap(`${this.semesterPlansCollectionName}/${id}/courses`);
 
       if (!semesterPlanClassesQuery.empty) {
         semesterPlanClassesQuery.docs.map((d) => batch.delete(d.ref));
@@ -155,5 +184,30 @@ export class SemesterPlansService {
         await this.update(semesterPlan.id, semesterPlan)
           .then(() => this.logger.log('Updated semester plan'));
       });
+  }
+
+  getFormattedTermYear(term: SemesterTerm, year: number): string {
+    const paddedYear = year.toString().padStart(4, '0');
+    const lastTwoDigitsOfYear = paddedYear.slice(-2);
+
+    let termAbbreviation = '';
+    switch (term) {
+      case SemesterTerm.FALL:
+        termAbbreviation = 'FS'
+        break;
+      case SemesterTerm.SPRING:
+        termAbbreviation = 'SS'
+        break;
+      case SemesterTerm.SUMMER:
+        termAbbreviation = 'SU'
+        break;
+    }
+
+    return `${termAbbreviation}${lastTwoDigitsOfYear}`;
+  }
+
+  formatSemesterPlanName = (semesterPlan: SemesterPlan): string => {
+
+    return `${this.getFormattedTermYear(semesterPlan.term, semesterPlan.year)} - ${semesterPlan.name ?? 'Unnamed'}`
   }
 }
