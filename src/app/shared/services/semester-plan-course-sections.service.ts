@@ -7,6 +7,10 @@ import { catchError, EMPTY } from "rxjs";
 import {
   SemesterPlanCourseSectionFormDialogComponent, SemesterPlanCourseSectionFormDialogContract
 } from "../dialogs/semester-plan-course-section-form-dialog/semester-plan-course-section-form-dialog.component";
+import {
+  ConfirmDialogComponent,
+  ConfirmDialogContract
+} from "../components/confirm-dialog/confirm-dialog.component";
 
 @Injectable({
   providedIn: 'root'
@@ -143,6 +147,25 @@ export class SemesterPlanCourseSectionsService {
       if (!updatedSection) return;
 
       await this.update(semesterPlanId, courseId, section.id, updatedSection);
+    });
+  }
+
+  openDeleteSectionDialog(semesterPlanId: string, courseId: string, sectionId: string) {
+    const dialogRef = this.dialog.open(
+      ConfirmDialogComponent,
+      {
+        id: 'confirm-delete-semester-plan-course-section-dialog',
+        data: {
+          title: 'Are you sure you want to delete this course?',
+        } satisfies ConfirmDialogContract
+      }
+    );
+
+    dialogRef.afterClosed().forEach(async (confirmed: boolean) => {
+      if (!confirmed) return;
+
+      await this.delete(semesterPlanId, courseId, sectionId)
+        .then(() => this.logger.info('Section deleted successfully'));
     });
   }
 }

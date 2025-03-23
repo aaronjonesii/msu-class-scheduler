@@ -6,17 +6,11 @@ import {
 } from "./components/schedule-class-meetings-form/schedule-class-meetings-form.component";
 import {
   MatDatepickerModule,
-  MatDatepickerToggle,
-  MatDateRangeInput,
-  MatDateRangePicker, MatEndDate, MatStartDate
 } from "@angular/material/datepicker";
 import {
-  MatError,
   MatFormField,
   MatFormFieldAppearance,
-  MatHint,
   MatLabel,
-  MatSuffix
 } from "@angular/material/form-field";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { MatInput } from "@angular/material/input";
@@ -29,16 +23,8 @@ import { MatInput } from "@angular/material/input";
     ReactiveFormsModule,
     ScheduleClassMeetingsFormComponent,
     MatDatepickerModule,
-    MatDateRangeInput,
-    MatDateRangePicker,
-    MatDatepickerToggle,
-    MatEndDate,
-    MatError,
     MatFormField,
-    MatHint,
     MatLabel,
-    MatStartDate,
-    MatSuffix,
     MatInput
   ],
   templateUrl: './course-section-form.component.html',

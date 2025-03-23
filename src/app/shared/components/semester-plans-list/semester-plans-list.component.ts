@@ -1,11 +1,8 @@
-import { DatePipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
 import { MatButton, MatAnchor } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipSet, MatChip } from '@angular/material/chips';
 import { MatIcon } from '@angular/material/icon';
-import { MatListItemLine, MatListItemTitle, MatNavList } from '@angular/material/list';
-import { MatMenuItem } from '@angular/material/menu';
 import { MatTooltip } from '@angular/material/tooltip';
 import { RouterLink } from '@angular/router';
 import { ColorToClassPipe } from '../../pipes/color-to-class.pipe';
@@ -24,11 +21,6 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
-    DatePipe,
-    MatListItemLine,
-    MatListItemTitle,
-    MatMenuItem,
-    MatNavList,
     RouterLink,
     SkeletonComponent,
     MatCardModule,

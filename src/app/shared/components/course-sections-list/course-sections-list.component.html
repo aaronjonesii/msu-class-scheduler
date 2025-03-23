@@ -7,7 +7,7 @@
         <mat-panel-title>Section: {{section.name}}</mat-panel-title>
         <mat-panel-description>
           @if (section.meetings.length > 0) {
-            {{section.meetings.length}} meetings
+            {{sectionDescription(section.meetings)}}
           } @else {
             No meetings
           }
@@ -28,6 +28,11 @@
       } @empty {
         No meetings added to this section.
       }
+
+      <mat-action-row>
+        <button mat-button class="primary-button" (click)="editSection(section)">Edit</button>
+        <button mat-button class="error-button" (click)="deleteSection(section.id)">Delete</button>
+      </mat-action-row>
     </mat-expansion-panel>
   } @empty {
     No sections to display.
