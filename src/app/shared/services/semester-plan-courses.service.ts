@@ -35,6 +35,12 @@ export class SemesterPlanCoursesService {
     );
   }
 
+  getAllWithSections$(semesterPlanId: string) {
+    return this.getAll$(semesterPlanId).pipe(
+
+    )
+  }
+
   getById$(semesterPlanId: string, courseId: string) {
     return this.db.doc$<ReadCourse>(
       `${this.coursesCollectionName(semesterPlanId)}/${courseId}`,
