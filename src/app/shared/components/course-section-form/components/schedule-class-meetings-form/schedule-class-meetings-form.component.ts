@@ -3,12 +3,10 @@ import { FormArray, FormGroup } from "@angular/forms";
 import { MatButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
 import {
-  ScheduleClassMeetingFormGroup
-} from "../../../../interfaces/schedule-class-meeting-form";
-import {
   ScheduleClassMeetingFormComponent
 } from "../schedule-class-meeting-form/schedule-class-meeting-form.component";
-import { ScheduleClassForm } from "../../../../forms/schedule-class-form";
+import { CourseMeetingFormGroup } from "../../../../interfaces/course-meeting-form-group";
+import { CourseForm } from "../../../../forms/course-form";
 
 @Component({
   selector: 'csb-schedule-class-meetings-form',
@@ -24,9 +22,9 @@ import { ScheduleClassForm } from "../../../../forms/schedule-class-form";
 })
 export class ScheduleClassMeetingsFormComponent {
   meetingsFormArray =
-    input(new FormArray<FormGroup<ScheduleClassMeetingFormGroup>>([]));
+    input(new FormArray<FormGroup<CourseMeetingFormGroup>>([]));
 
   addMeeting() {
-    this.meetingsFormArray().push(new ScheduleClassForm().newMeetingFormGroup());
+    this.meetingsFormArray().push(new CourseForm().newCourseMeetingFormGroup());
   }
 }

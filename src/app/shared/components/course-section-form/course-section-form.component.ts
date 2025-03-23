@@ -1,10 +1,9 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { CourseSectionForm } from "../../forms/course-section-form";
-import { FormArray, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import {
   ScheduleClassMeetingsFormComponent
 } from "./components/schedule-class-meetings-form/schedule-class-meetings-form.component";
-import { ScheduleClassMeetingFormGroup } from "../../interfaces/schedule-class-meeting-form";
 import {
   MatDatepickerModule,
   MatDatepickerToggle,
@@ -21,7 +20,6 @@ import {
 } from "@angular/material/form-field";
 import { provideNativeDateAdapter } from "@angular/material/core";
 import { MatInput } from "@angular/material/input";
-import { JsonPipe } from "@angular/common";
 
 @Component({
   selector: 'csb-course-section-form',
@@ -41,8 +39,7 @@ import { JsonPipe } from "@angular/common";
     MatLabel,
     MatStartDate,
     MatSuffix,
-    MatInput,
-    JsonPipe
+    MatInput
   ],
   templateUrl: './course-section-form.component.html',
   styleUrl: './course-section-form.component.scss',
@@ -50,8 +47,6 @@ import { JsonPipe } from "@angular/common";
 })
 export class CourseSectionFormComponent {
   sectionForm = input<CourseSectionForm>(new CourseSectionForm());
-
-  meetingsFormArray = this.sectionForm().meetingsFormArray as unknown as FormArray<FormGroup<ScheduleClassMeetingFormGroup>>
 
   formAppearance: MatFormFieldAppearance = 'outline';
 }

@@ -9,7 +9,5 @@
     />
   </mat-form-field>
 
-  <csb-schedule-class-meetings-form [meetingsFormArray]="meetingsFormArray" />
-
-  {{meetingsFormArray.value | json}}
+  <csb-schedule-class-meetings-form [meetingsFormArray]="sectionForm().meetingsFormArray" />
 </form>

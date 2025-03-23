@@ -4,7 +4,6 @@ import {
   input,
   output
 } from '@angular/core';
-import { ScheduleClassForm } from "../../../../forms/schedule-class-form";
 import { ReactiveFormsModule } from "@angular/forms";
 import {
   MatFormFieldAppearance,
@@ -24,6 +23,7 @@ import {
   MatButtonToggle,
   MatButtonToggleGroup
 } from "@angular/material/button-toggle";
+import { CourseForm } from "../../../../forms/course-form";
 
 @Component({
   selector: 'csb-schedule-class-meeting-form',
@@ -50,7 +50,7 @@ export class ScheduleClassMeetingFormComponent {
   protected readonly Day = Day;
 
   meetingFormGroup = input(
-    new ScheduleClassForm().newMeetingFormGroup(),
+    new CourseForm().newCourseMeetingFormGroup()
   );
 
   formAppearance = input<MatFormFieldAppearance>('outline');
@@ -59,7 +59,7 @@ export class ScheduleClassMeetingFormComponent {
 
   addMeetingTime() {
     this.meetingFormGroup().controls.meetingTimes.push(
-      new ScheduleClassForm().newMeetingTimeFormGroup(),
+      new CourseForm().newCourseMeetingTimeFormGroup(),
     );
   }
 
