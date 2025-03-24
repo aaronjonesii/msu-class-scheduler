@@ -9,8 +9,8 @@ import { SemesterPlanFormDialogComponent, SemesterPlanFormDialogContract } from 
 import { appRoutes } from '../../app.routes';
 import { Router } from '@angular/router';
 import { ReadScheduleClass } from '../interfaces/schedule-class';
-import { ReadCourse } from '../interfaces/course';
 import { SemesterTerm } from "../enums/semester-term";
+import { FirestorePaths } from "../../firestore.routes";
 
 @Injectable({ providedIn: 'root' })
 export class SemesterPlansService {
@@ -19,25 +19,7 @@ export class SemesterPlansService {
   private dialog = inject(MatDialog);
   private router = inject(Router);
 
-  private readonly semesterPlansCollectionName = 'semester-plans';
-  private readonly classesCollectionName = (semesterPlanId: string) =>
-    `${this.semesterPlansCollectionName}/${semesterPlanId}/classes`;
-
-  getAll$(semesterPlanId: string) {
-    return this.db.col$<ReadCourse>(
-      this.classesCollectionName(semesterPlanId),
-      { idField: 'id' },
-    ).pipe(
-      catchError((error: unknown) => {
-        this.logger.error(
-          `Error getting classes for semester plan: ${semesterPlanId}`,
-          error,
-        );
-
-        return EMPTY;
-      }),
-    );
-  }
+  private readonly semesterPlansCollectionName = FirestorePaths.semesterPlans;
 
   getByUser$(userId: string): Observable<ReadSemesterPlan[]> {
     return this.db.colQuery$<ReadSemesterPlan>(

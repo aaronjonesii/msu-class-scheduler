@@ -26,6 +26,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { User } from '@angular/fire/auth';
 import { Router } from '@angular/router';
 import { appRoutes } from '../../app.routes';
+import { FirestorePaths } from "../../firestore.routes";
 
 @Injectable({ providedIn: 'root' })
 export class SchedulesService {
@@ -34,11 +35,7 @@ export class SchedulesService {
   private dialog = inject(MatDialog);
   private router = inject(Router);
 
-  private readonly collectionName = 'schedules';
-
-  get timestamp() {
-    return this.db.timestamp;
-  }
+  private readonly collectionName = FirestorePaths.schedules;
 
   getByUser$(userId: string): Observable<ReadSchedule[]> {
     return this.db.colQuery$<ReadSchedule>(

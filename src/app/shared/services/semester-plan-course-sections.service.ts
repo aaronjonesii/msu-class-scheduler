@@ -11,6 +11,7 @@ import {
   ConfirmDialogComponent,
   ConfirmDialogContract
 } from "../components/confirm-dialog/confirm-dialog.component";
+import { FirestorePaths } from "../../firestore.routes";
 
 @Injectable({
   providedIn: 'root'
@@ -20,11 +21,11 @@ export class SemesterPlanCourseSectionsService {
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
 
-  private readonly semesterPlansCollectionName = 'semester-plans';
+  private readonly semesterPlansCollectionName = FirestorePaths.semesterPlans;
   private readonly coursesCollectionName = (semesterPlanId: string) =>
-    `${this.semesterPlansCollectionName}/${semesterPlanId}/courses`;
+    FirestorePaths.semesterPlanCourses(semesterPlanId);
   private readonly sectionsCollectionName = (semesterPlanId: string, courseId: string) =>
-    `${this.coursesCollectionName(semesterPlanId)}/${courseId}/sections`;
+    FirestorePaths.semesterPlanCourseSections(semesterPlanId, courseId);
 
   getAll$(semesterPlanId: string, courseId: string) {
     return this.db.col$<ReadCourseSection>(

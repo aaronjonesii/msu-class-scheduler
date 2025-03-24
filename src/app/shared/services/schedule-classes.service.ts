@@ -11,6 +11,7 @@ import {
   ScheduleClassFormDialogContract
 } from "../dialogs/schedule-class-form-dialog/schedule-class-form-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
+import { FirestorePaths } from "../../firestore.routes";
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleClassesService {
@@ -18,9 +19,11 @@ export class ScheduleClassesService {
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
 
-  private readonly schedulesCollectionName = 'schedules';
+  private readonly schedulesCollectionName = FirestorePaths.schedules;
   private readonly classesCollectionName = (scheduleId: string) =>
     `${this.schedulesCollectionName}/${scheduleId}/classes`;
+  // private readonly classesCollectionName = (scheduleId: string) =>
+  //   FirestorePaths.scheduleCourses(scheduleId);
 
   getAll$(scheduleId: string) {
     return this.db.col$<ReadScheduleClass>(

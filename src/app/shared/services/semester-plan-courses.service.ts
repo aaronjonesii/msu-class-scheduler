@@ -8,6 +8,7 @@ import {
   SemesterPlanCourseFormDialogComponent,
   SemesterPlanCourseFormDialogContract
 } from '../dialogs/semester-plan-course-form-dialog/semester-plan-course-form-dialog.component';
+import { FirestorePaths } from "../../firestore.routes";
 
 @Injectable({ providedIn: 'root' })
 export class SemesterPlanCoursesService {
@@ -15,9 +16,8 @@ export class SemesterPlanCoursesService {
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
 
-  private readonly semesterPlansCollectionName = 'semester-plans';
-  private readonly coursesCollectionName = (semesterPlanId: string) =>
-    `${this.semesterPlansCollectionName}/${semesterPlanId}/courses`;
+  private readonly semesterPlansCollectionName = FirestorePaths.semesterPlans;
+  private readonly coursesCollectionName = (semesterPlanId: string) => FirestorePaths.semesterPlanCourses(semesterPlanId)
 
   getAll$(semesterPlanId: string) {
     return this.db.col$<ReadCourse>(
