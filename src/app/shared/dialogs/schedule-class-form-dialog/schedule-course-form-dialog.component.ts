@@ -11,35 +11,35 @@ import {
   MatDialogTitle
 } from "@angular/material/dialog";
 import { MatButton } from "@angular/material/button";
-import { ScheduleClassForm } from "../../forms/schedule-class-form";
+import { ScheduleCourseForm } from "../../forms/schedule-course-form";
 import {
-  ScheduleClassFormComponent
-} from "../../components/schedule-class-form/schedule-class-form.component";
-import { ReadScheduleClass } from "../../interfaces/schedule-class";
+  ScheduleCourseFormComponent
+} from "../../components/schedule-class-form/schedule-course-form.component";
+import { ReadScheduleCourse } from "../../interfaces/schedule-course";
 
 export interface ScheduleClassFormDialogContract {
-  scheduleClass?: ReadScheduleClass,
+  scheduleClass?: ReadScheduleCourse,
 }
 
 @Component({
-  selector: 'csb-schedule-class-form-dialog',
+  selector: 'csb-schedule-course-form-dialog',
   standalone: true,
   imports: [
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    ScheduleClassFormComponent,
+    ScheduleCourseFormComponent,
     MatDialogClose
   ],
-  templateUrl: './schedule-class-form-dialog.component.html',
-  styleUrl: './schedule-class-form-dialog.component.scss',
+  templateUrl: './schedule-course-form-dialog.component.html',
+  styleUrl: './schedule-course-form-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScheduleClassFormDialogComponent implements OnInit {
+export class ScheduleCourseFormDialogComponent implements OnInit {
   private contract = inject<ScheduleClassFormDialogContract>(MAT_DIALOG_DATA);
 
-  scheduleClassForm = signal(new ScheduleClassForm());
+  scheduleClassForm = signal(new ScheduleCourseForm());
 
   editing = signal(false);
 
@@ -49,7 +49,7 @@ export class ScheduleClassFormDialogComponent implements OnInit {
     this.editing.set(true);
 
     this.scheduleClassForm.set(
-      new ScheduleClassForm(this.contract.scheduleClass),
+      new ScheduleCourseForm(this.contract.scheduleClass),
     );
   }
 }

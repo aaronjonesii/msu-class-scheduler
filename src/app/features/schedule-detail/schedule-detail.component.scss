@@ -22,10 +22,10 @@
   border-radius: var(--border-radius);
 }
 
-.classes {
+.courses {
   @include flexCol();
 }
-.classes .header {
+.courses .header {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;

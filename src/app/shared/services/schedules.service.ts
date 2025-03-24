@@ -13,11 +13,11 @@ import {
 } from "rxjs";
 import {
   ReadSchedule,
-  ReadScheduleWithClasses,
+  ReadScheduleWithCourses,
   Schedule,
   WriteSchedule
 } from "../interfaces/schedule";
-import { ReadScheduleClass } from "../interfaces/schedule-class";
+import { ReadScheduleCourse } from "../interfaces/schedule-course";
 import {
   ScheduleFormDialogComponent,
   ScheduleFormDialogContract
@@ -36,6 +36,7 @@ export class SchedulesService {
   private router = inject(Router);
 
   private readonly collectionName = FirestorePaths.schedules;
+  private readonly coursesCollectionName = (scheduleId: string) => FirestorePaths.scheduleCourses(scheduleId);
 
   getByUser$(userId: string): Observable<ReadSchedule[]> {
     return this.db.colQuery$<ReadSchedule>(
@@ -51,11 +52,11 @@ export class SchedulesService {
     );
   }
 
-  getByUserWithClasses$(userId: string): Observable<ReadScheduleWithClasses[]> {
+  getByUserWithCourses$(userId: string): Observable<ReadScheduleWithCourses[]> {
     return this.getByUser$(userId).pipe(
       switchMap((schedules: ReadSchedule[]) => {
         return from(schedules).pipe(
-          mergeMap((s) => this.getScheduleWithClasses$(s)),
+          mergeMap((s) => this.getScheduleWithCourses$(s)),
           take(schedules.length),
           toArray(),
         );
@@ -63,26 +64,26 @@ export class SchedulesService {
     );
   }
 
-  getScheduleWithClasses$(schedule: ReadSchedule): Observable<ReadScheduleWithClasses> {
+  getScheduleWithCourses$(schedule: ReadSchedule): Observable<ReadScheduleWithCourses> {
     return of(schedule).pipe(
       switchMap((s) => {
-        return combineLatest([of(s), this.getScheduleClasses$(s.id)]).pipe(
-          map(([schedule, scheduleClasses]) => {
-            return { ...schedule, classes: scheduleClasses };
+        return combineLatest([of(s), this.getScheduleCourses$(s.id)]).pipe(
+          map(([schedule, scheduleCourses]) => {
+            return { ...schedule, courses: scheduleCourses };
           }),
         );
       }),
     );
   }
 
-  getScheduleClasses$(scheduleId: string) {
-    return this.db.col$<ReadScheduleClass>(
-      `${this.collectionName}/${scheduleId}/classes`,
+  getScheduleCourses$(scheduleId: string) {
+    return this.db.col$<ReadScheduleCourse>(
+      this.coursesCollectionName(scheduleId),
       { idField: 'id' },
     ).pipe(
       catchError((error: unknown) => {
         this.logger.error(
-          `Error getting classes for schedule: ${scheduleId}`,
+          `Error getting courses for schedule: ${scheduleId}`,
           error,
         );
 
@@ -126,11 +127,11 @@ export class SchedulesService {
 
       batch.delete(scheduleRef);
 
-      const scheduleClassesQuery =
-        await this.db.colSnap(`${this.collectionName}/${id}/classes`);
+      const scheduleCoursesQuery =
+        await this.db.colSnap(this.coursesCollectionName(id));
 
-      if (!scheduleClassesQuery.empty) {
-        scheduleClassesQuery.docs.map((d) => batch.delete(d.ref));
+      if (!scheduleCoursesQuery.empty) {
+        scheduleCoursesQuery.docs.map((d) => batch.delete(d.ref));
       }
     }).then(() => true)
       .catch((error: unknown) => {

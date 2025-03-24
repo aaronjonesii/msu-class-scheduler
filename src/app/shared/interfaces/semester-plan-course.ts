@@ -1,6 +1,6 @@
 import {
-  ScheduleClassMeeting,
-} from "./schedule-class-meeting";
+  ScheduleCourseMeeting,
+} from "./schedule-course-meeting";
 import { DateTime } from "./date-time";
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
 import { Color } from "../enums/color";
@@ -42,5 +42,5 @@ export interface SemesterPlanCourseSection {
   id: string,
   startDate?: DateTime | null,
   endDate?: DateTime | null,
-  meetings: ScheduleClassMeeting[],
+  meetings: ScheduleCourseMeeting[],
 }

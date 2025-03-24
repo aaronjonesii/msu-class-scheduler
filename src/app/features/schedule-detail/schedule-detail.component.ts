@@ -12,19 +12,15 @@ import { MatIcon } from "@angular/material/icon";
 import { appRoutes } from "../../app.routes";
 import { MatDialog } from "@angular/material/dialog";
 import {
-  ScheduleClassFormDialogComponent,
-} from "../../shared/dialogs/schedule-class-form-dialog/schedule-class-form-dialog.component";
-import {
-  ReadScheduleClass,
-  ScheduleClass
-} from "../../shared/interfaces/schedule-class";
+  ReadScheduleCourse,
+} from "../../shared/interfaces/schedule-course";
 import { DatePipe, DOCUMENT } from "@angular/common";
 import {
-  ScheduleClassesService
-} from "../../shared/services/schedule-classes.service";
+  ScheduleCoursesService
+} from "../../shared/services/schedule-courses.service";
 import {
-  ScheduleClassesListComponent
-} from "../../shared/components/schedule-classes-list/schedule-classes-list.component";
+  ScheduleCoursesListComponent
+} from "../../shared/components/schedule-classes-list/schedule-courses-list.component";
 import { LoggerService } from "../../shared/services/logger.service";
 import {
   ConfirmDialogComponent, ConfirmDialogContract
@@ -49,7 +45,7 @@ import { scrollToElementId } from '../../shared/utils/scroll-to-element';
     RouterLink,
     MatIcon,
     MatButton,
-    ScheduleClassesListComponent,
+    ScheduleCoursesListComponent,
     SkeletonComponent,
     ScheduleGridViewComponent,
     DateAgoPipe,
@@ -66,7 +62,7 @@ import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 })
 export class ScheduleDetailComponent {
   private schedulesService = inject(SchedulesService);
-  private scheduleClassesService = inject(ScheduleClassesService);
+  private scheduleCoursesService = inject(ScheduleCoursesService);
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
   private document = inject(DOCUMENT);
@@ -88,60 +84,47 @@ export class ScheduleDetailComponent {
     ),
   );
 
-  scheduleClasses = toSignal(
+  scheduleCourses = toSignal(
     toObservable(this.scheduleId).pipe(
       switchMap((scheduleId) => {
-        return scheduleId ? this.scheduleClassesService.getAll$(scheduleId) : of(null);
+        return scheduleId ? this.scheduleCoursesService.getAll$(scheduleId) : of(null);
       }),
     ),
   );
 
-  scheduleClassesEffect = effect(() => {
-    const classIds = this.scheduleClasses()?.map((c) => c.id);
+  scheduleCoursesEffect = effect(() => {
+    const courseIds = this.scheduleCourses()?.map((c) => c.id);
 
-    return this.shownClasses.set(classIds || []);
+    return this.shownCourses.set(courseIds || []);
   }, { allowSignalWrites: true });
 
-  shownClasses = signal<string[]>([]);
+  shownCourses = signal<string[]>([]);
 
-  scheduleClassesCredits = computed(() => {
-    return this.scheduleClasses()
+  scheduleCoursesCredits = computed(() => {
+    return this.scheduleCourses()
       ?.reduce((acc, c) => acc + (c.credits || 0), 0);
   });
 
   @Input()
   set id(scheduleId: string) { this.scheduleId.set(scheduleId); }
 
-  addClass() {
-    const dialogRef = this.dialog.open(
-      ScheduleClassFormDialogComponent,
-      {
-        id: 'add-schedule-class-form-dialog',
-        width: '100%',
-        maxWidth: '600px',
-      },
-    );
-
-    dialogRef.afterClosed().pipe(first()).forEach(async (scheduleClass?: ScheduleClass) => {
-      if (!scheduleClass) return;
-
-      const scheduleId = this.scheduleId();
-
-      if (!scheduleId) return;
-
-      await this.scheduleClassesService.create(scheduleId, scheduleClass);
-    });
-  }
-
-  editScheduleClass(scheduleClass: ReadScheduleClass) {
+  addCourse() {
     const scheduleId = this.scheduleId();
 
     if (!scheduleId) return;
 
-    this.scheduleClassesService.openEditScheduleClassDialog(scheduleId, scheduleClass);
+    this.scheduleCoursesService.openAddScheduleCourseDialog(scheduleId);
   }
 
-  async deleteScheduleClass(classId: string) {
+  editScheduleCourse(scheduleCourse: ReadScheduleCourse) {
+    const scheduleId = this.scheduleId();
+
+    if (!scheduleId) return;
+
+    this.scheduleCoursesService.openEditScheduleCourseDialog(scheduleId, scheduleCourse);
+  }
+
+  async deleteScheduleCourse(courseId: string) {
     const scheduleId = this.scheduleId();
 
     if (!scheduleId) return;
@@ -149,9 +132,9 @@ export class ScheduleDetailComponent {
     const dialogRef = this.dialog.open(
       ConfirmDialogComponent,
       {
-        id: 'confirm-delete-schedule-class-dialog',
+        id: 'confirm-delete-schedule-course-dialog',
         data: {
-          title: 'Are you sure you want to delete this class?'
+          title: 'Are you sure you want to delete this course?'
         } as ConfirmDialogContract,
       },
     );
@@ -159,9 +142,9 @@ export class ScheduleDetailComponent {
     dialogRef.afterClosed().pipe(first()).forEach(async (confirm: boolean) => {
       if (!confirm) return;
 
-      await this.scheduleClassesService.delete(scheduleId, classId)
+      await this.scheduleCoursesService.delete(scheduleId, courseId)
         .then((success) => {
-          if (success) this.logger.log('Deleted schedule class');
+          if (success) this.logger.log('Deleted schedule course');
         });
     });
   }

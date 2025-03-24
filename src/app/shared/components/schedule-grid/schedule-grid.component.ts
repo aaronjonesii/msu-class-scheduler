@@ -7,24 +7,24 @@ import {
 import { Day } from "../../enums/day";
 import { NgClass, NgStyle } from "@angular/common";
 import {
-  ReadScheduleClass,
-} from "../../interfaces/schedule-class";
+  ReadScheduleCourse,
+} from "../../interfaces/schedule-course";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
 import { dateDifference } from "../../utils/date-difference";
 import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
-import { ScheduleClassStatus } from "../../enums/schedule-class-status";
+import { ScheduleCourseStatus } from "../../enums/schedule-course-status";
 import { MatChip } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
-import { ScheduleClassMeeting } from '../../interfaces/schedule-class-meeting';
+import { ScheduleCourseMeeting } from '../../interfaces/schedule-course-meeting';
 
 export interface GridTile {
   id: string,
   name: string,
   times?: string,
   color: Color,
-  meeting?: ScheduleClassMeeting,
-  scheduleClass?: ReadScheduleClass,
+  meeting?: ScheduleCourseMeeting,
+  scheduleClass?: ReadScheduleCourse,
   styles: {
     gridColumnStart: number,
     gridColumnEnd: number,
@@ -50,7 +50,7 @@ export interface GridTimes {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleGridComponent {
-  protected readonly ScheduleClassStatus = ScheduleClassStatus;
+  protected readonly ScheduleClassStatus = ScheduleCourseStatus;
 
   @HostBinding('style.gridTemplateColumns')
   get gridTemplateColumns() {
@@ -72,7 +72,7 @@ export class ScheduleGridComponent {
 
   times = input<GridTimes>({start: '08:00', end: '21:00'});
 
-  scheduleClasses = input<ReadScheduleClass[]>([]);
+  scheduleClasses = input<ReadScheduleCourse[]>([]);
 
   shownClasses = model<string[]>([]);
 
@@ -82,7 +82,7 @@ export class ScheduleGridComponent {
 
   timeSlotIncrement = input(60);
 
-  readonly classClicked = output<ReadScheduleClass>();
+  readonly classClicked = output<ReadScheduleCourse>();
 
   dayTiles = computed<GridTile[]>(() => {
     return this.days().map((day, i) => {

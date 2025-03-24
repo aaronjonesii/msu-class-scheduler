@@ -27,33 +27,33 @@
 
   <p class="schedule-description">{{ schedule?.description }}</p>
 
-  <div class="classes-chips">
-    <label for="schedule-classes-chips">
-      Classes - {{ scheduleClassesCredits() }} credits
+  <div class="courses-chips">
+    <label for="schedule-courses-chips">
+      Courses - {{ scheduleCoursesCredits() }} credits
     </label>
 
     <mat-chip-set
-      id="schedule-classes-chips"
-      aria-label="Schedule classes selection"
+      id="schedule-courses-chips"
+      aria-label="Schedule courses selection"
     >
-      @for (scheduleClass of scheduleClasses(); track scheduleClass) {
+      @for (scheduleCourse of scheduleCourses(); track scheduleCourse) {
       <mat-chip
         class="cursor-pointer"
         [highlighted]="true"
-        [matTooltip]="scheduleClass.name"
-        [class]="scheduleClass.color | colorToClass : 'chip'"
-        (click)="scrollToElementId(scheduleClass.id)"
+        [matTooltip]="scheduleCourse.name"
+        [class]="scheduleCourse.color | colorToClass : 'chip'"
+        (click)="scrollToElementId(scheduleCourse.id)"
       >
-        @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
-        {{ scheduleClass.subjectCode }} {{ scheduleClass.courseNumber }}
+        @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+        {{ scheduleCourse.subjectCode }} {{ scheduleCourse.courseNumber }}
         } @else {
-        {{ scheduleClass.name }}
-        } - {{ scheduleClass.credits || 0 }}
-        {{ scheduleClass?.credits === 1 ? "credit" : "credits" }}
+        {{ scheduleCourse.name }}
+        } - {{ scheduleCourse.credits || 0 }}
+        {{ scheduleCourse?.credits === 1 ? "credit" : "credits" }}
       </mat-chip>
       }
 
-      <mat-chip (click)="addClass()"> Add new class </mat-chip>
+      <mat-chip (click)="addCourse()"> Add new course </mat-chip>
     </mat-chip-set>
   </div>
 
@@ -65,26 +65,26 @@
   <div class="created">Created on {{ schedule.created?.toDate() | date }}</div>
 </section>
 
-<section class="classes">
+<section class="courses">
   <div class="header">
-    <h4 class="title">Classes</h4>
+    <h4 class="title">Courses</h4>
 
-    <button mat-button type="button" id="add-class-btn" (click)="addClass()">
+    <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
       <mat-icon matButtonIcon fontIcon="add" />
-      Class
+      Course
     </button>
   </div>
 
-  <csb-schedule-classes-list
-    [scheduleClasses]="scheduleClasses()"
-    (editScheduleClass)="editScheduleClass($event)"
-    (deleteScheduleClass)="deleteScheduleClass($event)"
+  <csb-schedule-courses-list
+    [scheduleCourses]="scheduleCourses()"
+    (editScheduleCourse)="editScheduleCourse($event)"
+    (deleteScheduleCourse)="deleteScheduleCourse($event)"
   />
 </section>
 
 <csb-schedule-grid-view
-  [scheduleClasses]="scheduleClasses()"
-  [(shownClasses)]="shownClasses"
+  [scheduleClasses]="scheduleCourses()"
+  [(shownClasses)]="shownCourses"
   (classClicked)="scrollToElementId($event.id)"
 />
 } @else {
@@ -137,14 +137,14 @@
   </div>
 </section>
 
-<section class="classes">
+<section class="courses">
   <div class="header">
-    <h4 class="title">Classes</h4>
+    <h4 class="title">Courses</h4>
 
     <csb-skeleton [styles]="{ width: '100%', maxWidth: '100px' }" />
   </div>
 
-  <csb-schedule-classes-list [scheduleClasses]="[]" />
+  <csb-schedule-courses-list [scheduleCourses]="[]" />
 </section>
 
 <csb-schedule-grid-view [scheduleClasses]="[]" />

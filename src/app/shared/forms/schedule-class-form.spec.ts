@@ -1,7 +1,7 @@
-import { ScheduleClassForm } from './schedule-class-form';
+import { ScheduleCourseForm } from './schedule-course-form';
 
 describe('ScheduleClassForm', () => {
   it('should create an instance', () => {
-    expect(new ScheduleClassForm()).toBeTruthy();
+    expect(new ScheduleCourseForm()).toBeTruthy();
   });
 });

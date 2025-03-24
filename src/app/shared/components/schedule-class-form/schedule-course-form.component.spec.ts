@@ -1,21 +1,21 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ScheduleClassFormComponent } from './schedule-class-form.component';
+import { ScheduleCourseFormComponent } from './schedule-course-form.component';
 import { provideAnimations } from "@angular/platform-browser/animations";
 
 describe('ScheduleClassFormComponent', () => {
-  let component: ScheduleClassFormComponent;
-  let fixture: ComponentFixture<ScheduleClassFormComponent>;
+  let component: ScheduleCourseFormComponent;
+  let fixture: ComponentFixture<ScheduleCourseFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScheduleClassFormComponent],
+      imports: [ScheduleCourseFormComponent],
       providers: [
         provideAnimations(),
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ScheduleClassFormComponent);
+    fixture = TestBed.createComponent(ScheduleCourseFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

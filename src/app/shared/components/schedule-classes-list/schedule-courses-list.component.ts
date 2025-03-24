@@ -4,44 +4,41 @@ import {
   input,
   output
 } from '@angular/core';
-import { ReadScheduleClass } from "../../interfaces/schedule-class";
+import { ReadScheduleCourse } from "../../interfaces/schedule-course";
 import {
-  MatList,
   MatListItem, MatListItemLine,
   MatListItemMeta,
   MatListItemTitle
 } from "@angular/material/list";
 import { TimePipe } from "../../pipes/time.pipe";
-import { MatAnchor, MatButton, MatIconButton } from "@angular/material/button";
-import { MatIcon } from "@angular/material/icon";
+import { MatAnchor, MatButton } from "@angular/material/button";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
 import {
   MatCardModule,
 } from "@angular/material/card";
-import { MatBadge } from "@angular/material/badge";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 
 @Component({
-  selector: 'csb-schedule-classes-list',
+  selector: 'csb-schedule-courses-list',
   standalone: true,
   imports: [
-    MatList, MatListItem, TimePipe,
-    MatIconButton, MatIcon, MatListItemTitle,
+    MatListItem, TimePipe,
+    MatListItemTitle,
     MatListItemLine, SkeletonComponent, MatListItemMeta,
-    MatCardModule, MatBadge, MatButton, ColorToClassPipe, MatAnchor,
+    MatCardModule, MatButton, ColorToClassPipe, MatAnchor,
   ],
-  templateUrl: './schedule-classes-list.component.html',
-  styleUrl: './schedule-classes-list.component.scss',
+  templateUrl: './schedule-courses-list.component.html',
+  styleUrl: './schedule-courses-list.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScheduleClassesListComponent {
-  scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
+export class ScheduleCoursesListComponent {
+  scheduleCourses = input<ReadScheduleCourse[] | null | undefined>(null);
 
-  readonly editScheduleClass = output<ReadScheduleClass>();
+  readonly editScheduleCourse = output<ReadScheduleCourse>();
 
-  readonly deleteScheduleClass = output<string>();
+  readonly deleteScheduleCourse = output<string>();
 
-  msuCourseLink = (scheduleClass: ReadScheduleClass) => {
+  msuCourseLink = (scheduleCourse: ReadScheduleCourse) => {
     const today = new Date();
 
     const currentMonth = today.getMonth() + 1; // Months are 0-indexed
@@ -62,6 +59,6 @@ export class ScheduleClassesListComponent {
       }
     }
 
-    return `https://reg.msu.edu/courses/search.aspx?Term=${term}&SubjectCode=${scheduleClass.subjectCode?.toUpperCase()}&CourseNumber=${scheduleClass.courseNumber}#Results`;
+    return `https://reg.msu.edu/courses/search.aspx?Term=${term}&SubjectCode=${scheduleCourse.subjectCode?.toUpperCase()}&CourseNumber=${scheduleCourse.courseNumber}#Results`;
   };
 }

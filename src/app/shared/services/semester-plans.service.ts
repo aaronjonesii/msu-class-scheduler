@@ -8,7 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { SemesterPlanFormDialogComponent, SemesterPlanFormDialogContract } from '../dialogs/semester-plan-form-dialog/semester-plan-form-dialog.component';
 import { appRoutes } from '../../app.routes';
 import { Router } from '@angular/router';
-import { ReadScheduleClass } from '../interfaces/schedule-class';
+import { ReadScheduleCourse } from '../interfaces/schedule-course';
 import { SemesterTerm } from "../enums/semester-term";
 import { FirestorePaths } from "../../firestore.routes";
 
@@ -60,7 +60,7 @@ export class SemesterPlansService {
   }
 
   getSemesterPlanClasses$(semseterPlanId: string) {
-    return this.db.col$<ReadScheduleClass>(
+    return this.db.col$<ReadScheduleCourse>(
       `${this.semesterPlansCollectionName}/${semseterPlanId}/courses`,
       { idField: 'id' },
     ).pipe(

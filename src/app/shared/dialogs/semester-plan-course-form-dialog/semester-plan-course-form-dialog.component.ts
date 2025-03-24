@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ScheduleClassFormComponent } from '../../components/schedule-class-form/schedule-class-form.component';
+import { ScheduleCourseFormComponent } from '../../components/schedule-class-form/schedule-course-form.component';
 import { CourseForm } from '../../forms/course-form';
 import { ReadCourse } from '../../interfaces/course';
 import { CourseFormComponent } from '../../components/course-form/course-form.component';
@@ -21,7 +21,7 @@ export interface SemesterPlanCourseFormDialogContract {
     MatDialogContent,
     MatDialogActions,
     MatButton,
-    ScheduleClassFormComponent,
+    ScheduleCourseFormComponent,
     MatDialogClose,
     CourseFormComponent,
   ],

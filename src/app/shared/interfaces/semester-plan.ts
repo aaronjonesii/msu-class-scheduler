@@ -1,5 +1,5 @@
 import { DateTime, ReadDateTime, WriteDateTime } from "./date-time";
-import { ReadScheduleClass, ScheduleClass } from "./schedule-class";
+import { ReadScheduleCourse, ScheduleCourse } from "./schedule-course";
 import { SemesterTerm } from "../enums/semester-term";
 
 export interface SemesterPlan {
@@ -9,7 +9,7 @@ export interface SemesterPlan {
   description: string | null,
   year: number,
   term: SemesterTerm,
-  classes?: ScheduleClass[],
+  classes?: ScheduleCourse[],
   created?: DateTime,
   updated?: DateTime,
 }
@@ -28,5 +28,5 @@ export interface ReadSemesterPlan extends SemesterPlan {
 }
 
 export interface ReadSemesterPlanWithClasses extends ReadSemesterPlan {
-  classes: ReadScheduleClass[],
+  classes: ReadScheduleCourse[],
 }

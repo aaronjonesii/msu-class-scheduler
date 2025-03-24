@@ -18,9 +18,9 @@ service cloud.firestore {
       allow create, update: if isSignedIn() && hasRsc(request.resource) && request.resource.data.userId == request.auth.uid;
       allow delete: if isSignedIn() && get(/databases/$(database)/documents/schedules/$(scheduleId)).data.userId == request.auth.uid;
 
-      // schedule classes collection
-      match /classes/{classId} {
-        // schedule classes functions
+      // schedule courses collection
+      match /courses/{courseId} {
+        // schedule courses functions
         function isUserSchedule() {
           return get(/databases/$(database)/documents/schedules/$(scheduleId)).data.userId == request.auth.uid;
         }
@@ -47,7 +47,7 @@ service cloud.firestore {
 
       // semester plan courses collection
       match /courses/{courseId} {
-        // semester plan classes functions
+        // semester plan courses functions
         function isUserSemesterPlan() {
           return isSignedIn() && semesterPlanUserId() == request.auth.uid;
         }

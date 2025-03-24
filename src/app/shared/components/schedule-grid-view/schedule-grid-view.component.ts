@@ -5,7 +5,7 @@ import {
   output,
   signal
 } from '@angular/core';
-import { ReadScheduleClass } from "../../interfaces/schedule-class";
+import { ReadScheduleCourse } from "../../interfaces/schedule-course";
 import { Day } from "../../enums/day";
 import { FormsModule } from "@angular/forms";
 import { KeyValuePipe } from "@angular/common";
@@ -56,11 +56,11 @@ import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 export class ScheduleGridViewComponent {
   protected readonly Day = Day;
 
-  scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
+  scheduleClasses = input<ReadScheduleCourse[] | null | undefined>(null);
 
   shownClasses = model<string[]>([]);
 
-  readonly classClicked = output<ReadScheduleClass>();
+  readonly classClicked = output<ReadScheduleCourse>();
 
   timeSlotIncrement = signal(60);
 

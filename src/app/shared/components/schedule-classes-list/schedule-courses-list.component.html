@@ -1,27 +1,27 @@
-@defer (when !!scheduleClasses()) {
-  @for (scheduleClass of scheduleClasses(); track scheduleClass.id) {
-    <mat-card [id]="scheduleClass.id"
-              [class]="scheduleClass.color | colorToClass: 'card'">
+@defer (when !!scheduleCourses()) {
+  @for (scheduleCourse of scheduleCourses(); track scheduleCourse.id) {
+    <mat-card [id]="scheduleCourse.id"
+              [class]="scheduleCourse.color | colorToClass: 'card'">
       <div class="badge secondary-card">
-        {{scheduleClass.credits || 0}} credits
+        {{scheduleCourse.credits || 0}} credits
       </div>
 
       <mat-card-header>
         <mat-card-title-group>
           <mat-card-title>
-            @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
-              {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+            @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+              {{scheduleCourse.subjectCode}} {{scheduleCourse.courseNumber}}
               -
             }
-            {{scheduleClass.name}}
+            {{scheduleCourse.name}}
           </mat-card-title>
 
-          <mat-card-subtitle>{{scheduleClass.description}}</mat-card-subtitle>
+          <mat-card-subtitle>{{scheduleCourse.description}}</mat-card-subtitle>
         </mat-card-title-group>
       </mat-card-header>
 
       <mat-card-content>
-        @for (meeting of scheduleClass.meetings; track meeting.type) {
+        @for (meeting of scheduleCourse.meetings; track meeting.type) {
           <div class="meeting-time">
             {{meeting.type}}
             -
@@ -33,16 +33,16 @@
           </div>
         }
 
-        <div class="status">{{scheduleClass.status}}</div>
+        <div class="status">{{scheduleCourse.status}}</div>
 
-        <div class="notes">{{scheduleClass?.notes}}</div>
+        <div class="notes">{{scheduleCourse?.notes}}</div>
       </mat-card-content>
 
       <mat-card-actions>
         <div>
-          @if (!scheduleClass?.isNotMSUCourse) {
+          @if (!scheduleCourse?.isNotMSUCourse) {
             <a mat-button type="button" class="secondary-button" target="_blank"
-               [href]="msuCourseLink(scheduleClass)">
+               [href]="msuCourseLink(scheduleCourse)">
               View on MSU
             </a>
           }
@@ -50,12 +50,12 @@
 
         <div>
           <button mat-button type="button" class="primary-button"
-                  (click)="editScheduleClass.emit(scheduleClass)">
+                  (click)="editScheduleCourse.emit(scheduleCourse)">
             Edit
           </button>
 
           <button mat-button type="button" class="error-button"
-                  (click)="deleteScheduleClass.emit(scheduleClass.id)">
+                  (click)="deleteScheduleCourse.emit(scheduleCourse.id)">
             Delete
           </button>
         </div>

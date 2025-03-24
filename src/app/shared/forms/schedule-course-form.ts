@@ -1,9 +1,9 @@
 import { FormArray, FormControl, FormGroup, Validators } from "@angular/forms";
-import { ReadScheduleClass } from "../interfaces/schedule-class";
-import { ScheduleClassStatus } from "../enums/schedule-class-status";
+import { ReadScheduleCourse } from "../interfaces/schedule-course";
+import { ScheduleCourseStatus } from "../enums/schedule-course-status";
 import { ScheduleClassFormGroup } from "../interfaces/schedule-class-form";
 import { Timestamp } from "@angular/fire/firestore";
-import { ScheduleClassMeetingType } from "../enums/schedule-class-meeting-type";
+import { ScheduleCourseMeetingType } from "../enums/schedule-course-meeting-type";
 import {
   ScheduleClassMeetingFormGroup
 } from "../interfaces/schedule-class-meeting-form";
@@ -11,16 +11,16 @@ import {
   ScheduleClassMeetingTimesFormGroup
 } from "../interfaces/schedule-class-meeting-times-form-group";
 import {
-  ScheduleClassMeetingTime
-} from "../interfaces/schedule-class-meeting-time";
+  ScheduleCourseMeetingTime
+} from "../interfaces/schedule-course-meeting-time";
 import { Day } from "../enums/day";
-import { ScheduleClassMeeting } from "../interfaces/schedule-class-meeting";
+import { ScheduleCourseMeeting } from "../interfaces/schedule-course-meeting";
 import { DefaultColor } from "../enums/color";
 
-export class ScheduleClassForm {
+export class ScheduleCourseForm {
   formGroup: FormGroup<ScheduleClassFormGroup>;
 
-  constructor(scheduleClass?: ReadScheduleClass | null) {
+  constructor(scheduleClass?: ReadScheduleCourse | null) {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
@@ -58,9 +58,9 @@ export class ScheduleClassForm {
   get meetings() {
     if (!this.meetingsFormArray.value.length) return [];
 
-    const meetings: ScheduleClassMeeting[] = this.meetingsFormArray.value
+    const meetings: ScheduleCourseMeeting[] = this.meetingsFormArray.value
       .map((m) => {
-        const meetingTimes: ScheduleClassMeetingTime[] = m.meetingTimes?.map((mt) => {
+        const meetingTimes: ScheduleCourseMeetingTime[] = m.meetingTimes?.map((mt) => {
           return {
             days: mt.days as Day[],
             startTime: mt.startTime as string,
@@ -69,7 +69,7 @@ export class ScheduleClassForm {
         }) || [];
 
         return {
-          type: m?.type || ScheduleClassMeetingType.RECITATION,
+          type: m?.type || ScheduleCourseMeetingType.RECITATION,
           location: m?.location || null,
           instructor: m?.instructor || null,
           meetingTimes,
@@ -128,7 +128,7 @@ export class ScheduleClassForm {
     return this.creditsCtrl.value;
   }
 
-  get scheduleClass(): ReadScheduleClass {
+  get scheduleClass(): ReadScheduleCourse {
     return {
       id: this.id || '',
       name: this.name,
@@ -145,11 +145,11 @@ export class ScheduleClassForm {
     };
   }
 
-  updateForm(scheduleClass?: ReadScheduleClass | null) {
+  updateForm(scheduleClass?: ReadScheduleCourse | null) {
     this.formGroup = this._buildForm(scheduleClass);
   }
 
-  newMeetingFormGroup(scheduleClassMeeting?: ScheduleClassMeeting) {
+  newMeetingFormGroup(scheduleClassMeeting?: ScheduleCourseMeeting) {
     const meetingTimesFormArray = new FormArray<FormGroup<ScheduleClassMeetingTimesFormGroup>>(
       scheduleClassMeeting?.meetingTimes ?
         scheduleClassMeeting.meetingTimes
@@ -158,7 +158,7 @@ export class ScheduleClassForm {
 
     return new FormGroup<ScheduleClassMeetingFormGroup>({
       type: new FormControl(
-        scheduleClassMeeting?.type || ScheduleClassMeetingType.LECTURE,
+        scheduleClassMeeting?.type || ScheduleCourseMeetingType.LECTURE,
         { nonNullable: true, validators: Validators.required },
       ),
       location: new FormControl(scheduleClassMeeting?.location || null),
@@ -167,7 +167,7 @@ export class ScheduleClassForm {
     });
   }
 
-  newMeetingTimeFormGroup(meetingTime?: ScheduleClassMeetingTime) {
+  newMeetingTimeFormGroup(meetingTime?: ScheduleCourseMeetingTime) {
     return new FormGroup<ScheduleClassMeetingTimesFormGroup>({
       days: new FormControl(
         meetingTime?.days || [],
@@ -184,7 +184,7 @@ export class ScheduleClassForm {
     });
   }
 
-  private _buildForm(scheduleClass?: ReadScheduleClass | null) {
+  private _buildForm(scheduleClass?: ReadScheduleCourse | null) {
     const meetingsFormArray =
       new FormArray<FormGroup<ScheduleClassMeetingFormGroup>>(
         scheduleClass?.meetings ?
@@ -200,7 +200,7 @@ export class ScheduleClassForm {
       ),
       description: new FormControl(scheduleClass?.description || null),
       status: new FormControl(
-        scheduleClass?.status || ScheduleClassStatus.OPEN,
+        scheduleClass?.status || ScheduleCourseStatus.OPEN,
         { validators: Validators.required, nonNullable: true },
       ),
       meetings: meetingsFormArray,

@@ -10,8 +10,8 @@ import {
   MatFormFieldModule
 } from "@angular/material/form-field";
 import {
-  ScheduleClassMeetingType
-} from "../../../../enums/schedule-class-meeting-type";
+  ScheduleCourseMeetingType
+} from "../../../../enums/schedule-course-meeting-type";
 import { KeyValuePipe } from "@angular/common";
 import { MatInput } from "@angular/material/input";
 import { provideNativeDateAdapter } from "@angular/material/core";
@@ -46,7 +46,7 @@ import { CourseForm } from "../../../../forms/course-form";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleClassMeetingFormComponent {
-  protected readonly ScheduleClassMeetingType = ScheduleClassMeetingType;
+  protected readonly ScheduleClassMeetingType = ScheduleCourseMeetingType;
   protected readonly Day = Day;
 
   meetingFormGroup = input(

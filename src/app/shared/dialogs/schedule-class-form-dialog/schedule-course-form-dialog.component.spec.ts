@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ScheduleClassFormDialogComponent } from './schedule-class-form-dialog.component';
+import { ScheduleCourseFormDialogComponent } from './schedule-course-form-dialog.component';
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 
 describe('ScheduleClassFormDialogComponent', () => {
-  let component: ScheduleClassFormDialogComponent;
-  let fixture: ComponentFixture<ScheduleClassFormDialogComponent>;
+  let component: ScheduleCourseFormDialogComponent;
+  let fixture: ComponentFixture<ScheduleCourseFormDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScheduleClassFormDialogComponent],
+      imports: [ScheduleCourseFormDialogComponent],
       providers: [
         {
           provide: MAT_DIALOG_DATA,
@@ -20,7 +20,7 @@ describe('ScheduleClassFormDialogComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ScheduleClassFormDialogComponent);
+    fixture = TestBed.createComponent(ScheduleCourseFormDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

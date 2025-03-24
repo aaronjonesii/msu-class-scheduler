@@ -46,7 +46,7 @@ export class ScheduleForm {
       userId: this.userId || '',
       name: this.name,
       description: this.description || null,
-      classes: [],
+      courses: [],
     };
   }
 

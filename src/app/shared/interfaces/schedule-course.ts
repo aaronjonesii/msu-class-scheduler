@@ -1,15 +1,15 @@
-import { ScheduleClassStatus } from "../enums/schedule-class-status";
+import { ScheduleCourseStatus } from "../enums/schedule-course-status";
 import {
-  ScheduleClassMeeting,
-} from "./schedule-class-meeting";
+  ScheduleCourseMeeting,
+} from "./schedule-course-meeting";
 import { DateTime } from "./date-time";
 import { FieldValue, Timestamp } from "@angular/fire/firestore";
 import { Color } from "../enums/color";
 
-export interface ScheduleClass {
+export interface ScheduleCourse {
   name: string,
-  status: ScheduleClassStatus,
-  meetings: ScheduleClassMeeting[],
+  status: ScheduleCourseStatus,
+  meetings: ScheduleCourseMeeting[],
   id?: string | null,
   subjectCode?: string | null,
   courseNumber?: number | null,
@@ -23,10 +23,10 @@ export interface ScheduleClass {
   updated?: DateTime | null,
   color?: Color | null,
   isNotMSUCourse: boolean | null,
-  sections?: ScheduleClassSection[],
+  sections?: ScheduleCourseSection[],
 }
 
-export interface ReadScheduleClass extends ScheduleClass {
+export interface ReadScheduleCourse extends ScheduleCourse {
   id: string,
   startDate?: Timestamp | null,
   endDate?: Timestamp | null,
@@ -34,16 +34,16 @@ export interface ReadScheduleClass extends ScheduleClass {
   updated?: Timestamp | null,
 }
 
-export interface WriteScheduleClass extends ScheduleClass {
+export interface WriteScheduleCourse extends ScheduleCourse {
   startDate?: FieldValue | null,
   endDate?: FieldValue | null,
   created?: FieldValue | null,
   updated?: FieldValue | null,
 }
 
-export interface ScheduleClassSection {
+export interface ScheduleCourseSection {
   id: string,
   startDate?: DateTime | null,
   endDate?: DateTime | null,
-  meetings: ScheduleClassMeeting[],
+  meetings: ScheduleCourseMeeting[],
 }

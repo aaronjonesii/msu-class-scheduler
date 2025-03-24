@@ -1,6 +1,6 @@
 import { Day } from "../enums/day";
 
-export interface ScheduleClassMeetingTime {
+export interface ScheduleCourseMeetingTime {
   days: Day[],
   startTime: string,
   endTime: string,

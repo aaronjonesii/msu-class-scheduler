@@ -56,7 +56,7 @@ export class SchedulesComponent {
   schedules = toSignal(
     this.authService.authState$().pipe(
       switchMap((user) => {
-        return user ? this.schedulesService.getByUserWithClasses$(user.uid) : of([]);
+        return user ? this.schedulesService.getByUserWithCourses$(user.uid) : of([]);
       }),
     ),
   );

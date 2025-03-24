@@ -4,7 +4,7 @@ import {
   input,
 } from '@angular/core';
 import { ReactiveFormsModule } from "@angular/forms";
-import { ScheduleClassForm } from "../../forms/schedule-class-form";
+import { ScheduleCourseForm } from "../../forms/schedule-course-form";
 import {
   MatFormFieldAppearance, MatFormFieldModule,
 } from "@angular/material/form-field";
@@ -14,7 +14,7 @@ import {
 } from "@angular/material/datepicker";
 import { MatOption, provideNativeDateAdapter } from "@angular/material/core";
 import { MatSelect, MatSelectTrigger } from "@angular/material/select";
-import { ScheduleClassStatus } from "../../enums/schedule-class-status";
+import { ScheduleCourseStatus } from "../../enums/schedule-course-status";
 import { KeyValuePipe } from "@angular/common";
 import {
   ScheduleClassMeetingsFormComponent
@@ -26,10 +26,10 @@ import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { MatCheckbox } from "@angular/material/checkbox";
 
 @Component({
-  selector: 'csb-schedule-class-form',
+  selector: 'csb-schedule-course-form',
   standalone: true,
-  templateUrl: './schedule-class-form.component.html',
-  styleUrl: './schedule-class-form.component.scss',
+  templateUrl: './schedule-course-form.component.html',
+  styleUrl: './schedule-course-form.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [provideNativeDateAdapter()],
   imports: [
@@ -40,11 +40,11 @@ import { MatCheckbox } from "@angular/material/checkbox";
     MatIcon, MatListItemIcon, MatSelectTrigger, ColorToClassPipe, MatCheckbox,
   ],
 })
-export class ScheduleClassFormComponent {
-  protected readonly ScheduleClassStatus = ScheduleClassStatus;
+export class ScheduleCourseFormComponent {
+  protected readonly ScheduleClassStatus = ScheduleCourseStatus;
   protected readonly Color = Color;
 
-  classForm = input<ScheduleClassForm>(new ScheduleClassForm());
+  classForm = input<ScheduleCourseForm>(new ScheduleCourseForm());
 
   formAppearance: MatFormFieldAppearance = 'outline';
 }

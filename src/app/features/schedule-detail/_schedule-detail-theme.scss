@@ -24,7 +24,7 @@
     .title {
       font: mat.get-theme-typography($theme, headline-large);
     }
-    .schedule-name, .classes .header .title {
+    .schedule-name, .courses .header .title {
       font: mat.get-theme-typography($theme, headline-medium);
       margin: 0;
     }

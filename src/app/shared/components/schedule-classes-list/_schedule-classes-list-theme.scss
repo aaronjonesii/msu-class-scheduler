@@ -11,7 +11,7 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  csb-schedule-classes-list {
+  csb-schedule-courses-list {
     .primary-icon-btn {
       @include mat.icon-color($theme, $color-variant: primary);
       &:hover {

@@ -4,15 +4,15 @@ import {
   input,
   output
 } from '@angular/core';
-import { ScheduleClassForm } from "../../../../forms/schedule-class-form";
+import { ScheduleCourseForm } from "../../../../forms/schedule-course-form";
 import { ReactiveFormsModule } from "@angular/forms";
 import {
   MatFormFieldAppearance,
   MatFormFieldModule
 } from "@angular/material/form-field";
 import {
-  ScheduleClassMeetingType
-} from "../../../../enums/schedule-class-meeting-type";
+  ScheduleCourseMeetingType
+} from "../../../../enums/schedule-course-meeting-type";
 import { KeyValuePipe } from "@angular/common";
 import { MatInput } from "@angular/material/input";
 import { provideNativeDateAdapter } from "@angular/material/core";
@@ -46,11 +46,11 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleClassMeetingFormComponent {
-  protected readonly ScheduleClassMeetingType = ScheduleClassMeetingType;
+  protected readonly ScheduleClassMeetingType = ScheduleCourseMeetingType;
   protected readonly Day = Day;
 
   meetingFormGroup = input(
-    new ScheduleClassForm().newMeetingFormGroup(),
+    new ScheduleCourseForm().newMeetingFormGroup(),
   );
 
   formAppearance = input<MatFormFieldAppearance>('outline');
@@ -59,7 +59,7 @@ export class ScheduleClassMeetingFormComponent {
 
   addMeetingTime() {
     this.meetingFormGroup().controls.meetingTimes.push(
-      new ScheduleClassForm().newMeetingTimeFormGroup(),
+      new ScheduleCourseForm().newMeetingTimeFormGroup(),
     );
   }
 

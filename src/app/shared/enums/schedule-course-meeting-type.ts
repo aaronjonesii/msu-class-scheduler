@@ -1,4 +1,4 @@
-export enum ScheduleClassMeetingType {
+export enum ScheduleCourseMeetingType {
   LECTURE = 'Lecture',
   RECITATION = 'Recitation',
   LABORATORY = 'Laboratory',

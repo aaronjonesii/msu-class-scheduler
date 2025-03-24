@@ -1,4 +1,4 @@
-import { ScheduleClass, ReadScheduleClass } from "./schedule-class";
+import { ScheduleCourse, ReadScheduleCourse } from "./schedule-course";
 import { DateTime, ReadDateTime, WriteDateTime } from "./date-time";
 
 export interface Schedule {
@@ -6,7 +6,7 @@ export interface Schedule {
   userId?: string,
   name: string,
   description: string | null,
-  classes?: ScheduleClass[],
+  courses?: ScheduleCourse[],
   created?: DateTime,
   updated?: DateTime,
 }
@@ -24,6 +24,6 @@ export interface ReadSchedule extends Schedule {
   updated?: ReadDateTime,
 }
 
-export interface ReadScheduleWithClasses extends ReadSchedule {
-  classes: ReadScheduleClass[],
+export interface ReadScheduleWithCourses extends ReadSchedule {
+  courses: ReadScheduleCourse[],
 }

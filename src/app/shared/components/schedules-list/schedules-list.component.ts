@@ -6,16 +6,9 @@ import {
 } from '@angular/core';
 import {
   ReadSchedule,
-  ReadScheduleWithClasses
+  ReadScheduleWithCourses
 } from "../../interfaces/schedule";
 import { appRoutes } from "../../../app.routes";
-import { DatePipe } from "@angular/common";
-import {
-  MatListItemLine,
-  MatListItemTitle,
-  MatNavList
-} from "@angular/material/list";
-import { MatMenuItem } from "@angular/material/menu";
 import { RouterLink } from "@angular/router";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
 import { MatCardModule } from "@angular/material/card";
@@ -30,11 +23,6 @@ import { MatTooltip } from "@angular/material/tooltip";
   selector: 'csb-schedules-list',
   standalone: true,
   imports: [
-    DatePipe,
-    MatListItemLine,
-    MatListItemTitle,
-    MatMenuItem,
-    MatNavList,
     RouterLink,
     SkeletonComponent,
     MatCardModule,
@@ -55,16 +43,16 @@ export class SchedulesListComponent {
 
   protected readonly appRoutes = appRoutes;
 
-  schedules = input<ReadScheduleWithClasses[] | null | undefined>(null);
+  schedules = input<ReadScheduleWithCourses[] | null | undefined>(null);
 
   filterText = input<string>();
 
-  editSchedule(schedule: ReadScheduleWithClasses) {
+  editSchedule(schedule: ReadScheduleWithCourses) {
     this.scheduleService.openEditDialog(schedule);
   }
 
   scheduleCredits = (schedule: ReadSchedule) => {
-    return schedule.classes
+    return schedule.courses
       ?.reduce((acc, c) => acc + (c.credits || 0), 0);
   };
 }
