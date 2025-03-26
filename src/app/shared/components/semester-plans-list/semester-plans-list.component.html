@@ -15,7 +15,7 @@ semesterPlan.id) {
   </mat-card-header>
 
   <mat-card-content>
-    @if (semesterPlan.classes.length) {
+    @if (semesterPlan.courses.length) {
     <div class="classes">
       <label for="semester-plan-classes">Classes</label>
 
@@ -23,7 +23,7 @@ semesterPlan.id) {
         id="semester-plan-classes"
         aria-label="Semester plan classes selection"
       >
-        @for (semesterPlanClass of semesterPlan.classes; track
+        @for (semesterPlanClass of semesterPlan.courses; track
         semesterPlanClass.id) {
         <mat-chip
           [highlighted]="true"

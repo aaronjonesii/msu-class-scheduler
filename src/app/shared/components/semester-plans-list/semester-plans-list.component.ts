@@ -11,7 +11,7 @@ import { SemesterPlansService } from '../../services/semester-plans.service';
 import { appRoutes } from '../../../app.routes';
 import {
   ReadSemesterPlan,
-  ReadSemesterPlanWithClasses
+  ReadSemesterPlanWithCourses
 } from '../../interfaces/semester-plan';
 
 @Component({
@@ -38,7 +38,7 @@ export class SemesterPlansListComponent {
 
   protected readonly appRoutes = appRoutes;
 
-  semesterPlans = input<ReadSemesterPlanWithClasses[] | null | undefined>(null);
+  semesterPlans = input<ReadSemesterPlanWithCourses[] | null | undefined>(null);
 
   filterText = input<string>();
 
@@ -49,6 +49,6 @@ export class SemesterPlansListComponent {
   }
 
   semesterPlanCredits = (semesterPlan: ReadSemesterPlan) => {
-    return semesterPlan.classes?.reduce((acc, c) => acc + (c.credits || 0), 0);
+    return semesterPlan.courses?.reduce((acc, c) => acc + (c.credits || 0), 0);
   }
 }

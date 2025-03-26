@@ -63,7 +63,7 @@ export class SemesterPlanForm {
       description: this.description || null,
       year: this.year,
       term: this.term,
-      classes: [],
+      courses: [],
     };
   }
 

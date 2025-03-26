@@ -8,7 +8,7 @@ import { SemesterTerm } from "../enums/semester-term";
 export interface Course {
   name: string,
   status: CourseStatus,
-  sections: CourseSection[],
+  sections?: CourseSection[],
   id?: string | null,
   subjectCode?: string | null,
   courseNumber?: number | null,
@@ -27,7 +27,7 @@ export interface Course {
 
 export interface ReadCourse extends Course {
   id: string,
-  sections: ReadCourseSection[],
+  sections?: ReadCourseSection[],
   startDate?: Timestamp | null,
   endDate?: Timestamp | null,
   created?: Timestamp | null,
@@ -39,4 +39,12 @@ export interface WriteCourse extends Course {
   endDate?: FieldValue | null,
   created?: FieldValue | null,
   updated?: FieldValue | null,
+}
+
+export interface ReadCourseWithSections extends ReadCourse {
+  sections: ReadCourseSection[],
+}
+
+export interface ReadCourseWithSelectedSection extends ReadCourseWithSections {
+  selectedSectionId: string,
 }

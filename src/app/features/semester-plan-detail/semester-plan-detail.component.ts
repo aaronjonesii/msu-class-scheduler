@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { SemesterPlansService } from '../../shared/services/semester-plans.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { first, of, switchMap } from 'rxjs';
+import { first, lastValueFrom, of, switchMap, withLatestFrom } from 'rxjs';
 import { ReadSemesterPlan } from '../../shared/interfaces/semester-plan';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -25,6 +25,7 @@ import { ReadCourse } from "../../shared/interfaces/course";
 import {
   SemesterPlanCourseSectionsService
 } from "../../shared/services/semester-plan-course-sections.service";
+import { ScheduleGeneratorService } from "../../shared/services/schedule-generator.service";
 
 @Component({
   selector: 'csb-semester-plan-detail',
@@ -42,6 +43,7 @@ export class SemesterPlanDetailComponent {
   private semesterPlansService = inject(SemesterPlansService);
   private semesterPlanCoursesService = inject(SemesterPlanCoursesService);
   private semesterPlanCourseSectionsService = inject(SemesterPlanCourseSectionsService);
+  private scheduleGeneratorService = inject(ScheduleGeneratorService);
   private logger = inject(LoggerService);
   private document = inject(DOCUMENT);
   private dialog = inject(MatDialog);
@@ -172,6 +174,14 @@ export class SemesterPlanDetailComponent {
     if (!semesterPlanId) return;
 
     this.semesterPlanCourseSectionsService.openAddSectionDialog(semesterPlanId, courseId)
+  }
+
+  async generateSchedule() {
+    const semesterPlanId = this.semesterPlanId();
+
+    if (!semesterPlanId) return;
+
+    await this.scheduleGeneratorService.generateSchedule(semesterPlanId);
   }
 
   scrollToElementId = (elementId: string) =>

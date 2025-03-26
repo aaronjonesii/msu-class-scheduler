@@ -71,6 +71,12 @@
   </div>
 </section>
 
+@if ((semesterPlan.courses?.length ?? 0) > 0) {
+  <section class="generate-schedules">
+    <button mat-button (click)="generateSchedule()">Generate Schedule</button>
+  </section>
+}
+
 <section class="courses">
   <div class="header">
     <h4 class="title">Courses</h4>

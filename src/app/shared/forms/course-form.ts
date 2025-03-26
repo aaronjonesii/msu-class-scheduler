@@ -199,7 +199,7 @@ export class CourseForm {
   }
 
   private _buildForm(course?: ReadCourse | null) {
-    const sectionsFormArrray = new FormArray<FormGroup<CourseSectionFormGroup>>(
+    const sectionsFormArray = new FormArray<FormGroup<CourseSectionFormGroup>>(
       course?.sections ? course.sections.map((s) => this.newCourseSectionFormGroup(s)) : []
     );
 
@@ -229,7 +229,7 @@ export class CourseForm {
       ),
       notes: new FormControl(course?.notes || null),
       selectedSectionId: new FormControl(course?.selectedSectionId || null),
-      sections: sectionsFormArrray,
+      sections: sectionsFormArray,
     });
   }
 }

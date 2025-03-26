@@ -4,7 +4,12 @@
       [hideToggle]="section.meetings.length === 0"
     >
       <mat-expansion-panel-header>
-        <mat-panel-title>Section: {{section.name}}</mat-panel-title>
+        <mat-panel-title>
+          Section: {{section.name}}
+          @if (courseSelectedSectionId() === section.id) {
+            &nbsp;<mat-chip class="secondary-chip" [highlighted]="true">Default</mat-chip>
+          }
+        </mat-panel-title>
         <mat-panel-description>
           @if (section.meetings.length > 0) {
             {{sectionDescription(section.meetings)}}
@@ -30,6 +35,10 @@
       }
 
       <mat-action-row>
+        @if (courseSelectedSectionId() !== section.id) {
+          <button mat-button class="tertiary-button" (click)="defaultSection(section.id)">Set as Default</button>
+        }
+
         <button mat-button class="primary-button" (click)="editSection(section)">Edit</button>
         <button mat-button class="error-button" (click)="deleteSection(section.id)">Delete</button>
       </mat-action-row>

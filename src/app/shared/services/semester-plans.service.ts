@@ -2,15 +2,15 @@ import { inject, Injectable } from '@angular/core';
 import { FirestoreService } from './firestore.service';
 import { LoggerService } from './logger.service';
 import { catchError, combineLatest, EMPTY, first, from, map, mergeMap, Observable, of, switchMap, take, toArray } from 'rxjs';
-import { ReadSemesterPlan, ReadSemesterPlanWithClasses, SemesterPlan, WriteSemesterPlan } from '../interfaces/semester-plan';
+import { ReadSemesterPlan, ReadSemesterPlanWithCourses, SemesterPlan, WriteSemesterPlan } from '../interfaces/semester-plan';
 import { where } from '@angular/fire/firestore';
 import { MatDialog } from '@angular/material/dialog';
 import { SemesterPlanFormDialogComponent, SemesterPlanFormDialogContract } from '../dialogs/semester-plan-form-dialog/semester-plan-form-dialog.component';
 import { appRoutes } from '../../app.routes';
 import { Router } from '@angular/router';
-import { ReadScheduleCourse } from '../interfaces/schedule-course';
 import { SemesterTerm } from "../enums/semester-term";
 import { FirestorePaths } from "../../firestore.routes";
+import { ReadCourse } from "../interfaces/course";
 
 @Injectable({ providedIn: 'root' })
 export class SemesterPlansService {
@@ -35,7 +35,7 @@ export class SemesterPlansService {
     );
   }
 
-  getByUserWithClasses$(userId: string): Observable<ReadSemesterPlanWithClasses[]> {
+  getByUserWithClasses$(userId: string): Observable<ReadSemesterPlanWithCourses[]> {
     return this.getByUser$(userId).pipe(
       switchMap((semesterPlans: ReadSemesterPlan[]) => {
         return from(semesterPlans).pipe(
@@ -47,12 +47,12 @@ export class SemesterPlansService {
     );
   }
 
-  getSemesterPlanWithClasses$(semesterPlan: ReadSemesterPlan): Observable<ReadSemesterPlanWithClasses> {
+  getSemesterPlanWithClasses$(semesterPlan: ReadSemesterPlan): Observable<ReadSemesterPlanWithCourses> {
     return of(semesterPlan).pipe(
       switchMap((s) => {
         return combineLatest([of(s), this.getSemesterPlanClasses$(s.id)]).pipe(
           map(([semesterPlan, semesterPlanClasses]) => {
-            return { ...semesterPlan, classes: semesterPlanClasses };
+            return { ...semesterPlan, courses: semesterPlanClasses };
           }),
         );
       }),
@@ -60,7 +60,7 @@ export class SemesterPlansService {
   }
 
   getSemesterPlanClasses$(semseterPlanId: string) {
-    return this.db.col$<ReadScheduleCourse>(
+    return this.db.col$<ReadCourse>(
       `${this.semesterPlansCollectionName}/${semseterPlanId}/courses`,
       { idField: 'id' },
     ).pipe(

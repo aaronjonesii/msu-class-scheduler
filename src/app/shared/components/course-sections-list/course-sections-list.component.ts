@@ -16,6 +16,9 @@ import { MatButton } from "@angular/material/button";
 import { CourseMeeting } from "../../interfaces/course-meeting";
 import { Day } from "../../enums/day";
 import { ReadCourseSection } from "../../interfaces/course-section";
+import { SemesterPlanCoursesService } from "../../services/semester-plan-courses.service";
+import { MatChip } from "@angular/material/chips";
+import { LoggerService } from "../../services/logger.service";
 
 @Component({
   selector: 'csb-course-sections-list',
@@ -27,15 +30,19 @@ import { ReadCourseSection } from "../../interfaces/course-section";
     MatExpansionPanelTitle,
     MatExpansionPanelDescription,
     MatButton,
-    MatExpansionPanelActionRow
+    MatExpansionPanelActionRow,
+    MatChip
   ],
   templateUrl: './course-sections-list.component.html',
   styleUrl: './course-sections-list.component.scss'
 })
 export class CourseSectionsListComponent {
   private semesterPlanCourseSectionsService = inject(SemesterPlanCourseSectionsService)
+  private semesterPlanCoursesService = inject(SemesterPlanCoursesService)
+  private logger = inject(LoggerService)
 
   courseId = input.required<string>();
+  courseSelectedSectionId = input.required<string>();
   semesterPlanId = input.required<string>();
 
   sections = toSignal(
@@ -69,6 +76,12 @@ export class CourseSectionsListComponent {
   }
   deleteSection = (sectionId: string) => {
     this.semesterPlanCourseSectionsService.openDeleteSectionDialog(this.semesterPlanId(), this.courseId(), sectionId);
+  }
+
+  defaultSection = async (sectionId: string) => {
+    await this.semesterPlanCoursesService.update(this.semesterPlanId(), this.courseId(), { selectedSectionId: sectionId })
+      .then(() => this.logger.info('Section set as default'))
+      .catch(error => this.logger.error('An error occurred updating course default section', error));
   }
 
   private dayToInitial = (day: Day): string => {

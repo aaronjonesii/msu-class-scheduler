@@ -11,7 +11,6 @@ import { MatButton } from "@angular/material/button";
 import {
   CourseSectionFormComponent
 } from "../../components/course-section-form/course-section-form.component";
-import { JsonPipe } from "@angular/common";
 
 export interface SemesterPlanCourseSectionFormDialogContract {
   section?: ReadCourseSection
@@ -26,8 +25,7 @@ export interface SemesterPlanCourseSectionFormDialogContract {
     MatDialogActions,
     MatButton,
     MatDialogClose,
-    CourseSectionFormComponent,
-    JsonPipe
+    CourseSectionFormComponent
   ],
   templateUrl: './semester-plan-course-section-form-dialog.component.html',
   styleUrl: './semester-plan-course-section-form-dialog.component.scss',
