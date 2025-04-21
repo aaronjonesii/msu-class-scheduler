@@ -1,7 +1,25 @@
-<h1 mat-dialog-title>{{editing() ? 'Edit' : 'Create'}} Schedule</h1>
+<h1 mat-dialog-title>
+  {{editing() ? 'Edit' : 'Create'}} Schedule
+
+  @if (combinations().length > 0) {
+    <span class="float-right">
+      <ng-container [ngTemplateOutlet]="combinationNav" />
+    </span>
+  }
+</h1>
 
 <mat-dialog-content>
   <csb-schedule-form [scheduleForm]="scheduleForm()" />
+
+  @if (combinations().length > 0) {
+    <ng-container [ngTemplateOutlet]="combinationNav" />
+
+    <csb-schedule-grid-view
+      [scheduleClasses]="selectedCombinationScheduleCourses()"
+      [(shownClasses)]="shownCourses"
+      (classClicked)="scrollToElementId($event.id)"
+    />
+  }
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
@@ -13,3 +31,17 @@
     {{editing() ? 'Save' : 'Create'}}
   </button>
 </mat-dialog-actions>
+
+<ng-template #combinationNav>
+  <div class="flex-row app-gap align-items-center">
+      <button mat-icon-button type="button" (click)="previousCombination()">
+        <mat-icon matButtonIcon fontIcon="chevron_left" />
+      </button>
+
+      <span>{{selectedCombinationIndex()}} / {{combinations().length}}</span>
+
+      <button mat-icon-button type="button" (click)="nextCombination()">
+        <mat-icon matButtonIcon fontIcon="chevron_right" />
+      </button>
+    </div>
+</ng-template>

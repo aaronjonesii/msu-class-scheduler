@@ -71,9 +71,9 @@
   </div>
 </section>
 
-@if ((semesterPlan.courses?.length ?? 0) > 0) {
+@if ((semesterPlanCourses()?.length ?? 0) > 0) {
   <section class="generate-schedules">
-    <button mat-button (click)="generateSchedule()">Generate Schedule</button>
+    <button mat-button (click)="generateSchedules()">Generate Schedules</button>
   </section>
 }
 

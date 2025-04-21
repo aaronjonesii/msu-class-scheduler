@@ -176,12 +176,12 @@ export class SemesterPlanDetailComponent {
     this.semesterPlanCourseSectionsService.openAddSectionDialog(semesterPlanId, courseId)
   }
 
-  async generateSchedule() {
+  async generateSchedules() {
     const semesterPlanId = this.semesterPlanId();
 
     if (!semesterPlanId) return;
 
-    await this.scheduleGeneratorService.generateSchedule(semesterPlanId);
+    await this.scheduleGeneratorService.generateSchedules(semesterPlanId);
   }
 
   scrollToElementId = (elementId: string) =>
