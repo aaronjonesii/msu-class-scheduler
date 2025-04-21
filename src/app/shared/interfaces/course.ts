@@ -1,5 +1,4 @@
-import { DateTime } from "./date-time";
-import { FieldValue, Timestamp } from "@angular/fire/firestore";
+import { DateTime, ReadDateTime, WriteDateTime } from "./date-time";
 import { Color } from "../enums/color";
 import { CourseStatus } from "../enums/course-status";
 import { CourseSection, ReadCourseSection } from "./course-section";
@@ -28,17 +27,17 @@ export interface Course {
 export interface ReadCourse extends Course {
   id: string,
   sections?: ReadCourseSection[],
-  startDate?: Timestamp | null,
-  endDate?: Timestamp | null,
-  created?: Timestamp | null,
-  updated?: Timestamp | null,
+  startDate?: ReadDateTime | null,
+  endDate?: ReadDateTime | null,
+  created?: ReadDateTime | null,
+  updated?: ReadDateTime | null,
 }
 
 export interface WriteCourse extends Course {
-  startDate?: FieldValue | null,
-  endDate?: FieldValue | null,
-  created?: FieldValue | null,
-  updated?: FieldValue | null,
+  startDate?: WriteDateTime | null,
+  endDate?: WriteDateTime | null,
+  created?: WriteDateTime | null,
+  updated?: WriteDateTime | null,
 }
 
 export interface ReadCourseWithSections extends ReadCourse {
@@ -48,3 +47,5 @@ export interface ReadCourseWithSections extends ReadCourse {
 export interface ReadCourseWithSelectedSection extends ReadCourseWithSections {
   selectedSectionId: string,
 }
+
+export type CoursesCombination = ReadCourseWithSelectedSection[];
