@@ -18,7 +18,7 @@ import {
 } from "rxjs";
 import {
   ReadCourse,
-  ReadCourseWithSections
+  ReadCourseWithSections, ReadCourseWithSelectedSection
 } from "../interfaces/course";
 import { ScheduleCourse, WriteScheduleCourse } from "../interfaces/schedule-course";
 import { ScheduleCourseMeeting } from "../interfaces/schedule-course-meeting";
@@ -34,6 +34,8 @@ import { AuthService } from "./auth.service";
 import { ReadSchedule, Schedule } from "../interfaces/schedule";
 import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
+import { CourseMeetingTime } from "../interfaces/course-meeting-time";
+import { CourseMeeting } from "../interfaces/course-meeting";
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleGeneratorService {
@@ -44,6 +46,62 @@ export class ScheduleGeneratorService {
   private router = inject(Router);
 
   user = toSignal(this.authService.authState$());
+
+  removeOverlappingCombinations(combinations: ReadCourseWithSelectedSection[][]): ReadCourseWithSelectedSection[][] {
+    // check if two meeting times overlap
+    const hasOverlap = (meeting1: CourseMeeting, meeting2: CourseMeeting): boolean => {
+      return meeting1.meetingTimes.some(meetingTime1 => meeting2.meetingTimes.some(meetingTime2 => {
+        const daysOverlap = meetingTime1.days.some(day => meetingTime2.days.includes(day));
+        const timeOverlap = meetingTime1.startTime < meetingTime2.endTime && meetingTime1.endTime > meetingTime2.startTime;
+        return daysOverlap && timeOverlap;
+      }));
+    }
+
+    // check if two course sections overlap
+    const sectionsOverlap = (section1: ReadCourseSection, section2: ReadCourseSection): boolean => {
+      if (!section1.meetings || !section2.meetings) return false;
+      return section1.meetings.some(meeting1 => section2.meetings.some(meeting2 => hasOverlap(meeting1, meeting2)))
+    }
+
+    // check if a combination has overlapping sections
+    const combinationHasOverlap = (combination: ReadCourseWithSelectedSection[]): boolean => {
+      for (let i = 0; i < combination.length; i++) {
+        for (let j = i + 1; j < combination.length; j++) {
+          const section1 = combination[i].sections?.find(s => s.id === combination[i].selectedSectionId);
+          const section2 = combination[j].sections?.find(s => s.id === combination[j].selectedSectionId);
+          if (section1 && section2 && sectionsOverlap(section1, section2)) return true;
+        }
+      }
+
+      return false;
+    }
+
+    return combinations.filter(combination => !combinationHasOverlap(combination));
+  }
+
+  generateCourseCombinations(courses: ReadCourseWithSections[]): ReadCourseWithSelectedSection[][] {
+    const combinations: ReadCourseWithSelectedSection[][] = [];
+
+    const helper = (index: number, currentCombination: ReadCourseWithSelectedSection[]) => {
+      if (index === courses.length) {
+        combinations.push([...currentCombination]);
+        return;
+      }
+
+      for (const courseSection of courses[index].sections) {
+        currentCombination.push({
+          ...courses[index],
+          selectedSectionId: courseSection.id
+        });
+        helper(index + 1, currentCombination);
+        currentCombination.pop();
+      }
+    }
+
+    helper(0, []);
+
+    return combinations;
+  }
 
   getSemesterPlanWithCourses$(semesterPlanId: string) {
     return this.db.doc$<ReadSemesterPlan>(FirestorePaths.semesterPlan(semesterPlanId)).pipe(
@@ -81,7 +139,7 @@ export class ScheduleGeneratorService {
     );
   }
 
-  async generateSchedule(semesterPlanId: string) {
+  async generateSchedules(semesterPlanId: string) {
     const user = this.user();
 
     if (user == null) return;
@@ -96,15 +154,25 @@ export class ScheduleGeneratorService {
 
     if (semesterPlan.courses.length < 2 || courseSectionsCount < 2) {
       this.logger.warn('A schedule requires at least 2 courses with selected sections.');
+      return;
     }
+
+    const combinations = this.generateCourseCombinations(semesterPlan.courses);
+    const filteredCombinations = this.removeOverlappingCombinations(combinations);
+    console.debug('generated course combinations', {combinations, filteredCombinations});
 
     const dialogRef = this.dialog.open(
       ScheduleFormDialogComponent,
       {
         id: 'generate-schedule-form-dialog',
         width: '100%',
-        maxWidth: '600px',
-        data: { userId: user.uid } as ScheduleFormDialogContract,
+        height: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
+        data: {
+          userId: user.uid,
+          combinations: filteredCombinations
+        } satisfies ScheduleFormDialogContract,
       },
     );
 
@@ -122,7 +190,7 @@ export class ScheduleGeneratorService {
     })
   }
 
-  private courseToScheduleCourse(course: ReadCourse): ScheduleCourse {
+  courseToScheduleCourse(course: ReadCourse): ScheduleCourse {
     const courseSection = course.sections?.find(s => s.id === course.selectedSectionId);
     const courseMeetings = courseSection?.meetings.map(meeting => ({
       type: meeting.type as unknown as ScheduleCourseMeetingType,
