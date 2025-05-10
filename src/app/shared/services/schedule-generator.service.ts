@@ -159,7 +159,6 @@ export class ScheduleGeneratorService {
 
     const combinations = this.generateCourseCombinations(semesterPlan.courses);
     const filteredCombinations = this.removeOverlappingCombinations(combinations);
-    console.debug('generated course combinations', {combinations, filteredCombinations});
 
     const dialogRef = this.dialog.open(
       ScheduleFormDialogComponent,
