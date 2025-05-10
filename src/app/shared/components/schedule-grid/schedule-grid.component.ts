@@ -12,7 +12,6 @@ import {
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
 import { dateDifference } from "../../utils/date-difference";
-import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { ScheduleCourseStatus } from "../../enums/schedule-course-status";
 import { MatChip } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -42,8 +41,8 @@ export interface GridTimes {
   selector: 'csb-schedule-grid',
   standalone: true,
   imports: [
-    NgStyle, ColorToClassPipe, MatMenu, MatMenuItem,
-    MatMenuTrigger, MatChip, MatTooltip, NgClass,
+    NgStyle, ColorToClassPipe,
+    MatChip, MatTooltip, NgClass,
   ],
   templateUrl: './schedule-grid.component.html',
   styleUrl: './schedule-grid.component.scss',
