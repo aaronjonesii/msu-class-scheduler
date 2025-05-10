@@ -5,24 +5,14 @@ import {
   output,
   signal
 } from '@angular/core';
-import { ReadScheduleClass } from "../../interfaces/schedule-class";
+import { ReadScheduleCourse } from "../../interfaces/schedule-course";
 import { Day } from "../../enums/day";
 import { FormsModule } from "@angular/forms";
 import { KeyValuePipe } from "@angular/common";
-import { MatFormField, MatLabel } from "@angular/material/form-field";
-import { MatOption } from "@angular/material/core";
-import { MatSelect } from "@angular/material/select";
 import {
   ScheduleGridComponent
 } from "../schedule-grid/schedule-grid.component";
-import {
-  MatButtonToggle,
-  MatButtonToggleGroup
-} from "@angular/material/button-toggle";
-import { MatIcon } from "@angular/material/icon";
 import { MatButton } from "@angular/material/button";
-import { MatMenu, MatMenuTrigger } from "@angular/material/menu";
-import { MatSelectionList } from "@angular/material/list";
 import { MatChipListbox, MatChipOption } from "@angular/material/chips";
 import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 
@@ -32,18 +22,8 @@ import { MatSlider, MatSliderThumb } from "@angular/material/slider";
   imports: [
     FormsModule,
     KeyValuePipe,
-    MatFormField,
-    MatLabel,
-    MatOption,
-    MatSelect,
     ScheduleGridComponent,
-    MatButtonToggleGroup,
-    MatButtonToggle,
-    MatIcon,
     MatButton,
-    MatMenu,
-    MatMenuTrigger,
-    MatSelectionList,
     MatChipListbox,
     MatChipOption,
     MatSlider,
@@ -56,11 +36,11 @@ import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 export class ScheduleGridViewComponent {
   protected readonly Day = Day;
 
-  scheduleClasses = input<ReadScheduleClass[] | null | undefined>(null);
+  scheduleCourses = input<ReadScheduleCourse[] | null | undefined>(null);
 
-  shownClasses = model<string[]>([]);
+  shownCourses = model<string[]>([]);
 
-  readonly classClicked = output<ReadScheduleClass>();
+  readonly courseClicked = output<ReadScheduleCourse>();
 
   timeSlotIncrement = signal(60);
 

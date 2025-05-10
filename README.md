@@ -10,7 +10,7 @@ MSU Class Scheduler is an Angular web app designed to make MSU course scheduling
 ## Key Features (Current and Upcoming)
 
 - Visual Scheduling: Easily visualize your schedule, identify conflicts, and optimize your time
-- AI Semester Planner (Future): Intelligent recommendations for optimal course combinations
+- Semester Planner: Intelligent recommendations for optimal course combinations
 - Grade Calculator (Future): Calculate your potential overall grade for a course
 
 
@@ -72,7 +72,6 @@ Headless unit tests:
 ## 🛣️ Roadmap
 
 - Schedule sharing via links
-- AI Semester planner
 - Grade Calculator
 
 

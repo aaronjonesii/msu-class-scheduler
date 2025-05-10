@@ -1,0 +1,84 @@
+@defer (when !!scheduleCourses()) {
+  @for (scheduleCourse of scheduleCourses(); track scheduleCourse.id) {
+    <mat-card [id]="scheduleCourse.id"
+              [class]="scheduleCourse.color | colorToClass: 'card'">
+      <div class="badge secondary-card">
+        {{scheduleCourse.credits || 0}} credits
+      </div>
+
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>
+            @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+              {{scheduleCourse.subjectCode}} {{scheduleCourse.courseNumber}}
+              -
+            }
+            {{scheduleCourse.name}}
+          </mat-card-title>
+
+          <mat-card-subtitle>{{scheduleCourse.description}}</mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
+
+      <mat-card-content>
+        @for (meeting of scheduleCourse.meetings; track meeting.type) {
+          <div class="meeting-time">
+            {{meeting.type}}
+            -
+            @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
+              {{meetingTime.days.join(', ')}} {{meetingTime.startTime | time}} to {{meetingTime.endTime | time}}
+            } @empty {
+              To Be Announced
+            }
+          </div>
+        }
+
+        <div class="status">{{scheduleCourse.status}}</div>
+
+        <div class="notes">{{scheduleCourse?.notes}}</div>
+      </mat-card-content>
+
+      <mat-card-actions>
+        <div>
+          @if (!scheduleCourse?.isNotMSUCourse) {
+            <a mat-button type="button" class="secondary-button" target="_blank"
+               [href]="msuCourseLink(scheduleCourse)">
+              View on MSU
+            </a>
+          }
+        </div>
+
+        <div>
+          <button mat-button type="button" class="primary-button"
+                  (click)="editScheduleCourse.emit(scheduleCourse)">
+            Edit
+          </button>
+
+          <button mat-button type="button" class="error-button"
+                  (click)="deleteScheduleCourse.emit(scheduleCourse.id)">
+            Delete
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  } @empty {
+    No courses yet.
+  }
+} @placeholder (minimum 500ms) {
+  @for (_ of [].constructor(5); track _) {
+    <mat-list-item>
+    <span matListItemTitle>
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '200px'}" />
+    </span>
+      <span matListItemLine>
+      <csb-skeleton [styles]="{width: '100%', maxWidth: '50px'}" />
+    </span>
+      <span matListItemMeta>
+      <csb-skeleton appearance="circle" />
+    </span>
+      <span matListItemMeta>
+      <csb-skeleton appearance="circle" />
+    </span>
+    </mat-list-item>
+  }
+}

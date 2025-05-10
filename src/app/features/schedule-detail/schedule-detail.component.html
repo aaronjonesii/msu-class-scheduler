@@ -1,148 +1,151 @@
 <div class="header">
   <h2 class="title">Schedule Detail</h2>
 
+  @if (schedule()) {
   <div class="btn-container">
     <button mat-button type="button" (click)="editSchedule(schedule())">
       <mat-icon matButtonIcon fontIcon="edit" />
       Edit
     </button>
 
-    <button mat-button type="button" class="error-button"
-            (click)="deleteSchedule()">
+    <button
+      mat-button
+      type="button"
+      class="error-button"
+      (click)="deleteSchedule()"
+    >
       <mat-icon matButtonIcon fontIcon="delete" />
       Delete
     </button>
   </div>
+  }
 </div>
 
-@defer (when loaded()) {
-  @if (schedule(); as schedule) {
-    <section class="details">
-      <h3 class="schedule-name">{{schedule?.name || 'Unnamed schedule'}}</h3>
+@defer (when loaded()) { @if (schedule(); as schedule) {
+<section class="details">
+  <h3 class="schedule-name">{{ schedule?.name || "Unnamed schedule" }}</h3>
 
-      <p class="schedule-description">{{schedule?.description}}</p>
+  <p class="schedule-description">{{ schedule?.description }}</p>
 
-      <div class="classes-chips">
-        <label for="schedule-classes-chips">
-          Classes - {{scheduleClassesCredits()}} credits
-        </label>
+  <div class="courses-chips">
+    <label for="schedule-courses-chips">
+      Courses - {{ scheduleCoursesCredits() }} credits
+    </label>
 
-        <mat-chip-set id="schedule-classes-chips"
-                      aria-label="Schedule classes selection">
-          @for (scheduleClass of scheduleClasses(); track scheduleClass) {
-            <mat-chip class="cursor-pointer" [highlighted]="true"
-                      [matTooltip]="scheduleClass.name"
-                      [class]="scheduleClass.color | colorToClass: 'chip'"
-                      (click)="scrollToElementId(scheduleClass.id)">
-              @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
-                {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
-              } @else {
-                {{scheduleClass.name}}
-              }
-              - {{scheduleClass.credits || 0}} {{scheduleClass?.credits === 1 ? 'credit' : 'credits'}}
-            </mat-chip>
-          }
-
-          <mat-chip (click)="addClass()">
-            Add new class
-          </mat-chip>
-        </mat-chip-set>
-      </div>
-
-
-      @if (schedule?.updated) {
-        <div class="updated">Last updated {{schedule.updated?.toDate() | dateAgo}}</div>
+    <mat-chip-set
+      id="schedule-courses-chips"
+      aria-label="Schedule courses selection"
+    >
+      @for (scheduleCourse of scheduleCourses(); track scheduleCourse) {
+      <mat-chip
+        class="cursor-pointer"
+        [highlighted]="true"
+        [matTooltip]="scheduleCourse.name"
+        [class]="scheduleCourse.color | colorToClass : 'chip'"
+        (click)="scrollToElementId(scheduleCourse.id)"
+      >
+        @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+        {{ scheduleCourse.subjectCode }} {{ scheduleCourse.courseNumber }}
+        } @else {
+        {{ scheduleCourse.name }}
+        } - {{ scheduleCourse.credits || 0 }}
+        {{ scheduleCourse?.credits === 1 ? "credit" : "credits" }}
+      </mat-chip>
       }
-      <div class="created">
-        Created on {{schedule.created?.toDate() | date}}
-      </div>
-    </section>
 
-    <section class="classes">
-      <div class="header">
-        <h4 class="title">Classes</h4>
+      <mat-chip (click)="addCourse()"> Add new course </mat-chip>
+    </mat-chip-set>
+  </div>
 
-        <button mat-button type="button" id="add-class-btn"
-                (click)="addClass()">
-          <mat-icon matButtonIcon fontIcon="add" />
-          Class
-        </button>
-      </div>
-
-      <csb-schedule-classes-list
-            [scheduleClasses]="scheduleClasses()"
-            (editScheduleClass)="editScheduleClass($event)"
-            (deleteScheduleClass)="deleteScheduleClass($event)" />
-    </section>
-
-    <csb-schedule-grid-view [scheduleClasses]="scheduleClasses()"
-                            [(shownClasses)]="shownClasses"
-                            (classClicked)="scrollToElementId($event.id)" />
-  } @else {
-    <div class="not-found-container text-center">
-      <p>
-        We couldn't find the schedule you were looking for. This is either because:
-      </p>
-
-      <ul>
-        <li>You do not have permission to view this schedule.</li>
-        <li>The schedule you are looking for has been moved or deleted.</li>
-        <li>
-          There is an error in the URL entered into your web browser.
-          Please check the URL and try again.
-        </li>
-      </ul>
-
-      <button mat-stroked-button type="button"
-              [routerLink]="[appRoutes.schedules]">
-        <mat-icon matButtonIcon fontIcon="event" />
-        Go to Schedules
-      </button>
-    </div>
+  @if (schedule?.updated) {
+  <div class="updated">
+    Last updated {{ schedule.updated?.toDate() | dateAgo }}
+  </div>
   }
-} @placeholder (minimum 500ms) {
-  <section class="details">
-    <h3 class="schedule-name">
-      <csb-skeleton [styles]="{width: '100%', maxWidth: '55%'}" />
-    </h3>
+  <div class="created">Created on {{ schedule.created?.toDate() | date }}</div>
+</section>
 
-    <p class="schedule-description">
-      <csb-skeleton [styles]="{width: '100%'}" />
-      <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
-    </p>
+<section class="courses">
+  <div class="header">
+    <h4 class="title">Courses</h4>
 
-    <div class="classes-chips">
-      <label for="schedule-classes-chips-placeholder">
-        Classes
-      </label>
+    <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
+      <mat-icon matButtonIcon fontIcon="add" />
+      Course
+    </button>
+  </div>
 
-      <div id="schedule-classes-chips-placeholder">
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
-        <csb-skeleton [styles]="{width: '100%', maxWidth: '25%'}" />
-      </div>
+  <csb-schedule-courses-list
+    [scheduleCourses]="scheduleCourses()"
+    (editScheduleCourse)="editScheduleCourse($event)"
+    (deleteScheduleCourse)="deleteScheduleCourse($event)"
+  />
+</section>
+
+<csb-schedule-grid-view
+  [scheduleCourses]="scheduleCourses()"
+  [(shownCourses)]="shownCourses"
+  (courseClicked)="scrollToElementId($event.id)"
+/>
+} @else {
+<div class="not-found-container text-center">
+  <p>
+    We couldn't find the schedule you were looking for. This is either because:
+  </p>
+
+  <ul>
+    <li>You do not have permission to view this schedule.</li>
+    <li>The schedule you are looking for has been moved or deleted.</li>
+    <li>
+      There is an error in the URL entered into your web browser. Please check
+      the URL and try again.
+    </li>
+  </ul>
+
+  <button mat-stroked-button type="button" [routerLink]="[appRoutes.schedules]">
+    <mat-icon matButtonIcon fontIcon="event" />
+    Go to Schedules
+  </button>
+</div>
+} } @placeholder (minimum 500ms) {
+<section class="details">
+  <h3 class="schedule-name">
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '55%' }" />
+  </h3>
+
+  <p class="schedule-description">
+    <csb-skeleton [styles]="{ width: '100%' }" />
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+  </p>
+
+  <div class="classes-chips">
+    <label for="schedule-classes-chips-placeholder"> Classes </label>
+
+    <div id="schedule-classes-chips-placeholder">
+      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
+      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
     </div>
+  </div>
 
+  <div class="updated">
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '45%' }" />
+  </div>
 
+  <div class="created">
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '35%' }" />
+  </div>
+</section>
 
-    <div class="updated">
-      <csb-skeleton [styles]="{width: '100%', maxWidth: '45%'}" />
-    </div>
+<section class="courses">
+  <div class="header">
+    <h4 class="title">Courses</h4>
 
-    <div class="created">
-      <csb-skeleton [styles]="{width: '100%', maxWidth: '35%'}" />
-    </div>
-  </section>
+    <csb-skeleton [styles]="{ width: '100%', maxWidth: '100px' }" />
+  </div>
 
-  <section class="classes">
-    <div class="header">
-      <h4 class="title">Classes</h4>
+  <csb-schedule-courses-list [scheduleCourses]="[]" />
+</section>
 
-      <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
-    </div>
-
-    <csb-schedule-classes-list [scheduleClasses]="[]" />
-  </section>
-
-  <csb-schedule-grid-view [scheduleClasses]="[]" />
+<csb-schedule-grid-view [scheduleCourses]="[]" />
 }

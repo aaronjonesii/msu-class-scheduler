@@ -1,45 +1,81 @@
 <nav>
-  <a mat-button class="home-btn" routerLinkActive="active-link"
-     [routerLink]="[appRoutes.home]"
-     [routerLinkActiveOptions]="{exact: true}">
-    <img matButtonIcon priority class="app-margin-right"
-         width="25" height="25"
-         ngSrc="assets/svgs/logo.svg" alt="MSU Class Scheduler Logo" />
+  <a
+    mat-button
+    class="home-btn"
+    routerLinkActive="active-link"
+    [routerLink]="[appRoutes.home]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    <img
+      matButtonIcon
+      priority
+      class="app-margin-right"
+      width="25"
+      height="25"
+      ngSrc="assets/svgs/logo.svg"
+      alt="MSU Class Scheduler Logo"
+    />
 
     <span>MSU Class Scheduler</span>
   </a>
 
-  <a mat-button class="hide-on-large-screens"
-     routerLinkActive="active-link"
-     [routerLink]="[appRoutes.schedules]"
-     [routerLinkActiveOptions]="{exact: true}">
+  <a
+    mat-button
+    class="hide-on-large-screens"
+    routerLinkActive="active-link"
+    [routerLink]="[appRoutes.schedules]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
     Schedules
+  </a>
+
+  <a
+    mat-button
+    class="hide-on-large-screens"
+    routerLinkActive="active-link"
+    [routerLink]="[appRoutes.semesterPlans]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    Semester Plans
   </a>
 
   <div class="flex-spacer"></div>
 
-  @defer (when isSignedIn() !== undefined) {
-    @if (isSignedIn()) {
-      <a mat-button tabindex="0" (keyup)="signOut()" (click)="signOut()">
-        <mat-icon matButtonIcon fontIcon="logout" />
-        Sign out
-      </a>
-    } @else {
-      <a mat-button [routerLink]="[appRoutes.signIn]">
-        <mat-icon matButtonIcon fontIcon="login" />
-        Sign in
-      </a>
-    }
-  } @placeholder (minimum 500ms) {
-    <csb-skeleton [styles]="{width: '100px', height: '35px'}" />
+  @defer (when isSignedIn() !== undefined) { @if (isSignedIn()) {
+  <a mat-button tabindex="0" (keyup)="signOut()" (click)="signOut()">
+    <mat-icon matButtonIcon fontIcon="logout" />
+    Sign out
+  </a>
+  } @else {
+  <a mat-button [routerLink]="[appRoutes.signIn]">
+    <mat-icon matButtonIcon fontIcon="login" />
+    Sign in
+  </a>
+  } } @placeholder (minimum 500ms) {
+  <csb-skeleton [styles]="{ width: '100px', height: '35px' }" />
   }
 </nav>
 
 <nav class="small-nav">
-  <a mat-button type="button" class="flex-grow"
-     routerLinkActive="active-link"
-     [routerLink]="[appRoutes.schedules]"
-     [routerLinkActiveOptions]="{exact: true}">
+  <a
+    mat-button
+    type="button"
+    class="flex-grow"
+    routerLinkActive="active-link"
+    [routerLink]="[appRoutes.schedules]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
     Schedules
+  </a>
+
+  <a
+    mat-button
+    type="button"
+    class="flex-grow"
+    routerLinkActive="active-link"
+    [routerLink]="[appRoutes.semesterPlans]"
+    [routerLinkActiveOptions]="{ exact: true }"
+  >
+    Semester Plans
   </a>
 </nav>

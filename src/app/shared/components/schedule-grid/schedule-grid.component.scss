@@ -40,7 +40,7 @@
   text-align: center;
 }
 
-.tile.class {
+.tile.course {
   position: relative;
 
   .waitlist-chip {
@@ -48,7 +48,7 @@
   }
 }
 
-.tile.class.waitlist {
+.tile.course.waitlist {
   padding-top: calc(var(--padding) * 2);
 }
 

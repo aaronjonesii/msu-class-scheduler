@@ -1,0 +1,23 @@
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+}
+
+.meeting-time {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+
+  padding: var(--padding);
+  border-radius: var(--border-radius);
+  border-width: 1px;
+  border-style: solid;
+}
+
+.type {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--gap);
+}

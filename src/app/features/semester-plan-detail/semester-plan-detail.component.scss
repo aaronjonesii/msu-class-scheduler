@@ -1,0 +1,44 @@
+@mixin flexCol() {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap);
+  padding-bottom: calc(var(--padding) * 2);
+}
+
+:host {
+  @include flexCol();
+  padding: var(--padding);
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.details {
+  padding: var(--padding);
+  border-radius: var(--border-radius);
+}
+
+.classes {
+  @include flexCol();
+}
+.classes .header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.not-found-container,
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+.not-found-container ul {
+  text-align: left;
+}

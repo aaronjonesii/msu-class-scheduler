@@ -1,0 +1,56 @@
+@defer (when !!semesterPlanCourses()) {
+  @for (course of semesterPlanCourses(); track course.id) {
+    <mat-card [id]="course.id" [class]="course.color | colorToClass: 'card'">
+      <div class="badge secondary-card">{{course.credits || 0}} credits</div>
+
+      <mat-card-header>
+        <mat-card-title-group>
+          <mat-card-title>
+            @if (course?.subjectCode && course?.courseNumber) {
+              {{course.subjectCode}} {{course.courseNumber}} -
+            }
+            {{course.name}}
+          </mat-card-title>
+
+          <mat-card-subtitle>{{course.description}}</mat-card-subtitle>
+        </mat-card-title-group>
+      </mat-card-header>
+
+      <mat-card-content>
+        <h4>Sections</h4>
+        <csb-course-sections-list
+          [courseId]="course.id"
+          [courseSelectedSectionId]="course.selectedSectionId ?? ''"
+          [semesterPlanId]="semesterPlanId()" />
+      </mat-card-content>
+
+      <mat-card-actions>
+        <div>
+          @if (!course?.isNotMSUCourse) {
+            <a mat-button type="button" class="secondary-button" target="_blank"
+               [href]="msuCourseLink(course)">
+              View on MSU
+            </a>
+          }
+        </div>
+
+        <div>
+          <button mat-button type="button" class="tertiary-button"
+                  (click)="addSemesterPlanCourseSection.emit(course.id)">
+            Add Section
+          </button>
+
+          <button mat-button type="button" class="primary-button"
+                  (click)="editSemesterPlanCourse.emit(course)">
+            Edit
+          </button>
+
+          <button mat-button type="button" class="error-button"
+                  (click)="deleteSemesterPlanCourse.emit(course.id)">
+            Delete
+          </button>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  }
+}

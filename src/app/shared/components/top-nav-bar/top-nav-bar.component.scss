@@ -1,4 +1,4 @@
-@import '../../../../assets/scss/partials/media_queries';
+@import "../../../../assets/scss/partials/media_queries";
 
 :host {
   display: flex;
@@ -8,12 +8,19 @@
 nav {
   display: flex;
   align-items: center;
-  height: 56px;
+  min-height: 56px;
 }
 
-.small-nav { display: none; }
+.small-nav {
+  display: none;
+}
 
 @media (max-width: $tabletPortrait) {
-  .small-nav { display: flex; }
-  .hide-on-large-screens { display: none; }
+  .small-nav {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .hide-on-large-screens {
+    display: none;
+  }
 }

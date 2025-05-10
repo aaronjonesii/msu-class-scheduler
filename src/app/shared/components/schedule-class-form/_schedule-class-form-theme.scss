@@ -1,9 +1,11 @@
 // https://material.angular.io/guide/theming-your-components
-@use 'sass:map';
-@use '@angular/material' as mat;
+@use "sass:map";
+@use "@angular/material" as mat;
 
-@use './components/schedule-class-meetings-form/schedule-class-meetings-form-theme' as scheduleClassMeetingsForm;
-@use './components/schedule-class-meeting-form/schedule-class-meeting-form-theme' as scheduleClassMeetingForm;
+@use "./components/schedule-class-meetings-form/schedule-class-meetings-form-theme"
+  as scheduleClassMeetingsForm;
+@use "./components/schedule-class-meeting-form/schedule-class-meeting-form-theme"
+  as scheduleClassMeetingForm;
 
 @import "../../../../assets/scss/partials/colors";
 
@@ -19,15 +21,21 @@
   $has-density: mat.theme-has($theme, density);
   $theme-type: mat.get-theme-type($theme);
 
-  csb-schedule-class-form {}
+  csb-schedule-class-form {
+  }
 }
 
-@mixin typography($theme) {}
+@mixin typography($theme) {
+}
 
 @mixin theme($theme) {
-  @if mat.theme-has($theme, color) { @include color($theme); }
+  @if mat.theme-has($theme, color) {
+    @include color($theme);
+  }
 
-  @if mat.theme-has($theme, typography) { @include typography($theme); }
+  @if mat.theme-has($theme, typography) {
+    @include typography($theme);
+  }
 
   @include componentThemeMixins($theme);
 }

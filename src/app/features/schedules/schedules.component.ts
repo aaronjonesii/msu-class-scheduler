@@ -6,13 +6,11 @@ import {
 import { SchedulesService } from "../../shared/services/schedules.service";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { AuthService } from "../../shared/services/auth.service";
-import { first, of, switchMap } from "rxjs";
+import { of, switchMap } from "rxjs";
 import { MatButton } from "@angular/material/button";
 import { MatIcon } from "@angular/material/icon";
-import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
 import { LoggerService } from "../../shared/services/logger.service";
-import { ReadSchedule } from "../../shared/interfaces/schedule";
 import {
   SchedulesListComponent
 } from "../../shared/components/schedules-list/schedules-list.component";
@@ -21,10 +19,6 @@ import { KeyValuePipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Timestamp } from "@angular/fire/firestore";
 import { dateDifference } from "../../shared/utils/date-difference";
-import { MatDialog } from "@angular/material/dialog";
-import {
-  ScheduleFormDialogComponent, ScheduleFormDialogContract
-} from "../../shared/dialogs/schedule-form-dialog/schedule-form-dialog.component";
 
 export enum ScheduleFilterOption {
   ALL = 'All',
@@ -51,8 +45,6 @@ export class SchedulesComponent {
   private schedulesService = inject(SchedulesService);
   private authService = inject(AuthService);
   private logger = inject(LoggerService);
-  private dialog = inject(MatDialog);
-  private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
   protected readonly ScheduleFilterOption = ScheduleFilterOption;
@@ -64,10 +56,12 @@ export class SchedulesComponent {
   schedules = toSignal(
     this.authService.authState$().pipe(
       switchMap((user) => {
-        return user ? this.schedulesService.getByUserWithClasses$(user.uid) : of([]);
+        return user ? this.schedulesService.getByUserWithCourses$(user.uid) : of([]);
       }),
     ),
   );
+
+  mostRecentDays = 30;
 
   filterDescription = computed(() => {
     switch (this.schedulesFilter()) {
@@ -75,7 +69,7 @@ export class SchedulesComponent {
         return 'Most recent schedules (updated within 30 days).';
       case ScheduleFilterOption.ALL:
       default:
-        return 'All schedules.';
+        return 'All your schedules.';
     }
   })
 
@@ -89,7 +83,7 @@ export class SchedulesComponent {
 
           const differenceInDays = dateDifference(now, mostRecentDate.toDate());
 
-          return differenceInDays <= 30;
+          return differenceInDays <= this.mostRecentDays;
         });
       case ScheduleFilterOption.ALL:
       default: return this.schedules();
@@ -105,27 +99,7 @@ export class SchedulesComponent {
       return;
     }
 
-    const dialogRef = this.dialog.open(
-      ScheduleFormDialogComponent,
-      {
-        id: 'create-schedule-form-dialog',
-        width: '100%',
-        maxWidth: '600px',
-        data: { userId: user.uid } as ScheduleFormDialogContract,
-      },
-    );
-
-    dialogRef.afterClosed().pipe(first())
-      .forEach(async (schedule?: ReadSchedule) => {
-        if (!schedule) return;
-
-        await this.schedulesService.create(schedule)
-          .then((newDoc) => {
-            if (!newDoc) return;
-
-            this.router.navigate([appRoutes.scheduleDetail(newDoc.id)]);
-          });
-      });
+    this.schedulesService.openCreateDialog(user);
   }
 
   keepSameOrder = () => 1;

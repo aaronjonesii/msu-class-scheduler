@@ -1,0 +1,13 @@
+<form [formGroup]="sectionForm().formGroup">
+  <mat-form-field [appearance]="formAppearance">
+    <mat-label>Name</mat-label>
+    <input
+      matInput
+      type="text"
+      name="name"
+      [formControl]="sectionForm().nameCtrl"
+    />
+  </mat-form-field>
+
+  <csb-schedule-class-meetings-form [meetingsFormArray]="sectionForm().meetingsFormArray" />
+</form>

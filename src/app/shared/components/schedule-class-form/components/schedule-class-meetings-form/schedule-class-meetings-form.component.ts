@@ -8,7 +8,7 @@ import {
 import {
   ScheduleClassMeetingFormComponent
 } from "../schedule-class-meeting-form/schedule-class-meeting-form.component";
-import { ScheduleClassForm } from "../../../../forms/schedule-class-form";
+import { ScheduleCourseForm } from "../../../../forms/schedule-course-form";
 
 @Component({
   selector: 'csb-schedule-class-meetings-form',
@@ -27,6 +27,6 @@ export class ScheduleClassMeetingsFormComponent {
     input(new FormArray<FormGroup<ScheduleClassMeetingFormGroup>>([]));
 
   addMeeting() {
-    this.meetingsFormArray().push(new ScheduleClassForm().newMeetingFormGroup());
+    this.meetingsFormArray().push(new ScheduleCourseForm().newMeetingFormGroup());
   }
 }

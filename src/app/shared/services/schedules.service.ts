@@ -13,33 +13,35 @@ import {
 } from "rxjs";
 import {
   ReadSchedule,
-  ReadScheduleWithClasses,
+  ReadScheduleWithCourses,
   Schedule,
   WriteSchedule
 } from "../interfaces/schedule";
-import { ReadScheduleClass } from "../interfaces/schedule-class";
+import { ReadScheduleCourse } from "../interfaces/schedule-course";
 import {
   ScheduleFormDialogComponent,
   ScheduleFormDialogContract
 } from "../dialogs/schedule-form-dialog/schedule-form-dialog.component";
 import { MatDialog } from "@angular/material/dialog";
+import { User } from '@angular/fire/auth';
+import { Router } from '@angular/router';
+import { appRoutes } from '../../app.routes';
+import { FirestorePaths } from "../../firestore.routes";
 
 @Injectable({ providedIn: 'root' })
 export class SchedulesService {
   private db = inject(FirestoreService);
   private logger = inject(LoggerService);
   private dialog = inject(MatDialog);
+  private router = inject(Router);
 
-  private readonly collectionName = 'schedules';
-
-  get timestamp() {
-    return this.db.timestamp;
-  }
+  private readonly collectionName = FirestorePaths.schedules;
+  private readonly coursesCollectionName = (scheduleId: string) => FirestorePaths.scheduleCourses(scheduleId);
 
   getByUser$(userId: string): Observable<ReadSchedule[]> {
     return this.db.colQuery$<ReadSchedule>(
       this.collectionName,
-      {idField: 'id'},
+      { idField: 'id' },
       where('userId', '==', userId),
     ).pipe(
       catchError((error: unknown) => {
@@ -50,11 +52,11 @@ export class SchedulesService {
     );
   }
 
-  getByUserWithClasses$(userId: string): Observable<ReadScheduleWithClasses[]> {
+  getByUserWithCourses$(userId: string): Observable<ReadScheduleWithCourses[]> {
     return this.getByUser$(userId).pipe(
       switchMap((schedules: ReadSchedule[]) => {
         return from(schedules).pipe(
-          mergeMap((s) => this.getScheduleWithClasses$(s)),
+          mergeMap((s) => this.getScheduleWithCourses$(s)),
           take(schedules.length),
           toArray(),
         );
@@ -62,26 +64,26 @@ export class SchedulesService {
     );
   }
 
-  getScheduleWithClasses$(schedule: ReadSchedule): Observable<ReadScheduleWithClasses> {
+  getScheduleWithCourses$(schedule: ReadSchedule): Observable<ReadScheduleWithCourses> {
     return of(schedule).pipe(
       switchMap((s) => {
-        return combineLatest([of(s), this.getScheduleClasses$(s.id)]).pipe(
-          map(([schedule, scheduleClasses]) => {
-            return {...schedule, classes: scheduleClasses};
+        return combineLatest([of(s), this.getScheduleCourses$(s.id)]).pipe(
+          map(([schedule, scheduleCourses]) => {
+            return { ...schedule, courses: scheduleCourses };
           }),
         );
       }),
     );
   }
 
-  getScheduleClasses$(scheduleId: string) {
-    return this.db.col$<ReadScheduleClass>(
-      `${this.collectionName}/${scheduleId}/classes`,
+  getScheduleCourses$(scheduleId: string) {
+    return this.db.col$<ReadScheduleCourse>(
+      this.coursesCollectionName(scheduleId),
       { idField: 'id' },
     ).pipe(
       catchError((error: unknown) => {
         this.logger.error(
-          `Error getting classes for schedule: ${scheduleId}`,
+          `Error getting courses for schedule: ${scheduleId}`,
           error,
         );
 
@@ -92,7 +94,7 @@ export class SchedulesService {
 
   getById$(id: string) {
     return this.db.doc$<ReadSchedule>(`${this.collectionName}/${id}`).pipe(
-      map((schedule) => schedule ? {...schedule, id} : schedule),
+      map((schedule) => schedule ? { ...schedule, id } : schedule),
       catchError((error: unknown) => {
         this.logger.error(`Error getting schedule by id: ${id}`, error);
 
@@ -125,11 +127,11 @@ export class SchedulesService {
 
       batch.delete(scheduleRef);
 
-      const scheduleClassesQuery =
-        await this.db.colSnap(`${this.collectionName}/${id}/classes`);
+      const scheduleCoursesQuery =
+        await this.db.colSnap(this.coursesCollectionName(id));
 
-      if (!scheduleClassesQuery.empty) {
-        scheduleClassesQuery.docs.map((d) => batch.delete(d.ref));
+      if (!scheduleCoursesQuery.empty) {
+        scheduleCoursesQuery.docs.map((d) => batch.delete(d.ref));
       }
     }).then(() => true)
       .catch((error: unknown) => {
@@ -139,7 +141,31 @@ export class SchedulesService {
       });
   }
 
-  openEditScheduleDialog(schedule: ReadSchedule) {
+  async openCreateDialog(user: User) {
+    const dialogRef = this.dialog.open(
+      ScheduleFormDialogComponent,
+      {
+        id: 'create-schedule-form-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: { userId: user.uid } as ScheduleFormDialogContract,
+      },
+    );
+
+    dialogRef.afterClosed().pipe(first())
+      .forEach(async (schedule?: ReadSchedule) => {
+        if (!schedule) return;
+
+        await this.create(schedule)
+          .then((newDoc) => {
+            if (!newDoc) return;
+
+            this.router.navigate([appRoutes.scheduleDetail(newDoc.id)]);
+          });
+      });
+  }
+
+  openEditDialog(schedule: ReadSchedule) {
     const dialogRef = this.dialog.open(
       ScheduleFormDialogComponent,
       {
@@ -152,10 +178,10 @@ export class SchedulesService {
 
     dialogRef.afterClosed().pipe(first())
       .forEach(async (schedule?: ReadSchedule) => {
-      if (!schedule) return;
+        if (!schedule) return;
 
-      await this.update(schedule.id, schedule)
-        .then(() => this.logger.log('Updated schedule'));
-    });
+        await this.update(schedule.id, schedule)
+          .then(() => this.logger.log('Updated schedule'));
+      });
   }
 }

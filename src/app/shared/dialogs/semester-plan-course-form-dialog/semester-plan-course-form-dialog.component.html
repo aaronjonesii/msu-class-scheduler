@@ -1,0 +1,18 @@
+<h1 mat-dialog-title>{{ editing() ? "Edit" : "Create" }} Course</h1>
+
+<mat-dialog-content>
+  <csb-course-form [courseForm]="courseForm()" />
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+
+  <button
+    mat-flat-button
+    type="button"
+    [disabled]="courseForm().formGroup.invalid"
+    [mat-dialog-close]="courseForm().course"
+  >
+    {{ editing() ? "Save" : "Create" }}
+  </button>
+</mat-dialog-actions>

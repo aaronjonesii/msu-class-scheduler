@@ -7,6 +7,9 @@ service cloud.firestore {
     // functions
     function isSignedIn() { return request.auth != null; }
     function hasRsc(rsc) { return rsc != null }
+    function isOwner(rsc) {
+      return isSignedIn() && hasRsc(rsc) && rsc.data.userId == request.auth.uid
+    }
 
     // schedules collection
     match /schedules/{scheduleId} {
@@ -15,15 +18,51 @@ service cloud.firestore {
       allow create, update: if isSignedIn() && hasRsc(request.resource) && request.resource.data.userId == request.auth.uid;
       allow delete: if isSignedIn() && get(/databases/$(database)/documents/schedules/$(scheduleId)).data.userId == request.auth.uid;
 
-      // schedule classes collection
-      match /classes/{classId} {
-        // schedule classes functions
+      // schedule courses collection
+      match /courses/{courseId} {
+        // schedule courses functions
         function isUserSchedule() {
           return get(/databases/$(database)/documents/schedules/$(scheduleId)).data.userId == request.auth.uid;
         }
         allow read: if isSignedIn() && hasRsc(resource) && isUserSchedule();
         allow create, update: if isSignedIn() && hasRsc(request.resource) && isUserSchedule();
         allow delete: if isSignedIn() && isUserSchedule();
+      }
+    }
+
+    // semester plans collection
+    match /semester-plans/{semesterPlanId} {
+      function semesterPlanRsc() {
+        return get(/databases/$(database)/documents/semester-plans/$(semesterPlanId));
+      }
+
+      function semesterPlanUserId() {
+        return semesterPlanRsc().data.userId;
+      }
+
+      // users can only manage-view their own semester plans
+      allow read: if isOwner(resource);
+      allow create, update: if isOwner(request.resource);
+      allow delete: if isSignedIn() && semesterPlanUserId() == request.auth.uid;
+
+      // semester plan courses collection
+      match /courses/{courseId} {
+        // semester plan courses functions
+        function isUserSemesterPlan() {
+          return isSignedIn() && semesterPlanUserId() == request.auth.uid;
+        }
+        
+        allow read: if hasRsc(resource) && isUserSemesterPlan();
+        allow create, update: if hasRsc(request.resource) && isUserSemesterPlan();
+        allow delete: if isUserSemesterPlan();
+
+        // semester plan course sections collection
+        match /sections/{sectionId} {
+          
+          allow read: if hasRsc(resource) && isUserSemesterPlan();
+          allow create, update: if hasRsc(request.resource) && isUserSemesterPlan();
+          allow delete: if isUserSemesterPlan();
+        }
       }
     }
   }

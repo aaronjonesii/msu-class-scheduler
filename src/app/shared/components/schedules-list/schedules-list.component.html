@@ -14,20 +14,20 @@
       </mat-card-header>
 
       <mat-card-content>
-        @if (schedule.classes.length) {
-          <div class="classes">
-            <label for="schedule-classes">Classes</label>
+        @if (schedule.courses.length) {
+          <div class="courses">
+            <label for="schedule-courses">Courses</label>
 
-            <mat-chip-set id="schedule-classes"
-                          aria-label="Schedule classes selection">
-              @for (scheduleClass of schedule.classes; track scheduleClass) {
+            <mat-chip-set id="schedule-courses"
+                          aria-label="Schedule courses selection">
+              @for (scheduleCourse of schedule.courses; track scheduleCourse) {
                 <mat-chip [highlighted]="true"
-                          [matTooltip]="scheduleClass.name+' - '+scheduleClass.credits+' '+((scheduleClass.credits === 1) ? 'credit' : 'credits')"
-                          [class]="scheduleClass.color | colorToClass: 'chip'">
-                  @if (scheduleClass?.subjectCode && scheduleClass?.courseNumber) {
-                    {{scheduleClass.subjectCode}} {{scheduleClass.courseNumber}}
+                          [matTooltip]="scheduleCourse.name+' - '+scheduleCourse.credits+' '+((scheduleCourse.credits === 1) ? 'credit' : 'credits')"
+                          [class]="scheduleCourse.color | colorToClass: 'chip'">
+                  @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+                    {{scheduleCourse.subjectCode}} {{scheduleCourse.courseNumber}}
                   } @else {
-                    {{scheduleClass.name}}
+                    {{scheduleCourse.name}}
                   }
                 </mat-chip>
               }
@@ -72,7 +72,7 @@
 
     <mat-card-content>
       <div class="classes">
-        <label for="schedule-classes">Classes</label>
+        <label for="schedule-courses">Courses</label>
 
         <div class="placeholder-chips">
           <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
