@@ -15,9 +15,9 @@
     <ng-container [ngTemplateOutlet]="combinationNav" />
 
     <csb-schedule-grid-view
-      [scheduleClasses]="selectedCombinationScheduleCourses()"
-      [(shownClasses)]="shownCourses"
-      (classClicked)="scrollToElementId($event.id)"
+      [scheduleCourses]="selectedCombinationScheduleCourses()"
+      [(shownCourses)]="shownCourses"
+      (courseClicked)="scrollToElementId($event.id)"
     />
   }
 </mat-dialog-content>

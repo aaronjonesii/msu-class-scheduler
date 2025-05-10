@@ -18,37 +18,37 @@
   </div>
 }
 
-@for (classTile of classTiles(); track classTile.id) {
-  <div class="tile class" tabindex="0"
-       [class]="classTile.color | colorToClass: 'card'"
-       [ngStyle]="classTile.styles"
-       [ngClass]="{'waitlist': classTile.scheduleClass?.status === ScheduleClassStatus.WAITlIST}"
-       (keyup)="classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined"
-       (click)=" classTile.scheduleClass ? classClicked.emit(classTile.scheduleClass) : undefined">
-    @if (classTile.scheduleClass?.status === ScheduleClassStatus.WAITlIST) {
+@for (courseTile of courseTiles(); track courseTile.id) {
+  <div class="tile course" tabindex="0"
+       [class]="courseTile.color | colorToClass: 'card'"
+       [ngStyle]="courseTile.styles"
+       [ngClass]="{'waitlist': courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST}"
+       (keyup)="courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined"
+       (click)=" courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined">
+    @if (courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST) {
       <mat-chip class="error-chip waitlist-chip"
                 [highlighted]="true"
-                [matTooltip]="((classTile.scheduleClass?.subjectCode && classTile.scheduleClass?.courseNumber) ? (classTile.scheduleClass?.subjectCode+' '+classTile.scheduleClass?.courseNumber) : classTile.scheduleClass?.name)+' class has Waitlist status'">Waitlist</mat-chip>
+                [matTooltip]="((courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) ? (courseTile.scheduleCourse?.subjectCode+' '+courseTile.scheduleCourse?.courseNumber) : courseTile.scheduleCourse?.name)+' class has Waitlist status'">Waitlist</mat-chip>
     }
 
-    @if (classTile.scheduleClass?.subjectCode && classTile.scheduleClass?.courseNumber) {
+    @if (courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) {
       <span class="subject-code"
-            [title]="classTile.scheduleClass?.subjectCode+' '+classTile.scheduleClass?.courseNumber">
-        {{classTile.scheduleClass?.subjectCode}}
-        {{classTile.scheduleClass?.courseNumber}}
+            [title]="courseTile.scheduleCourse?.subjectCode+' '+courseTile.scheduleCourse?.courseNumber">
+        {{courseTile.scheduleCourse?.subjectCode}}
+        {{courseTile.scheduleCourse?.courseNumber}}
       </span>
     }
 
-    <span class="name truncate-text" [title]="classTile.name">{{classTile.name}}</span>
+    <span class="name truncate-text" [title]="courseTile.name">{{courseTile.name}}</span>
 
-    <!-- <span class="description truncate-text" [title]="classTile.scheduleClass?.description">{{classTile.scheduleClass?.description}}</span> -->
+    <!-- <span class="description truncate-text" [title]="courseTile.scheduleClass?.description">{{courseTile.scheduleClass?.description}}</span> -->
 
-    <span class="type" [title]="classTile.meeting?.type">{{classTile.meeting?.type}}</span>
+    <span class="type" [title]="courseTile.meeting?.type">{{courseTile.meeting?.type}}</span>
 
-    <span class="times" [title]="classTile.times">{{classTile.times}}</span>
+    <span class="times" [title]="courseTile.times">{{courseTile.times}}</span>
 
-    <span class="location" [title]="classTile.meeting?.location">{{classTile.meeting?.location}}</span>
+    <span class="location" [title]="courseTile.meeting?.location">{{courseTile.meeting?.location}}</span>
 
-    <span class="instructor truncate-text" [title]="classTile.meeting?.instructor">{{classTile.meeting?.instructor}}</span>
+    <span class="instructor truncate-text" [title]="courseTile.meeting?.instructor">{{courseTile.meeting?.instructor}}</span>
   </div>
 }

@@ -36,11 +36,11 @@ import { MatSlider, MatSliderThumb } from "@angular/material/slider";
 export class ScheduleGridViewComponent {
   protected readonly Day = Day;
 
-  scheduleClasses = input<ReadScheduleCourse[] | null | undefined>(null);
+  scheduleCourses = input<ReadScheduleCourse[] | null | undefined>(null);
 
-  shownClasses = model<string[]>([]);
+  shownCourses = model<string[]>([]);
 
-  readonly classClicked = output<ReadScheduleCourse>();
+  readonly courseClicked = output<ReadScheduleCourse>();
 
   timeSlotIncrement = signal(60);
 
