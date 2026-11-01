@@ -30,7 +30,6 @@
     "@angular/platform-browser-dynamic": "^18.2.7",
     "@angular/platform-server": "^18.2.7",
     "@angular/router": "^18.2.7",
-    "@angular/service-worker": "^18.2.7",
     "@angular/ssr": "^18.2.7",
     "angular-eslint": "^18.1.0",
     "express": "^4.21.0",

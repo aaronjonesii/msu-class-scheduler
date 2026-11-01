@@ -52,7 +52,6 @@ MSU Class Scheduler is an Angular web app designed to make MSU course scheduling
 - Client: Angular
 - Server: Firebase
 - Additional:
-    - Progressive Web Application (Service Worker)
     - Server-Side Rendering (SSR - not yet implemented in the live demo)
 
 
@@ -79,7 +78,7 @@ Headless unit tests:
 
 Have feedback, suggestions, or need help? Email me at [jonesaa5@msu.edu](mailto:jonesaa5@msu.edu)
 ## ℹ️ Additional Information
-- Optimizations: The app is built as a Progressive Web App (PWA) for fast loading and offline capabilities. Server-Side Rendering (SSR) is installed but not yet implemented in the live demo.
+- Optimizations: Public pages are prerendered for a fast first load. Server-Side Rendering (SSR) is installed but not yet implemented in the live demo.
 
 - Used By: This project is being actively developed by me, an MSU student. I plan to expand its functionality to benefit all Spartans soon.
 
