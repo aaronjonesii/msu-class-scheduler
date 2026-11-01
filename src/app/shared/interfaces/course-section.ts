@@ -1,9 +1,11 @@
 import { CourseMeeting } from "./course-meeting";
 import { DateTime, ReadDateTime, WriteDateTime } from "./date-time";
+import { CourseStatus } from "../enums/course-status";
 
 export interface CourseSection {
   id?: string | null,
   name: string,
+  status?: CourseStatus | null,
   meetings: CourseMeeting[],
   created?: DateTime | null,
   updated?: DateTime | null,
