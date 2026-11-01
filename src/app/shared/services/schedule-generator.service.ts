@@ -10,9 +10,8 @@ import {
   switchMap,
   map,
   from,
-  mergeMap,
+  concatMap,
   Observable,
-  take,
   toArray,
   lastValueFrom, first
 } from "rxjs";
@@ -36,6 +35,7 @@ import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
 import { CourseMeetingTime } from "../interfaces/course-meeting-time";
 import { CourseMeeting } from "../interfaces/course-meeting";
+import { sortSectionsByName } from "../utils/sort-sections-by-name";
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleGeneratorService {
@@ -112,8 +112,8 @@ export class ScheduleGeneratorService {
         ).pipe(
           switchMap(courses => {
             return from(courses).pipe(
-              mergeMap(c => this.getCourseWithSections$(semesterPlanId, c)),
-              take(courses.length),
+              // One at a time, so the same plan always numbers its schedules the same way.
+              concatMap(c => this.getCourseWithSections$(semesterPlanId, c).pipe(first())),
               toArray(),
             )
           })
@@ -133,7 +133,7 @@ export class ScheduleGeneratorService {
           { idField: 'id' }
         );
         return combineLatest([of(c), courseSections]).pipe(
-          map(([_course, sections]) => ({ ..._course, sections }))
+          map(([_course, sections]) => ({ ..._course, sections: sortSectionsByName(sections) }))
         )
       })
     );

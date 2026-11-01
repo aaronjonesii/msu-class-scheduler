@@ -2,7 +2,7 @@ import { ApplicationRef } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { Router } from '@angular/router';
-import { of } from 'rxjs';
+import { concat, firstValueFrom, map, NEVER, Observable, of, timer } from 'rxjs';
 
 import { AuthService } from './auth.service';
 import { FirestoreService } from './firestore.service';
@@ -44,6 +44,7 @@ describe('ScheduleGeneratorService', () => {
   let added: Added[];
   let courses: ReadCourse[];
   let sections: Record<string, ReadCourseSection[]>;
+  let sectionsOf: (courseId: string) => Observable<ReadCourseSection[]>;
   let logger: jasmine.SpyObj<LoggerService>;
 
   const dialog = () => document.querySelector('mat-dialog-container') as HTMLElement;
@@ -94,6 +95,7 @@ describe('ScheduleGeneratorService', () => {
       math: [section('math-1', '09:00', '09:50'), section('math-2', '11:00', '11:50')],
       physics: [section('physics-1', '13:00', '13:50'), section('physics-2', '15:00', '15:50')],
     };
+    sectionsOf = (courseId) => of(sections[courseId]);
     logger = jasmine.createSpyObj<LoggerService>('LoggerService', ['info', 'warn', 'error']);
 
     TestBed.configureTestingModule({
@@ -109,7 +111,7 @@ describe('ScheduleGeneratorService', () => {
             col$: (path: string) => {
               const [, courseId] = path.match(/courses\/([^/]+)\/sections$/) ?? [];
 
-              return of(courseId ? sections[courseId] : courses);
+              return courseId ? sectionsOf(courseId) : of(courses);
             },
             add: async (path: string, data: Record<string, unknown>) => {
               added.push({ path, data });
@@ -127,6 +129,43 @@ describe('ScheduleGeneratorService', () => {
   afterEach(async () => {
     dialog()?.querySelector<HTMLButtonElement>('button[mat-dialog-close]')?.click();
     await settle();
+  });
+
+  describe('getSemesterPlanWithCourses$', () => {
+    const planCourses = async () =>
+      (await firstValueFrom(service.getSemesterPlanWithCourses$(PLAN_ID))).courses;
+    const later = (courseId: string) => timer(5).pipe(map(() => sections[courseId]));
+
+    it('should keep the order of the plan when sections arrive out of order', async () => {
+      sectionsOf = (courseId) => courseId === 'math' ? later(courseId) : of(sections[courseId]);
+
+      expect((await planCourses()).map((c) => c.id)).toEqual(['math', 'physics']);
+    });
+
+    it('should keep every course once when sections arrive twice for one of them', async () => {
+      sectionsOf = (courseId) => courseId === 'math' ?
+        concat(of(sections[courseId]), of(sections[courseId])) : later(courseId);
+
+      expect((await planCourses()).map((c) => c.id)).toEqual(['math', 'physics']);
+    });
+
+    it('should not wait for a listener to end, because a live one never does', async () => {
+      sectionsOf = (courseId) => concat(of(sections[courseId]), NEVER);
+
+      expect((await planCourses()).map((c) => c.id)).toEqual(['math', 'physics']);
+    });
+
+    it('should order sections by name, like the plan page', async () => {
+      sections['math'] = ['010', '002', '001'].map((name) => section(name, '09:00', '09:50'));
+
+      expect((await planCourses())[0].sections.map((s) => s.name)).toEqual(['001', '002', '010']);
+    });
+
+    it('should have no courses for a plan with none', async () => {
+      courses = [];
+
+      expect(await planCourses()).toEqual([]);
+    });
   });
 
   describe('generateSchedules', () => {
