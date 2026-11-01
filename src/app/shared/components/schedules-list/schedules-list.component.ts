@@ -18,6 +18,7 @@ import { MatAnchor, MatButton } from "@angular/material/button";
 import { SchedulesService } from "../../services/schedules.service";
 import { MatIcon } from "@angular/material/icon";
 import { MatTooltip } from "@angular/material/tooltip";
+import { formatCredits } from "../../utils/format-credits";
 
 @Component({
   selector: 'csb-schedules-list',
@@ -42,6 +43,7 @@ export class SchedulesListComponent {
   private scheduleService = inject(SchedulesService);
 
   protected readonly appRoutes = appRoutes;
+  protected readonly formatCredits = formatCredits;
 
   schedules = input<ReadScheduleWithCourses[] | null | undefined>(null);
 

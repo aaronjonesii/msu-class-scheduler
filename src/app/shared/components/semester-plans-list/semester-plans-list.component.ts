@@ -9,6 +9,7 @@ import { ColorToClassPipe } from '../../pipes/color-to-class.pipe';
 import { SkeletonComponent } from '../skeleton/skeleton.component';
 import { SemesterPlansService } from '../../services/semester-plans.service';
 import { appRoutes } from '../../../app.routes';
+import { formatCredits } from '../../utils/format-credits';
 import {
   ReadSemesterPlan,
   ReadSemesterPlanWithCourses
@@ -37,6 +38,7 @@ export class SemesterPlansListComponent {
   private semesterPlansService = inject(SemesterPlansService);
 
   protected readonly appRoutes = appRoutes;
+  protected readonly formatCredits = formatCredits;
 
   semesterPlans = input<ReadSemesterPlanWithCourses[] | null | undefined>(null);
 

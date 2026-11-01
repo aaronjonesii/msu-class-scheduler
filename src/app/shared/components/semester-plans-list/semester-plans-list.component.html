@@ -1,16 +1,13 @@
 @defer (when !!semesterPlans()) { @for (semesterPlan of semesterPlans(); track
 semesterPlan.id) {
 <mat-card>
-  <div class="badge primary-card">
-    {{ semesterPlanCredits(semesterPlan) }}
-    {{ semesterPlanCredits(semesterPlan) === 1 ? "credit" : "credits" }}
-  </div>
-
   <mat-card-header>
     <mat-card-title-group>
       <mat-card-title>{{ formatSemesterPlanName(semesterPlan) }}</mat-card-title>
 
       <mat-card-subtitle>{{ semesterPlan.description }}</mat-card-subtitle>
+
+      <span class="credits">{{ formatCredits(semesterPlanCredits(semesterPlan)) }}</span>
     </mat-card-title-group>
   </mat-card-header>
 

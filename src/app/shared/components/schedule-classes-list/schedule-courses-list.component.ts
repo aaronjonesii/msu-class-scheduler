@@ -16,6 +16,7 @@ import {
   MatCardModule,
 } from "@angular/material/card";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
+import { formatCredits } from "../../utils/format-credits";
 import { formatTimeRange } from "../../utils/format-time";
 import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 
@@ -33,6 +34,7 @@ import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleCoursesListComponent {
+  protected readonly formatCredits = formatCredits;
   protected readonly formatTimeRange = formatTimeRange;
   protected readonly noMeetingTimeLabel = noMeetingTimeLabel;
 
