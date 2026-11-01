@@ -15,7 +15,7 @@ import { ScheduleForm } from "../../forms/schedule-form";
 import {
   ScheduleFormComponent
 } from "../../components/schedule-form/schedule-form.component";
-import { ReadCourseWithSections } from "../../interfaces/course";
+import { CoursesCombination, ReadCourseWithSections } from "../../interfaces/course";
 import {
   ScheduleGridViewComponent
 } from "../../components/schedule-grid-view/schedule-grid-view.component";
@@ -77,7 +77,12 @@ export class ScheduleFormDialogComponent implements OnInit {
 
   selectedCombinationIndex = signal(0);
 
-  selectedCombination = computed(() => this.combinations()[this.selectedCombinationIndex()] ?? []);
+  selectedCombination = computed(() => this.combinations()[this.selectedCombinationIndex()] ?? [], {
+    // A pick rebuilds the list, but the same sections on screen are still the same schedule.
+    equal: (a, b) => {
+      return a.length === b.length && a.every((course, index) => course.selectedSectionId === b[index].selectedSectionId);
+    },
+  });
 
   selectedCombinationScheduleCourses = computed<ReadScheduleCourse[]>(() => {
     return this.selectedCombination().map(c => this.scheduleGeneratorService.courseToScheduleCourse(c) as ReadScheduleCourse);
@@ -110,19 +115,18 @@ export class ScheduleFormDialogComponent implements OnInit {
     return { ...this.scheduleForm().schedule, courses: this.selectedCombinationScheduleCourses() };
   }
 
-  /** Numbers change with the picks, so this stays on the schedule on screen as far as it can. */
+  /** Numbers change with the picks, so this stays as close to the schedule on screen as it can. */
   onPicksChange(pickedSectionIds: ReadonlySet<string>) {
-    const stillPicked = this.selectedCombination()
-      .map((course) => course.selectedSectionId)
-      .filter((sectionId) => pickedSectionIds.has(sectionId));
+    const onScreen = this.selectedCombination().map((course) => course.selectedSectionId);
+    const sectionsKept = (combination: CoursesCombination) => {
+      return combination.filter((course) => onScreen.includes(course.selectedSectionId)).length;
+    };
 
     this.pickedSectionIds.set(pickedSectionIds);
 
-    const closest = this.combinations().findIndex((combination) => {
-      return stillPicked.every((sectionId) => combination.some((course) => course.selectedSectionId === sectionId));
-    });
-
-    this.selectedCombinationIndex.set(Math.max(closest, 0));
+    this.selectedCombinationIndex.set(this.combinations().reduce((closest, combination, index, combinations) => {
+      return sectionsKept(combination) > sectionsKept(combinations[closest]) ? index : closest;
+    }, 0));
   }
 
   previousCombination() {

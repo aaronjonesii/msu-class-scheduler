@@ -70,6 +70,12 @@ describe('ScheduleFormDialogComponent', () => {
     fixture.detectChanges();
   }
 
+  function typeNumber(value: string, box = numberBoxes()[0]) {
+    box.value = value;
+    box.dispatchEvent(new Event('change'));
+    fixture.detectChanges();
+  }
+
   it('should create', async () => {
     await setUp();
 
@@ -114,12 +120,6 @@ describe('ScheduleFormDialogComponent', () => {
 
   describe('schedule numbers', () => {
     const three = planWith('first', 'second', 'third');
-
-    function typeNumber(value: string, box = numberBoxes()[0]) {
-      box.value = value;
-      box.dispatchEvent(new Event('change'));
-      fixture.detectChanges();
-    }
 
     it('should number the first schedule 1', async () => {
       await setUp({ courses: three });
@@ -262,12 +262,6 @@ describe('ScheduleFormDialogComponent', () => {
     // Schedules: 1 m1 p1, 2 m1 p2, 3 m2 p1, 4 m2 p2.
     const plan = [course('math', ['m1', 'm2']), course('physics', ['p1', 'p2'])];
 
-    function typeNumber(value: string) {
-      numberBoxes()[0].value = value;
-      numberBoxes()[0].dispatchEvent(new Event('change'));
-      fixture.detectChanges();
-    }
-
     function pick(...sectionIds: string[]) {
       component.onPicksChange(new Set(sectionIds));
       fixture.detectChanges();
@@ -305,6 +299,33 @@ describe('ScheduleFormDialogComponent', () => {
       pick('m1', 'm2', 'p2');
 
       expect(courseIds()).toEqual(['m2', 'p2']);
+    });
+
+    it('should keep every section on screen that is still picked, not just the first', () => {
+      typeNumber('4');
+
+      pick('m2', 'p1', 'p2');
+
+      expect(courseIds()).toEqual(['m2', 'p2']);
+      expect(numberBoxes()[0].value).toBe('2');
+    });
+
+    it('should leave the courses shown alone when the schedule on screen stays the same', () => {
+      component.shownCourses.set(['m2']);
+
+      pick('m2', 'p1', 'p2');
+
+      expect(courseIds()).toEqual(['m2', 'p1']);
+      expect(component.shownCourses()).toEqual(['m2']);
+    });
+
+    it('should show every course again when another schedule comes on screen', () => {
+      component.shownCourses.set(['m2']);
+
+      component.nextCombination();
+      fixture.detectChanges();
+
+      expect(component.shownCourses()).toEqual(['m2', 'p2']);
     });
 
     it('should keep the other courses when a whole course is turned off', () => {
@@ -351,18 +372,38 @@ describe('ScheduleFormDialogComponent', () => {
   });
 
   describe('when the picks that are left no longer fit with the schedule on screen', () => {
-    it('should go to the first schedule', async () => {
-      // Schedules: 1 a1 c1, 2 a2 c1, 3 a2 c2. a1 clashes with c2.
-      const [a, c] = [course('a', ['a1', 'a2']), course('c', ['c1', 'c2'])];
-      a.sections[0].meetings = [MONDAY_AT_9];
+    it('should keep as many of its sections as it can', async () => {
+      // Schedules: 1 m1 p1 c1, 2 m1 p2 c1, 3 m2 p1 c1, 4 m2 p1 c2, 5 m2 p2 c1, 6 m2 p2 c2. m1 clashes with c2.
+      const [math, physics, chem] = [course('math', ['m1', 'm2']), course('physics', ['p1', 'p2']), course('chem', ['c1', 'c2'])];
+      math.sections[0].meetings = [MONDAY_AT_9];
+      chem.sections[1].meetings = [MONDAY_AT_9];
+
+      await setUp({ courses: [math, physics, chem] });
+
+      typeNumber('2');
+
+      component.onPicksChange(new Set(['m1', 'm2', 'p1', 'p2', 'c2']));
+      fixture.detectChanges();
+
+      expect(courseIds()).toEqual(['m2', 'p2', 'c2']);
+      expect(numberBoxes()[0].value).toBe('2');
+    });
+
+    it('should go to the first schedule when none of its sections can stay', async () => {
+      // Schedules: 1 a1 c1, 2 a1 c2, 3 a1 c3, 4 a2 c1. a2 clashes with c2 and c3.
+      const [a, c] = [course('a', ['a1', 'a2']), course('c', ['c1', 'c2', 'c3'])];
+      a.sections[1].meetings = [MONDAY_AT_9];
       c.sections[1].meetings = [MONDAY_AT_9];
+      c.sections[2].meetings = [MONDAY_AT_9];
 
       await setUp({ courses: [a, c] });
 
-      component.onPicksChange(new Set(['a1', 'a2', 'c2']));
+      typeNumber('4');
+
+      component.onPicksChange(new Set(['a1', 'a2', 'c2', 'c3']));
       fixture.detectChanges();
 
-      expect(courseIds()).toEqual(['a2', 'c2']);
+      expect(courseIds()).toEqual(['a1', 'c2']);
       expect(numberBoxes()[0].value).toBe('1');
     });
   });
@@ -376,8 +417,10 @@ describe('ScheduleFormDialogComponent', () => {
       expect(dialog().querySelector('csb-section-picker')).toBeNull();
     });
 
-    it('should leave Create on once there is a name', async () => {
+    it('should keep Create off until there is a name', async () => {
       await setUp();
+
+      expect(createButton().disabled).toBeTrue();
 
       typeName();
 

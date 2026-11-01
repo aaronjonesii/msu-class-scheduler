@@ -38,13 +38,15 @@
               <mat-checkbox [checked]="pickedSectionIds().has(section.id)"
                             (change)="togglePicks([section], $event.checked)">
                 <span class="section-name">{{section.name}}</span>
-                @if (section.status && section.status !== CourseStatus.OPEN) {
-                  <span class="status error-color">{{section.status}}</span>
+                @if (sectionStatus(section, course); as status) {
+                  @if (status !== CourseStatus.OPEN) {
+                    <span class="status error-color">{{status}}</span>
+                  }
                 }
               </mat-checkbox>
 
               <div class="section-details">
-                <p>{{formatCourseMeetings(section.meetings)}}</p>
+                <p>{{formatCourseMeetings(section.meetings) || 'No meetings'}}</p>
                 @if (formatMeetingDetails(section.meetings); as details) {
                   <p>{{details}}</p>
                 }

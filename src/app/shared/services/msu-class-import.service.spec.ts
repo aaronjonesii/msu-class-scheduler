@@ -123,7 +123,7 @@ describe('MsuClassImportService', () => {
     expect(sectionWrites().map((w) => w.data['name'])).toEqual(['001', '002']);
   });
 
-  it('should set the first open section as the default so schedules can be generated', async () => {
+  it('should make the first open section the default', async () => {
     const page = parsed(ECE_331_PAGE);
     const waitListFirst = [page.options[7], page.options[0]];
 

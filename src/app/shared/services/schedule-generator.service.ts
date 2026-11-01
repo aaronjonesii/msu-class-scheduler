@@ -35,6 +35,7 @@ import { ReadSchedule, Schedule } from "../interfaces/schedule";
 import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
 import { CourseMeeting } from "../interfaces/course-meeting";
+import { sectionStatus } from "../utils/section-status";
 import { sortSectionsByName } from "../utils/sort-sections-by-name";
 
 @Injectable({ providedIn: 'root' })
@@ -204,7 +205,7 @@ export class ScheduleGeneratorService {
     const scheduleCourseMeetings: ScheduleCourseMeeting[] = courseMeetings ?? []
     return {
       id: course.id,
-      status: (courseSection?.status ?? course.status) as unknown as ScheduleCourseStatus,
+      status: sectionStatus(courseSection, course) as unknown as ScheduleCourseStatus,
       subjectCode: course.subjectCode ?? null,
       courseNumber: course.courseNumber ?? null,
       name: course.name,

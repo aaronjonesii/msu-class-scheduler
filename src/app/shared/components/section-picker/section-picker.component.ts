@@ -11,6 +11,7 @@ import { ReadCourseWithSections } from "../../interfaces/course";
 import { ReadCourseSection } from "../../interfaces/course-section";
 import { formatCourseMeetings } from "../../utils/format-course-meetings";
 import { formatMeetingDetails } from "../../utils/format-meeting-details";
+import { sectionStatus } from "../../utils/section-status";
 
 @Component({
   selector: 'csb-section-picker',
@@ -30,6 +31,7 @@ export class SectionPickerComponent {
   protected readonly CourseStatus = CourseStatus;
   protected readonly formatCourseMeetings = formatCourseMeetings;
   protected readonly formatMeetingDetails = formatMeetingDetails;
+  protected readonly sectionStatus = sectionStatus;
 
   courses = input.required<ReadCourseWithSections[]>();
 

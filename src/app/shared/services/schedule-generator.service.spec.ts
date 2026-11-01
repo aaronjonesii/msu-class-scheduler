@@ -403,6 +403,26 @@ describe('ScheduleGeneratorService', () => {
       expect(savedTimes()).toEqual(['math 11:00', 'physics 13:00']);
     });
 
+    it('should show the schedule on screen in the week, and follow the picks', async () => {
+      const tileNames = () => Array.from(dialog().querySelectorAll('.tile.course .name'))
+        .map((name) => name.textContent);
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      expect(tileNames()).toEqual(['math', 'physics']);
+
+      courseBox('physics').click();
+      await settle();
+
+      expect(tileNames()).toEqual(['math']);
+
+      courseBox('physics').click();
+      await settle();
+
+      expect(tileNames()).toEqual(['math', 'physics']);
+    });
+
     it('should start with everything picked when opened again', async () => {
       await service.generateSchedules(PLAN_ID);
       await settle();

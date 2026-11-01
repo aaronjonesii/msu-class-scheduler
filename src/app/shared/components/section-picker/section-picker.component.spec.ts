@@ -90,6 +90,24 @@ describe('SectionPickerComponent', () => {
     expect(sectionRow('math-1').textContent).not.toContain('Open');
   });
 
+  it('should go by the course status when a section has none of its own', () => {
+    render([{ ...course('Calculus II', [section('math-1')]), status: CourseStatus.WAITlIST }], []);
+
+    expect(sectionRow('math-1').textContent).toContain('Waitlist');
+  });
+
+  it('should go by the section status over the course status', () => {
+    render([{ ...course('Calculus II', [section('math-1', CourseStatus.OPEN)]), status: CourseStatus.CLOSED }], []);
+
+    expect(sectionRow('math-1').textContent).not.toContain('Closed');
+  });
+
+  it('should say when a section has no meetings', () => {
+    render([course('Calculus II', [{ ...section('math-1'), meetings: [] }])], []);
+
+    expect(sectionRow('math-1').textContent).toContain('No meetings');
+  });
+
   it('should say how many sections of each course are picked', () => {
     render([math, physics], ['math-1', 'math-3']);
 

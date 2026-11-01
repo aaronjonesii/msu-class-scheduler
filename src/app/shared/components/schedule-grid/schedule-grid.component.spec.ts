@@ -41,6 +41,9 @@ describe('ScheduleGridComponent', () => {
     fixture = TestBed.createComponent(ScheduleGridComponent);
     component = fixture.componentInstance;
 
+    // Tile text wraps by width, so these tests can't depend on the size of the browser window.
+    (fixture.nativeElement as HTMLElement).style.width = '800px';
+
     fixture.componentRef.setInput('days', WEEKDAYS);
     fixture.componentRef.setInput('times', { start: '08:00', end: '22:00' });
     fixture.componentRef.setInput('scheduleCourses', scheduleCourses);
@@ -198,10 +201,13 @@ describe('ScheduleGridComponent', () => {
     it('should wrap a long name onto a second line instead of cutting it off', () => {
       render([{ ...ece302, name: 'Great Ages Of The Modern World And Beyond' }]);
 
-      const name = tileElements()[0].querySelector('.name') as Element;
+      const [name, title, time] = ['.name', '.course-title', '.times']
+        .map((selector) => tileElements()[0].querySelector(selector) as Element);
       const lineTops = Array.from(name.getClientRects()).map((line) => line.top);
 
       expect(new Set(lineTops).size).toBeGreaterThan(1);
+      // Hidden lines still count in the name's rects, so measure what is left showing too.
+      expect(title.getBoundingClientRect().height).toBeGreaterThan(time.getBoundingClientRect().height);
     });
 
     it('should show the name of a class with no course code', () => {
