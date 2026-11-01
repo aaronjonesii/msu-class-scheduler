@@ -11,7 +11,7 @@ import {
 } from "../../interfaces/schedule-course";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
-import { dateDifference } from "../../utils/date-difference";
+import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 import { ScheduleCourseStatus } from "../../enums/schedule-course-status";
 import { MatChip } from "@angular/material/chips";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -21,7 +21,7 @@ export interface GridTile {
   id: string,
   name: string,
   times?: string,
-  color: Color,
+  color?: Color,
   meeting?: ScheduleCourseMeeting,
   scheduleCourse?: ReadScheduleCourse,
   styles: {
@@ -35,6 +35,18 @@ export interface GridTile {
 export interface GridTimes {
   start: string,
   end: string,
+}
+
+/** Rows are this short so a class sits at its real time. Hour labels span several. */
+const MINUTES_PER_ROW = 5;
+
+/** +2 because grid lines count from 1 and the first row holds the day labels. */
+const rowAtMinutes = (minutes: number) => Math.round(minutes / MINUTES_PER_ROW) + 2;
+
+function toMinutes(time: string): number {
+  const [hours, minutes] = time.split(':').map(Number);
+
+  return hours * 60 + minutes;
 }
 
 @Component({
@@ -53,19 +65,29 @@ export class ScheduleGridComponent {
 
   @HostBinding('style.gridTemplateColumns')
   get gridTemplateColumns() {
-    return `repeat(${this.days().length + 1}, minmax(100px, 1fr))`;
+    return `72px repeat(${this.days().length}, minmax(120px, 1fr))`;
+  }
+
+  @HostBinding('style.--slot-height')
+  get slotHeight() {
+    return `${this.rowHeight()}px`;
+  }
+
+  @HostBinding('style.--header-height')
+  get headerHeight() {
+    return `${this.firstRowHeight()}px`;
   }
 
   @HostBinding('style.gridTemplateRows')
   get gridTemplateRows() {
-    const numTimeSlots = this.numTimeSlots();
+    const fixedRowHeight = this.rowHeight() * MINUTES_PER_ROW / this.timeSlotIncrement();
 
-    return `${this.firstRowHeight()}px repeat(${numTimeSlots}, minmax(${this.rowHeight()}px, 1fr))`;
+    return `${this.firstRowHeight()}px repeat(${this.numRows()}, ${fixedRowHeight}px)`;
   }
 
-  firstRowHeight = input(100);
+  firstRowHeight = input(40);
 
-  rowHeight = input(100);
+  rowHeight = input(72);
 
   days = input(Object.values(Day));
 
@@ -76,8 +98,6 @@ export class ScheduleGridComponent {
   shownCourses = model<string[]>([]);
 
   dayTileColor = input(Color.SPRING_GREEN);
-
-  timeTileColor = input(Color.ORANGE);
 
   timeSlotIncrement = input(60);
 
@@ -100,35 +120,32 @@ export class ScheduleGridComponent {
     });
   });
 
-  numTimeSlots = computed(() => {
+  totalMinutes = computed(() => {
     const { start, end } = this.times();
 
-    const totalMinutes = this._differenceInMinutes(start, end);
-
-    return totalMinutes / this.timeSlotIncrement();
+    return toMinutes(end) - toMinutes(start);
   });
 
-  timeTiles = computed<GridTile[]>(() => {
-    const numSlots = this.numTimeSlots()
+  numRows = computed(() => Math.ceil(this.totalMinutes() / MINUTES_PER_ROW));
 
+  timeTiles = computed<GridTile[]>(() => {
     const tiles: GridTile[] = [];
 
     const start = this._parseTime(this.times().start);
 
     const incrementMinutes = this.timeSlotIncrement();
 
-    for (let i = 0; i < numSlots; i++) {
+    for (let i = 0; i * incrementMinutes < this.totalMinutes(); i++) {
       const startTime = new Date(start.getTime() + i * incrementMinutes * 60 * 1000);
 
       tiles.push({
         id: startTime.toLocaleTimeString(),
         name: this._formatTime(startTime),
-        color: this.timeTileColor(),
         styles: {
           gridColumnStart: 1,
           gridColumnEnd: 2,
-          gridRowStart: i + 2,
-          gridRowEnd: i + 3,
+          gridRowStart: rowAtMinutes(i * incrementMinutes),
+          gridRowEnd: rowAtMinutes((i + 1) * incrementMinutes),
         },
       });
     }
@@ -139,89 +156,77 @@ export class ScheduleGridComponent {
   courseTiles = computed<GridTile[]>(() => {
     const tiles: GridTile[] = [];
 
-    const nextAvailableRow: Record<string, number> = {};
-
-    this.days().map((day) => nextAvailableRow[day] = this.numTimeSlots() + 2);
+    const noTimeTiles: GridTile[] = [];
 
     for (const scheduleCourse of this.scheduleCourses()) {
       if (!this.shownCourses().includes(scheduleCourse.id)) continue;
 
       for (const meeting of scheduleCourse.meetings) {
-        let hasMeetingTimes = false;
+        const tile = {
+          name: scheduleCourse.name,
+          color: scheduleCourse?.color ?? DefaultColor,
+          meeting,
+          scheduleCourse,
+        };
 
-        hasMeetingTimes = !!meeting.meetingTimes.length;
+        if (meeting.meetingTimes.length === 0) {
+          noTimeTiles.push({
+            ...tile,
+            id: `${scheduleCourse.id}-${meeting.type}-no-time`,
+            times: noMeetingTimeLabel(meeting),
+            styles: {
+              /** A class with no set time isn't on any one day, so it spans them all. */
+              gridColumnStart: 2,
+              gridColumnEnd: this.days().length + 2,
+              /** Rows are set below, once every timed class has its place. */
+              gridRowStart: 0,
+              gridRowEnd: 0,
+            },
+          });
+        }
 
-        if (hasMeetingTimes) {
-          for (const time of meeting.meetingTimes) {
-            for (const day of time.days) {
-              const dayIndex = this.days().indexOf(day);
-
-              const startTime = this._parseTime(time.startTime);
-
-              const startRow = this._getGridRowFromTime(startTime);
-
-              const endTime = this._parseTime(time.endTime);
-
-              const endRow = this._getGridRowFromTime(endTime);
-
-              tiles.push({
-                id: `${scheduleCourse.id}-${meeting.type}-${day}-${time.startTime}`,
-                name: scheduleCourse.name,
-                times: `${this._formatTime(startTime)} - ${this._formatTime(endTime)}`,
-                color: scheduleCourse?.color ?? DefaultColor,
-                meeting,
-                scheduleCourse,
-                styles: {
-                  /** +2 to account for the time column and label column */
-                  gridColumnStart: dayIndex + 2,
-                  /** +1 for the single column span */
-                  gridColumnEnd: dayIndex + 2 + 1,
-                  gridRowStart: startRow,
-                  gridRowEnd: endRow + 1,
-                },
-              });
-            }
-          }
-        } else {
-          for (const day of this.days()) {
-            const startRow = nextAvailableRow[day];
-
-            const endRow = nextAvailableRow[day] + 1;
-
+        for (const time of meeting.meetingTimes) {
+          for (const day of time.days) {
             const dayIndex = this.days().indexOf(day);
 
+            const startRow = this._rowAtTime(time.startTime);
+
             tiles.push({
-              id: `${scheduleCourse.id}-${meeting.type}-${day}-TBA`,
-              name: scheduleCourse.name,
-              times: 'To Be Announced',
-              color: scheduleCourse?.color ?? DefaultColor,
-              meeting,
-              scheduleCourse,
+              ...tile,
+              id: `${scheduleCourse.id}-${meeting.type}-${day}-${time.startTime}`,
+              times: `${this._formatTime(this._parseTime(time.startTime))} - ${this._formatTime(this._parseTime(time.endTime))}`,
               styles: {
                 /** +2 to account for the time column and label column */
                 gridColumnStart: dayIndex + 2,
                 /** +1 for the single column span */
                 gridColumnEnd: dayIndex + 2 + 1,
                 gridRowStart: startRow,
-                gridRowEnd: endRow,
+                gridRowEnd: Math.max(this._rowAtTime(time.endTime), startRow + 1),
               },
             });
-
-            nextAvailableRow[day]++;
           }
         }
       }
     }
 
-    return tiles;
+    /** Below the grid, and below any evening class that runs past the end of it. */
+    const firstFreeRow = Math.max(this.numRows() + 2, ...tiles.map((t) => t.styles.gridRowEnd));
+
+    noTimeTiles.forEach((tile, index) => {
+      tile.styles.gridRowStart = firstFreeRow + index;
+      tile.styles.gridRowEnd = firstFreeRow + index + 1;
+    });
+
+    return [...tiles, ...noTimeTiles];
   });
 
-  private _differenceInMinutes(start: string, end: string) {
-    const [startHour, startMinute] = start.split(':').map(Number);
+  /** Short tiles only have room for the course, time and room. */
+  tileDetails({ name, meeting }: GridTile): string {
+    return [name, meeting?.type, meeting?.instructor].filter(Boolean).join(', ');
+  }
 
-    const [endHour, endMinute] = end.split(':').map(Number);
-
-    return (endHour - startHour) * 60 + (endMinute - startMinute);
+  private _rowAtTime(time: string): number {
+    return rowAtMinutes(Math.max(0, toMinutes(time) - toMinutes(this.times().start)));
   }
 
   private _parseTime(timeStr: string): Date {
@@ -236,22 +241,5 @@ export class ScheduleGridComponent {
 
   private _formatTime(date: Date): string {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  private _getGridRowFromTime(time: Date): number {
-    const start = this._parseTime(this.times().start);
-
-    /** Ensure the time is within the grid's time range */
-    if (time.getTime() < start.getTime()) {
-      /** Default to the first available row */
-      return 2;
-    }
-
-    const minutesDiff = dateDifference(time, start, 'minutes');
-
-    const slotsDiff = minutesDiff / this.timeSlotIncrement();
-
-    /** +2 to account for the label row and the first time slow row */
-    return Math.floor(slotsDiff) + 2;
   }
 }

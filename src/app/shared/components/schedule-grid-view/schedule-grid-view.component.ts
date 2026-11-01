@@ -50,7 +50,7 @@ export class ScheduleGridViewComponent {
 
   startTime = signal('08:00');
 
-  endTime = signal('19:00');
+  endTime = signal('22:00');
 
   showGridOptions = signal(false);
 

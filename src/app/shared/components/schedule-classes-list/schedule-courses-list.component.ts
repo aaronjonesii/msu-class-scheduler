@@ -17,6 +17,7 @@ import {
   MatCardModule,
 } from "@angular/material/card";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
+import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 
 @Component({
   selector: 'csb-schedule-courses-list',
@@ -32,6 +33,8 @@ import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleCoursesListComponent {
+  protected readonly noMeetingTimeLabel = noMeetingTimeLabel;
+
   scheduleCourses = input<ReadScheduleCourse[] | null | undefined>(null);
 
   readonly editScheduleCourse = output<ReadScheduleCourse>();

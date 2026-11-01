@@ -18,11 +18,8 @@
 
 @mixin typography($theme) {
   csb-schedule-grid {
-    .labels span {
-      font: mat.get-theme-typography($theme, title-medium) !important;
-    }
     .tile span {
-      font: mat.get-theme-typography($theme, label-large);
+      font: mat.get-theme-typography($theme, label-medium);
     }
   }
 }
