@@ -10,20 +10,20 @@ import {
   MatListItemMeta,
   MatListItemTitle
 } from "@angular/material/list";
-import { TimePipe } from "../../pipes/time.pipe";
 import { MatAnchor, MatButton } from "@angular/material/button";
 import { SkeletonComponent } from "../skeleton/skeleton.component";
 import {
   MatCardModule,
 } from "@angular/material/card";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
+import { formatTimeRange } from "../../utils/format-time";
 import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 
 @Component({
   selector: 'csb-schedule-courses-list',
   standalone: true,
   imports: [
-    MatListItem, TimePipe,
+    MatListItem,
     MatListItemTitle,
     MatListItemLine, SkeletonComponent, MatListItemMeta,
     MatCardModule, MatButton, ColorToClassPipe, MatAnchor,
@@ -33,6 +33,7 @@ import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScheduleCoursesListComponent {
+  protected readonly formatTimeRange = formatTimeRange;
   protected readonly noMeetingTimeLabel = noMeetingTimeLabel;
 
   scheduleCourses = input<ReadScheduleCourse[] | null | undefined>(null);

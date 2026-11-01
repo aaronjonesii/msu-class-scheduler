@@ -26,7 +26,7 @@
             {{meeting.type}}
             -
             @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
-              {{meetingTime.days.join(', ')}} {{meetingTime.startTime | time}} to {{meetingTime.endTime | time}}
+              {{meetingTime.days.join(', ')}} {{formatTimeRange(meetingTime)}}
             } @empty {
               {{noMeetingTimeLabel(meeting)}}
             }

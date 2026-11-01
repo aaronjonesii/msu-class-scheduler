@@ -55,7 +55,6 @@ import { scrollToElementId } from '../../shared/utils/scroll-to-element';
     ColorToClassPipe,
     MatTooltip,
   ],
-  providers: [DatePipe],
   templateUrl: './schedule-detail.component.html',
   styleUrl: './schedule-detail.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -74,7 +74,7 @@ describe('SectionPickerComponent', () => {
   it('should show when and where each section meets, and who teaches it', () => {
     render([math], []);
 
-    expect(sectionRow('math-1').textContent).toContain('Lecture: (Mon: 09:00 - 09:50)');
+    expect(sectionRow('math-1').textContent).toContain('Lecture: (Mon: 9:00 AM - 9:50 AM)');
     expect(sectionRow('math-1').textContent).toContain('Wells Hall A1 · Ann Lee');
   });
 

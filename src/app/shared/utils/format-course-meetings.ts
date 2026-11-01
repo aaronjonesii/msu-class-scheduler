@@ -1,5 +1,6 @@
 import { Day } from "../enums/day";
 import { CourseMeeting } from "../interfaces/course-meeting";
+import { formatTimeRange } from "./format-time";
 import { noMeetingTimeLabel } from "./no-meeting-time-label";
 
 function dayToInitial(day: Day): string {
@@ -23,6 +24,10 @@ function dayToInitial(day: Day): string {
   }
 }
 
+export function formatDays(days: Day[]): string {
+  return days.map(dayToInitial).join(' ');
+}
+
 export function formatCourseMeetings(meetings: CourseMeeting[]): string {
   const list: string[] = [];
 
@@ -30,9 +35,7 @@ export function formatCourseMeetings(meetings: CourseMeeting[]): string {
     const { type } = meeting;
     const meetingTimes: string[] = [];
     for (const meetingTime of meeting.meetingTimes) {
-      const { days, startTime, endTime } = meetingTime;
-      const daysInitials = days.map(dayToInitial);
-      meetingTimes.push(`${daysInitials.join(' ')}: ${startTime} - ${endTime}`);
+      meetingTimes.push(`${formatDays(meetingTime.days)}: ${formatTimeRange(meetingTime)}`);
     }
     list.push(`${type}: (${meetingTimes.join(', ') || noMeetingTimeLabel(meeting)})`);
   }

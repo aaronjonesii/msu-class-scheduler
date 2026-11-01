@@ -219,6 +219,12 @@ describe('ScheduleGridComponent', () => {
       expect(isInsideTile(title)).toBeTrue();
     });
 
+    it('should show the time the same way as the rest of the app', () => {
+      render([ece302]);
+
+      expect(tileElements()[0].querySelector('.times')?.textContent).toBe('9:10 AM - 10:00 AM');
+    });
+
     it('should show the same tooltip anywhere on the tile', () => {
       render([ece302]);
 

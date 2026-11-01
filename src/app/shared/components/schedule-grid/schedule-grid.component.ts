@@ -11,6 +11,7 @@ import {
 } from "../../interfaces/schedule-course";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
+import { formatTimeRange } from "../../utils/format-time";
 import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 import { ScheduleCourseStatus } from "../../enums/schedule-course-status";
 import { MatChip } from "@angular/material/chips";
@@ -194,7 +195,7 @@ export class ScheduleGridComponent {
             tiles.push({
               ...tile,
               id: `${scheduleCourse.id}-${meeting.type}-${day}-${time.startTime}`,
-              times: `${this._formatTime(this._parseTime(time.startTime))} - ${this._formatTime(this._parseTime(time.endTime))}`,
+              times: formatTimeRange(time),
               styles: {
                 /** +2 to account for the time column and label column */
                 gridColumnStart: dayIndex + 2,
