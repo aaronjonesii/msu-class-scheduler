@@ -8,7 +8,7 @@
  *   firebase emulators:exec --only firestore --project demo-msu-class-scheduler "npx tsx --test migrate-classes-to-courses.spec.ts"
  */
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { before, beforeEach, describe, it } from 'node:test';
 import { getApps, initializeApp } from 'firebase-admin/app';
@@ -278,8 +278,13 @@ describe('migrate-classes-to-courses', () => {
     );
   });
 
-  describe('with the real pre-migration production snapshot', () => {
-    const backup: BackupEntry[] = JSON.parse(readFileSync(BACKUP_FILE, 'utf8'));
+  // The backup holds personal data, so it is gitignored and absent from a fresh clone.
+  describe('with the real pre-migration production snapshot', { skip: !existsSync(BACKUP_FILE) }, () => {
+    let backup: BackupEntry[];
+
+    before(() => {
+      backup = JSON.parse(readFileSync(BACKUP_FILE, 'utf8'));
+    });
 
     beforeEach(async () => {
       const scheduleIds = new Set(backup.map((e) => e.path.split('/')[1]!));
