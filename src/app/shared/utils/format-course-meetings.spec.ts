@@ -23,6 +23,21 @@ describe('formatCourseMeetings', () => {
     ])).toBe('Laboratory: (Tue: 11:30 - 14:20); Lecture: (Fri: 13:50 - 14:40)');
   });
 
+  it('should show where an online section meets instead of a time', () => {
+    expect(formatCourseMeetings([{
+      type: CourseMeetingType.LECTURE,
+      location: 'Online Asynchronous',
+      meetingTimes: [],
+    }])).toBe('Lecture: (Online Asynchronous)');
+  });
+
+  it('should say when a meeting has no time yet', () => {
+    expect(formatCourseMeetings([{
+      type: CourseMeetingType.LECTURE,
+      meetingTimes: [],
+    }])).toBe('Lecture: (To be announced)');
+  });
+
   it('should describe nothing when there are no meetings', () => {
     expect(formatCourseMeetings([])).toBe('');
   });

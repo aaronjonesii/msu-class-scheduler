@@ -1,6 +1,10 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 import { ScheduleCoursesListComponent } from './schedule-courses-list.component';
+import { ScheduleCourseMeetingType } from '../../enums/schedule-course-meeting-type';
+import { ScheduleCourseStatus } from '../../enums/schedule-course-status';
+import { ReadScheduleCourse } from '../../interfaces/schedule-course';
 
 describe('ScheduleClassesListComponent', () => {
   let component: ScheduleCoursesListComponent;
@@ -8,7 +12,8 @@ describe('ScheduleClassesListComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ScheduleCoursesListComponent]
+      imports: [ScheduleCoursesListComponent],
+      providers: [provideNoopAnimations()],
     })
     .compileComponents();
 
@@ -17,7 +22,30 @@ describe('ScheduleClassesListComponent', () => {
     fixture.detectChanges();
   });
 
+  async function meetingLine(location: string | null) {
+    fixture.componentRef.setInput('scheduleCourses', [{
+      id: 'course',
+      name: 'Course',
+      status: ScheduleCourseStatus.OPEN,
+      isNotMSUCourse: null,
+      meetings: [{ type: ScheduleCourseMeetingType.LECTURE, location, instructor: null, meetingTimes: [] }],
+    } as ReadScheduleCourse]);
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    return (fixture.nativeElement as HTMLElement).querySelector('.meeting-time')?.textContent?.replace(/\s+/g, ' ').trim();
+  }
+
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should show where an online class meets instead of a time', async () => {
+    expect(await meetingLine('Online Asynchronous')).toBe('Lecture - Online Asynchronous');
+  });
+
+  it('should say to be announced when there is no time or online location', async () => {
+    expect(await meetingLine(null)).toBe('Lecture - To be announced');
   });
 });

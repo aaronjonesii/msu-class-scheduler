@@ -139,7 +139,7 @@ export class ScheduleCourseForm {
       endDate: this.endDate ? this._dateToTimestamp(this.endDate) : null,
       color: this.color || null,
       subjectCode: this.subjectCode?.toUpperCase() || null,
-      courseNumber: this.courseNumber || null,
+      courseNumber: this.courseNumber?.toUpperCase() || null,
       isNotMSUCourse: this.isNotMSUCourse || null,
       credits: this.credits || 0,
     };
@@ -211,7 +211,7 @@ export class ScheduleCourseForm {
         { validators: Validators.required, nonNullable: true },
       ),
       subjectCode: new FormControl(scheduleClass?.subjectCode || null),
-      courseNumber: new FormControl(scheduleClass?.courseNumber || null),
+      courseNumber: new FormControl(scheduleClass?.courseNumber?.toString() ?? null),
       isNotMSUCourse: new FormControl(
         scheduleClass?.isNotMSUCourse || null,
       ),

@@ -163,6 +163,23 @@ describe('ScheduleGeneratorService', () => {
       expect(savedTimes()).toEqual(['math 09:00', 'physics 13:00', 'history 17:00']);
     });
 
+    it('should keep an online section with no meeting time, which cannot conflict', async () => {
+      const online = { ...section('math-online', '09:00', '09:50'), meetings: [{
+        type: CourseMeetingType.LECTURE, location: 'Online Asynchronous', instructor: null, meetingTimes: [],
+      }] };
+      sections['math'] = [online];
+      courses = [course('math', 'math-online'), course('physics', 'physics-1')];
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      await createSchedule();
+
+      expect(savedTimes()).toEqual(['math no meeting', 'physics 13:00']);
+      expect((scheduleCourseDocs()[0].data as unknown as ScheduleCourse).meetings[0].location)
+        .toBe('Online Asynchronous');
+    });
+
     it('should use the status of the section on screen', async () => {
       sections['math'] = [{ ...section('math-1', '09:00', '09:50'), status: CourseStatus.WAITlIST }];
 

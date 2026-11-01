@@ -13,7 +13,7 @@ export interface CourseFormGroup {
   endDate: FormControl<Date | null>,
   color: FormControl<Color>,
   subjectCode: FormControl<string | null>,
-  courseNumber: FormControl<number | null>,
+  courseNumber: FormControl<string | null>,
   isNotMSUCourse: FormControl<boolean | null>,
   credits: FormControl<number>,
   selectedSectionId: FormControl<string | null>,

@@ -1,9 +1,3 @@
-<div class="tile labels">
-  <span [class]="this.dayTileColor() | colorToClass: 'card'">Days</span>
-
-  <span [class]="this.timeTileColor() | colorToClass: 'card'">Times</span>
-</div>
-
 @for (dayTile of dayTiles(); track dayTile.id) {
   <div class="tile day" [class]="dayTile.color | colorToClass: 'card'"
        [ngStyle]="dayTile.styles">
@@ -12,17 +6,20 @@
 }
 
 @for (timeTile of timeTiles(); track timeTile.id) {
-  <div class="tile time" [class]="timeTile.color | colorToClass: 'card'"
-       [ngStyle]="timeTile.styles">
+  <div class="tile time" [ngStyle]="timeTile.styles">
     {{timeTile.name}}
   </div>
 }
 
 @for (courseTile of courseTiles(); track courseTile.id) {
   <div class="tile course" tabindex="0"
+       [title]="tileDetails(courseTile)"
        [class]="courseTile.color | colorToClass: 'card'"
        [ngStyle]="courseTile.styles"
-       [ngClass]="{'waitlist': courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST}"
+       [ngClass]="{
+         'waitlist': courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST,
+         'no-time': courseTile.meeting?.meetingTimes?.length === 0
+       }"
        (keyup)="courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined"
        (click)=" courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined">
     @if (courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST) {
@@ -39,16 +36,16 @@
       </span>
     }
 
-    <span class="name truncate-text" [title]="courseTile.name">{{courseTile.name}}</span>
+    <span class="times" [title]="courseTile.times">{{courseTile.times}}</span>
 
-    <!-- <span class="description truncate-text" [title]="courseTile.scheduleClass?.description">{{courseTile.scheduleClass?.description}}</span> -->
+    @if (courseTile.meeting?.location !== courseTile.times) {
+      <span class="location" [title]="courseTile.meeting?.location">{{courseTile.meeting?.location}}</span>
+    }
+
+    <span class="name" [title]="courseTile.name">{{courseTile.name}}</span>
 
     <span class="type" [title]="courseTile.meeting?.type">{{courseTile.meeting?.type}}</span>
 
-    <span class="times" [title]="courseTile.times">{{courseTile.times}}</span>
-
-    <span class="location" [title]="courseTile.meeting?.location">{{courseTile.meeting?.location}}</span>
-
-    <span class="instructor truncate-text" [title]="courseTile.meeting?.instructor">{{courseTile.meeting?.instructor}}</span>
+    <span class="instructor" [title]="courseTile.meeting?.instructor">{{courseTile.meeting?.instructor}}</span>
   </div>
 }

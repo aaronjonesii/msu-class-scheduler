@@ -18,6 +18,12 @@
         place-items: center;
         background: #18453b;
         transition: opacity 200ms ease-out;
+        /* Needs no JavaScript, so the page still shows if the app can't start. */
+        animation: app-splash-give-up 1ms 8s forwards;
+      }
+
+      @keyframes app-splash-give-up {
+        to { opacity: 0; transform: translateY(-100%); }
       }
 
       #app-splash.app-splash-hidden {

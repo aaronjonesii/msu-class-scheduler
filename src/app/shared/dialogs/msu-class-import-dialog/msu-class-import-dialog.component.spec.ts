@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { SemesterTerm } from '../../enums/semester-term';
 import {
-  classRow, ECE_203_PAGE, ECE_302_PAGE, ECE_331_PAGE, pageWithRows,
+  classRow, ECE_203_PAGE, ECE_302_PAGE, ECE_331_PAGE, IAH_221C_PAGE, pageWithRows,
 } from '../../utils/parse-msu-class-page.fixtures';
 import {
   MsuClassImportDialogComponent,
@@ -99,6 +99,34 @@ describe('MsuClassImportDialogComponent', () => {
     expect(statusLabels()).toEqual(['Waitlist']);
   });
 
+  describe('a page with online sections and the shopping cart', () => {
+    const options = () => Array.from(element().querySelectorAll('.option'));
+
+    it('should check the online sections along with the others', () => {
+      setUp();
+      paste(IAH_221C_PAGE);
+
+      expect(checkedCount()).toBe(5);
+      expect(statusLabels()).toEqual([]);
+    });
+
+    it('should mark only the option in the shopping cart', () => {
+      setUp();
+      paste(IAH_221C_PAGE);
+
+      expect(options().map((o) => o.querySelector('.in-cart')?.textContent ?? null))
+        .toEqual([null, null, null, 'In shopping cart', null]);
+    });
+
+    it('should describe an online section by where it meets', () => {
+      setUp();
+      paste(IAH_221C_PAGE);
+
+      expect(options()[3].textContent).toContain('Lecture: (Online Asynchronous)');
+      expect(options()[3].textContent).toContain('William Johnsen');
+    });
+  });
+
   it('should not label open options', () => {
     setUp();
     paste(ECE_203_PAGE);
@@ -125,9 +153,9 @@ describe('MsuClassImportDialogComponent', () => {
 
   it('should show a warning about the page itself', () => {
     setUp();
-    paste(pageWithRows([classRow()], 'MTH 152H'));
+    paste(pageWithRows([classRow()], 'ABC 100', 'No units here'));
 
-    expect(dialogText()).toContain('MTH 152H is saved as MTH 152');
+    expect(dialogText()).toContain('Credits were not on the page');
   });
 
   it('should show why a paste could not be read', () => {

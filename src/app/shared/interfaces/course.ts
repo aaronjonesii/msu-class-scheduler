@@ -10,7 +10,7 @@ export interface Course {
   sections?: CourseSection[],
   id?: string | null,
   subjectCode?: string | null,
-  courseNumber?: number | null,
+  courseNumber?: string | number | null,
   description?: string | null,
   term?: SemesterTerm | null,
   credits?: number | null,

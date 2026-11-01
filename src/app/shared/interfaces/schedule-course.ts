@@ -12,7 +12,7 @@ export interface ScheduleCourse {
   meetings: ScheduleCourseMeeting[],
   id?: string | null,
   subjectCode?: string | null,
-  courseNumber?: number | null,
+  courseNumber?: string | number | null,
   description?: string | null,
   term?: string | null,
   credits?: number | null,

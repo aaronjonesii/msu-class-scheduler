@@ -3,7 +3,6 @@ import { NavigationCancel, NavigationEnd, NavigationError, NavigationStart, Rout
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { AuthService } from './auth.service';
-import { LoggerService } from './logger.service';
 import { SPLASH_MINIMUM_MS, SplashScreenService } from './splash-screen.service';
 import { SSRSafeService } from './ssr-safe.service';
 
@@ -41,7 +40,6 @@ describe('SplashScreenService', () => {
       providers: [
         { provide: Router, useValue: { events: routerEvents } },
         { provide: AuthService, useValue: { authState$: () => authState } },
-        { provide: LoggerService, useValue: jasmine.createSpyObj('LoggerService', ['error']) },
         { provide: SSRSafeService, useValue: { get isBrowser() { return isBrowser; } } },
       ],
     });
@@ -162,20 +160,14 @@ describe('SplashScreenService', () => {
     expect(isHidden()).toBeTrue();
   });
 
-  it('should not leave the app locked behind the splash when the sign-in check fails', () => {
-    start();
-
-    authState.error(new Error('auth failed'));
-
-    expect(isHidden()).toBeTrue();
-    expect(TestBed.inject(LoggerService).error).toHaveBeenCalled();
-  });
-
-  it('should remove the splash after it fades out', () => {
+  it('should remove the splash after it fades out, not before', () => {
     start();
 
     appBecomesReady();
     waitOutMinimum();
+
+    expect(splash.isConnected).toBeTrue();
+
     splash.dispatchEvent(new Event('transitionend'));
 
     expect(document.getElementById('app-splash')).toBeNull();

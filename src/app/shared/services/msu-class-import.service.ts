@@ -19,8 +19,9 @@ interface NewSection {
 }
 
 function isSameCourse(course: ReadCourse, page: MsuClassPage): boolean {
+  // Courses saved before numbers could hold a letter have a plain number.
   return course.subjectCode?.toUpperCase() === page.subjectCode &&
-    course.courseNumber === page.courseNumber;
+    String(course.courseNumber) === page.courseNumber;
 }
 
 function toNewCourse(page: MsuClassPage, defaultSection: NewSection, courses: ReadCourse[]): Course {
@@ -108,7 +109,8 @@ export class MsuClassImportService {
       }
 
       // Generate Schedules only uses courses that have a default section.
-      const defaultSection = sections.find((s) => s.option.status === CourseStatus.OPEN) ?? sections[0];
+      const defaultSection = sections.find((s) => s.option.inCart) ??
+        sections.find((s) => s.option.status === CourseStatus.OPEN) ?? sections[0];
       const courseRef = this.db.doc(FirestorePaths.semesterPlanCourse(semesterPlanId, courseId));
 
       if (course) {

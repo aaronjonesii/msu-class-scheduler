@@ -4,7 +4,7 @@ import { Day } from '../enums/day';
 import { SemesterTerm } from '../enums/semester-term';
 import { MsuClassOption, MsuClassPage, parseMsuClassPage } from './parse-msu-class-page';
 import {
-  classRow, ECE_203_PAGE, ECE_302_PAGE, ECE_331_PAGE, pageWithRows,
+  classRow, ECE_203_PAGE, ECE_302_PAGE, ECE_331_PAGE, IAH_221C_PAGE, pageWithRows,
 } from './parse-msu-class-page.fixtures';
 
 function parsed(text: string): MsuClassPage {
@@ -24,7 +24,7 @@ describe('parseMsuClassPage', () => {
     it('should read the course details', () => {
       expect(page.courseCode).toBe('ECE 203');
       expect(page.subjectCode).toBe('ECE');
-      expect(page.courseNumber).toBe(203);
+      expect(page.courseNumber).toBe('203');
       expect(page.name).toBe('Circuits Lab');
       expect(page.credits).toBe(1);
       expect(page.description).toContain('Electrical test equipment');
@@ -76,7 +76,7 @@ describe('parseMsuClassPage', () => {
     const page = parsed(ECE_302_PAGE);
 
     it('should read the course details', () => {
-      expect(page.courseNumber).toBe(302);
+      expect(page.courseNumber).toBe('302');
       expect(page.name).toBe('Electronic Circuits');
       expect(page.credits).toBe(3);
     });
@@ -108,7 +108,7 @@ describe('parseMsuClassPage', () => {
     const page = parsed(ECE_331_PAGE);
 
     it('should read the course details', () => {
-      expect(page.courseNumber).toBe(331);
+      expect(page.courseNumber).toBe('331');
       expect(page.name).toBe('Microprocessors & Digital Sys');
       expect(page.credits).toBe(4);
       expect(page.options.length).toBe(8);
@@ -157,6 +157,54 @@ describe('parseMsuClassPage', () => {
     });
   });
 
+  describe('IAH 221C (online sections and the shopping cart)', () => {
+    const page = parsed(IAH_221C_PAGE);
+
+    it('should read the course details', () => {
+      expect(page.courseCode).toBe('IAH 221C');
+      expect(page.courseNumber).toBe('221C');
+      expect(page.name).toBe('Great Ages Modern World (I)');
+      expect(page.credits).toBe(4);
+      expect(page.options.length).toBe(5);
+    });
+
+    it('should have nothing to warn about', () => {
+      expect(page.warnings).toEqual([]);
+    });
+
+    it('should read an option in the shopping cart as open and note that it is in the cart', () => {
+      expect(page.options.map((o) => o.status)).toEqual(Array(5).fill(CourseStatus.OPEN));
+      expect(page.options.map((o) => o.inCart)).toEqual([false, false, false, true, false]);
+    });
+
+    it('should read an online section that has no meeting time', () => {
+      const online = page.options[3];
+
+      expect(online.sectionName).toBe('730');
+      expect(online.seats).toEqual(['Open Seats 17 of 25']);
+      expect(online.meetings).toEqual([{
+        type: CourseMeetingType.LECTURE,
+        location: 'Online Asynchronous',
+        instructor: 'William Johnsen',
+        meetingTimes: [],
+      }]);
+    });
+
+    it('should read the in-person sections on the same page', () => {
+      expect(page.options[2].sectionName).toBe('004');
+      expect(page.options[2].meetings).toEqual([{
+        type: CourseMeetingType.LECTURE,
+        location: 'Business College Complex N22',
+        instructor: 'Yore Kedem',
+        meetingTimes: [{ days: [Day.TUESDAY, Day.THURSDAY], startTime: '12:40', endTime: '14:30' }],
+      }]);
+    });
+
+    it('should not flag any option', () => {
+      expect(page.options.every((o) => o.warnings.length === 0 && !o.needsReview)).toBeTrue();
+    });
+  });
+
   describe('pages it cannot read', () => {
     it('should reject unrelated text', () => {
       const { page, error } = parseMsuClassPage('Grocery list\nmilk\neggs');
@@ -198,23 +246,49 @@ describe('parseMsuClassPage', () => {
       expect(optionFrom(classRow({ status: 'Reserved' })).status).toBeNull();
     });
 
-    it('should warn that a letter in the course number cannot be saved', () => {
-      const page = parsed(pageWithRows([classRow()], 'MTH 152H'));
+    it('should read a wait list option in the shopping cart', () => {
+      const option = optionFrom(classRow({ status: 'Wait List / Shopping Cart' }));
 
-      expect(page.courseCode).toBe('MTH 152H');
-      expect(page.courseNumber).toBe(152);
-      expect(page.warnings.join()).toContain('MTH 152H is saved as MTH 152');
+      expect(option.status).toBe(CourseStatus.WAITlIST);
+      expect(option.inCart).toBeTrue();
     });
 
-    it('should warn that a leading zero in the course number cannot be saved', () => {
-      const page = parsed(pageWithRows([classRow()], 'ENG 090'));
+    it('should leave out a room that has not been announced for an online section', () => {
+      const option = optionFrom(classRow({ times: ['To be announced'], rooms: ['To be Announced'] }));
 
-      expect(page.courseNumber).toBe(90);
-      expect(page.warnings.join()).toContain('ENG 090 is saved as ENG 90');
+      expect(option.needsReview).toBeFalse();
+      expect(option.meetings[0].location).toBeNull();
+      expect(option.meetings[0].instructor).toBe('Ann Lee');
     });
 
-    it('should not warn about an ordinary course number', () => {
-      expect(parsed(pageWithRows([classRow()], 'ENG 190')).warnings).toEqual([]);
+    it('should pair a timed part and an online part with their own details', () => {
+      const option = optionFrom(classRow({
+        components: [
+          'Class Comp Laboratory - Class Sect 001 -',
+          'Class Comp Lecture - Class Sect LEC1 - C',
+        ],
+        times: ['To be announced', 'Monday', '9:10AM to 10:00AM'],
+        rooms: ['Online Asynchronous', 'Wells Hall A1'],
+        instructors: ['Ann Lee', 'Bo Park'],
+        seats: ['Open Seats 1 of 9', 'Open Seats 2 of 9'],
+      }));
+
+      expect(option.needsReview).toBeFalse();
+      expect(option.meetings[0].location).toBe('Online Asynchronous');
+      expect(option.meetings[0].meetingTimes).toEqual([]);
+      expect(option.meetings[1].location).toBe('Wells Hall A1');
+      expect(option.meetings[1].meetingTimes.length).toBe(1);
+    });
+
+    it('should keep the letter that identifies a course', () => {
+      const letters = ['A', 'B', 'D'].map((letter) => parsed(pageWithRows([classRow()], `IAH 211${letter}`)));
+
+      expect(letters.map((page) => page.courseNumber)).toEqual(['211A', '211B', '211D']);
+      expect(letters.map((page) => page.subjectCode)).toEqual(['IAH', 'IAH', 'IAH']);
+    });
+
+    it('should keep a leading zero in the course number', () => {
+      expect(parsed(pageWithRows([classRow()], 'ENG 090')).courseNumber).toBe('090');
     });
 
     it('should warn when credits are missing', () => {
@@ -302,8 +376,8 @@ describe('parseMsuClassPage', () => {
       expectFlagged(option);
     });
 
-    it('should flag a part with no meeting time', () => {
-      const option = optionFrom(classRow({ times: ['To be Announced'] }));
+    it('should flag a part with nothing in its days and times column', () => {
+      const option = optionFrom(classRow({ times: [] }));
 
       expectFlagged(option);
       expect(option.meetings[0].meetingTimes).toEqual([]);

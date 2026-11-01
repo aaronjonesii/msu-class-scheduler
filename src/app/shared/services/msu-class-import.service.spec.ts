@@ -6,7 +6,7 @@ import { MsuClassImportService } from './msu-class-import.service';
 import { CourseStatus } from '../enums/course-status';
 import { ReadCourse } from '../interfaces/course';
 import { MsuClassPage, parseMsuClassPage } from '../utils/parse-msu-class-page';
-import { ECE_203_PAGE, ECE_302_PAGE, ECE_331_PAGE } from '../utils/parse-msu-class-page.fixtures';
+import { ECE_203_PAGE, ECE_302_PAGE, ECE_331_PAGE, IAH_221C_PAGE } from '../utils/parse-msu-class-page.fixtures';
 
 interface Write {
   op: 'set' | 'update',
@@ -89,7 +89,7 @@ describe('MsuClassImportService', () => {
     expect(courseWrites()[0].data).toEqual(jasmine.objectContaining({
       name: 'Circuits Lab',
       subjectCode: 'ECE',
-      courseNumber: 203,
+      courseNumber: '203',
       credits: 1,
       status: CourseStatus.OPEN,
       isNotMSUCourse: null,
@@ -132,6 +132,14 @@ describe('MsuClassImportService', () => {
     const openSection = sectionWrites().find((w) => w.data['status'] === CourseStatus.OPEN) as Write;
 
     expect(courseWrites()[0].data['selectedSectionId']).toBe(idFrom(openSection));
+  });
+
+  it('should make the section in the shopping cart the default', async () => {
+    await importAll(parsed(IAH_221C_PAGE));
+
+    const cartSection = sectionWrites().find((w) => w.data['name'] === '730') as Write;
+
+    expect(courseWrites()[0].data['selectedSectionId']).toBe(idFrom(cartSection));
   });
 
   it('should fall back to a wait list section when none are open', async () => {
@@ -215,6 +223,37 @@ describe('MsuClassImportService', () => {
       await importAll(parsed(ECE_203_PAGE));
 
       expectNewCourse('mth203');
+    });
+
+    it('should save the whole course number, including its letter', async () => {
+      await importAll(parsed(IAH_221C_PAGE));
+
+      expect(courseWrites()[0].data['courseNumber']).toBe('221C');
+    });
+
+    it('should not merge courses that only differ by the letter in their number', async () => {
+      planCourses = [{ id: 'iah221a', subjectCode: 'IAH', courseNumber: '221A' } as ReadCourse];
+
+      await importAll(parsed(IAH_221C_PAGE));
+
+      expectNewCourse('iah221a');
+    });
+
+    it('should find a course with a letter in its number', async () => {
+      planCourses = [{ id: 'iah221c', subjectCode: 'IAH', courseNumber: '221C' } as ReadCourse];
+
+      await importAll(parsed(IAH_221C_PAGE));
+
+      expect(courseWrites()[0].op).toBe('update');
+      expect(courseWrites()[0].path).toContain('/iah221c');
+    });
+
+    it('should find a course saved earlier with a plain number', async () => {
+      planCourses = [{ id: 'ece203', subjectCode: 'ECE', courseNumber: 203 } as ReadCourse];
+
+      await importAll(parsed(ECE_203_PAGE));
+
+      expect(courseWrites()[0].op).toBe('update');
     });
 
     it('should match a course saved with a lowercase subject code', async () => {
