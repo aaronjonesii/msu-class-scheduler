@@ -1,21 +1,22 @@
 import { DOCUMENT } from '@angular/common';
 import { inject, Injectable } from '@angular/core';
 import { NavigationEnd, NavigationError, Router } from '@angular/router';
-import { finalize, first, forkJoin, take, timer } from 'rxjs';
+import { first, forkJoin, take, timer } from 'rxjs';
 import { AuthService } from './auth.service';
-import { LoggerService } from './logger.service';
 import { SSRSafeService } from './ssr-safe.service';
 
 const SPLASH_ID = 'app-splash';
 const HIDDEN_CLASS = 'app-splash-hidden';
 export const SPLASH_MINIMUM_MS = 600;
 
-/** Controls the splash screen in index.html, which shows before any JavaScript runs. */
+/**
+ * Controls the splash screen in index.html, which shows before any JavaScript
+ * runs. A CSS rule there hides it after a few seconds if this never gets to.
+ */
 @Injectable({ providedIn: 'root' })
 export class SplashScreenService {
   private authService = inject(AuthService);
   private document = inject(DOCUMENT);
-  private logger = inject(LoggerService);
   private router = inject(Router);
   private ssrSafe = inject(SSRSafeService);
 
@@ -34,11 +35,7 @@ export class SplashScreenService {
     // Measured from page open, so only a fast load waits, and it doesn't flash.
     const minimumTimePassed$ = timer(Math.max(0, SPLASH_MINIMUM_MS - performance.now()));
 
-    forkJoin([firstPageReady$, signInStateKnown$, minimumTimePassed$]).pipe(
-      finalize(() => this.hide()),
-    ).subscribe({
-      error: (error: unknown) => this.logger.error('Error waiting for the app to start', error),
-    });
+    forkJoin([firstPageReady$, signInStateKnown$, minimumTimePassed$]).subscribe(() => this.hide());
   }
 
   private hide(): void {
