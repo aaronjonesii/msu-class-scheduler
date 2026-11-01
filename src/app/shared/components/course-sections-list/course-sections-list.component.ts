@@ -11,6 +11,7 @@ import { CourseStatus } from "../../enums/course-status";
 import { ReadCourse } from "../../interfaces/course";
 import { ReadCourseSection } from "../../interfaces/course-section";
 import { sectionStatus } from "../../utils/section-status";
+import { ownMeetings, sharedMeetings } from "../../utils/shared-meetings";
 import { sortSectionsByName } from "../../utils/sort-sections-by-name";
 import { SemesterPlanCoursesService } from "../../services/semester-plan-courses.service";
 import { LoggerService } from "../../services/logger.service";
@@ -38,6 +39,7 @@ export class CourseSectionsListComponent {
 
   protected readonly CourseStatus = CourseStatus;
   protected readonly sectionStatus = sectionStatus;
+  protected readonly ownMeetings = ownMeetings;
 
   course = input.required<ReadCourse>();
   semesterPlanId = input.required<string>();
@@ -54,6 +56,8 @@ export class CourseSectionsListComponent {
       map(sortSectionsByName),
     )
   );
+
+  meetingsOfEverySection = computed(() => sharedMeetings(this.sections() ?? []));
 
   editSection = (section: ReadCourseSection) => {
     this.semesterPlanCourseSectionsService.openEditSectionDialog(this.semesterPlanId(), this.courseId(), section);

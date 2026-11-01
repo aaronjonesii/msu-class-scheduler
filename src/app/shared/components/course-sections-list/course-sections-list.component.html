@@ -1,3 +1,13 @@
+@if (meetingsOfEverySection().length > 0) {
+  <div class="shared">
+    <p class="shared-label">Every section has</p>
+
+    @for (meeting of meetingsOfEverySection(); track meeting) {
+      <csb-course-meeting [meeting]="meeting" />
+    }
+  </div>
+}
+
 <ul class="sections">
   @for (section of sections(); track section.id) {
     <li class="section">
@@ -14,9 +24,11 @@
       </div>
 
       <div class="meetings">
-        @for (meeting of section.meetings; track meeting) {
+        @for (meeting of ownMeetings(section, meetingsOfEverySection()); track meeting) {
           <csb-course-meeting [meeting]="meeting" />
-        } @empty {
+        }
+
+        @if (section.meetings.length === 0) {
           No meetings
         }
       </div>

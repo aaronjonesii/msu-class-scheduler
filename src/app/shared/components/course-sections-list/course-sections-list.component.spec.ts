@@ -143,6 +143,45 @@ describe('CourseSectionsListComponent', () => {
     });
   });
 
+  describe('a meeting every section has', () => {
+    const lecture = {
+      type: CourseMeetingType.LECTURE, location: 'Wonders Hall C213', instructor: 'Matthew Meier', meetingTimes: [],
+    };
+    const lab = { ...lecture, type: CourseMeetingType.LABORATORY, location: 'Engineering Building 3230' };
+    const shared = () => list().querySelector('.shared');
+
+    it('should show once, above the sections', async () => {
+      await render([
+        { ...section('001'), meetings: [lab, lecture] },
+        { ...section('002'), meetings: [{ ...lab, instructor: 'Ann Lee' }, lecture] },
+      ]);
+
+      expect(shared()?.textContent).toContain('Every section has');
+      expect(shared()?.textContent).toContain('Wonders Hall C213');
+      expect(rows().map((row) => row.textContent?.includes('Wonders Hall C213'))).toEqual([false, false]);
+      expect(rows().map((row) => row.textContent?.includes('Engineering Building 3230'))).toEqual([true, true]);
+    });
+
+    it('should stay on the rows when any section differs', async () => {
+      await render([
+        { ...section('001'), meetings: [lecture] },
+        { ...section('002'), meetings: [{ ...lecture, location: 'Wells Hall A1' }] },
+      ]);
+
+      expect(shared()).toBeNull();
+      expect(rows()[0].textContent).toContain('Wonders Hall C213');
+    });
+
+    it('should not call a section with only shared meetings empty', async () => {
+      await render([
+        { ...section('001'), meetings: [lecture] },
+        { ...section('002'), meetings: [lecture] },
+      ]);
+
+      expect(rows()[0].textContent).not.toContain('No meetings');
+    });
+  });
+
   describe('the actions of a section', () => {
     it('should be named for screen readers', async () => {
       await render([section('001')]);
