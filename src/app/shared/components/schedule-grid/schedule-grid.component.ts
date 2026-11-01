@@ -220,9 +220,11 @@ export class ScheduleGridComponent {
     return [...tiles, ...noTimeTiles];
   });
 
-  /** Short tiles only have room for the course, time and room. */
-  tileDetails({ name, meeting }: GridTile): string {
-    return [name, meeting?.type, meeting?.instructor].filter(Boolean).join(', ');
+  /** Short tiles only have room for the course and time. */
+  tileDetails({ name, meeting, scheduleCourse }: GridTile): string {
+    const details = [name, meeting?.location, meeting?.type, meeting?.instructor].filter(Boolean).join(', ');
+
+    return [details, scheduleCourse?.description].filter(Boolean).join('\n\n');
   }
 
   private _rowAtTime(time: string): number {

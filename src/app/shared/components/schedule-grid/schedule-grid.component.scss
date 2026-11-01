@@ -40,11 +40,19 @@
   border-radius: 6px;
   cursor: pointer;
 
-  span {
+  > span {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  /* Two lines at most, so the time still fits under it on a 50 minute class. */
+  > .course-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
   }
 
   .subject-code {

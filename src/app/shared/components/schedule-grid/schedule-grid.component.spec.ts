@@ -161,14 +161,62 @@ describe('ScheduleGridComponent', () => {
   });
 
   describe('reading a class at a glance', () => {
-    const textOrder = (tile: Element) => Array.from(tile.querySelectorAll('span'))
+    const textOrder = (tile: Element) => Array.from(tile.querySelectorAll(':scope > span'))
       .map((span) => span.className.split(' ')[0]);
 
-    it('should lead with what, when and where', () => {
-      const math = { ...timed('math', '09:00', '09:50'), subjectCode: 'MTH', courseNumber: '132' };
-      render([math]);
+    /** Text that doesn't fit wraps into a column past the edge of the tile. */
+    function isInsideTile(element: Element) {
+      const { left, right, top, bottom } = element.getBoundingClientRect();
+      const tile = (element.closest('.tile') as Element).getBoundingClientRect();
 
-      expect(textOrder(tileElements()[0]).slice(0, 3)).toEqual(['subject-code', 'times', 'location']);
+      return left >= tile.left && right <= tile.right && top >= tile.top && bottom <= tile.bottom;
+    }
+
+    const ece302 = { ...timed('Electronic Circuits', '09:10', '10:00'), subjectCode: 'ECE', courseNumber: '302' };
+
+    it('should lead with what the class is, then when and where', () => {
+      render([ece302]);
+
+      expect(textOrder(tileElements()[0]).slice(0, 3)).toEqual(['course-title', 'times', 'location']);
+    });
+
+    it('should show the code and name together on a 50 minute class', () => {
+      render([ece302]);
+
+      const title = tileElements()[0].querySelector('.course-title') as Element;
+
+      expect(title.textContent?.replace(/\s+/g, ' ').trim()).toBe('ECE 302 Electronic Circuits');
+      expect(isInsideTile(title)).toBeTrue();
+    });
+
+    it('should show the time on a 50 minute class with a long name', () => {
+      render([{ ...ece302, name: 'Microprocessors & Digital Systems For Engineers And Scientists' }]);
+
+      expect(isInsideTile(tileElements()[0].querySelector('.times') as Element)).toBeTrue();
+    });
+
+    it('should wrap a long name onto a second line instead of cutting it off', () => {
+      render([{ ...ece302, name: 'Great Ages Of The Modern World And Beyond' }]);
+
+      const name = tileElements()[0].querySelector('.name') as Element;
+      const lineTops = Array.from(name.getClientRects()).map((line) => line.top);
+
+      expect(new Set(lineTops).size).toBeGreaterThan(1);
+    });
+
+    it('should show the name of a class with no course code', () => {
+      render([timed('Study Group', '09:10', '10:00')]);
+
+      const title = tileElements()[0].querySelector('.course-title') as Element;
+
+      expect(title.textContent?.trim()).toBe('Study Group');
+      expect(isInsideTile(title)).toBeTrue();
+    });
+
+    it('should show the same tooltip anywhere on the tile', () => {
+      render([ece302]);
+
+      expect(tileElements()[0].querySelectorAll('[title]').length).toBe(0);
     });
 
     it('should keep the details a short tile has no room for in its tooltip', () => {
@@ -180,13 +228,20 @@ describe('ScheduleGridComponent', () => {
       }]);
       render([math]);
 
-      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, Lecture, Ann Lee');
+      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, Wells Hall A1, Lecture, Ann Lee');
     });
 
     it('should leave a missing instructor out of the tooltip', () => {
       render([timed('Calculus II', '09:00', '09:50')]);
 
-      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, Lecture');
+      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, Wells Hall A1, Lecture');
+    });
+
+    it('should add the course description to the tooltip on its own lines', () => {
+      render([{ ...timed('Calculus II', '09:00', '09:50'), description: 'Limits and series.' }]);
+
+      expect(tileElements()[0].getAttribute('title'))
+        .toBe('Calculus II, Wells Hall A1, Lecture\n\nLimits and series.');
     });
 
     it('should mark a class with no set time so it can sit on one line', () => {
