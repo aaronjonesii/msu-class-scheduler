@@ -11,8 +11,14 @@
 <mat-dialog-content>
   <csb-schedule-form [scheduleForm]="scheduleForm()" />
 
-  @if (combinations().length > 0) {
-    <ng-container [ngTemplateOutlet]="combinationNav" />
+  @if (courses.length > 0) {
+    @if (noScheduleFits()) {
+      <p class="error-color" role="alert">
+        No schedule fits these picks. Turn on more sections, or turn off a course that conflicts.
+      </p>
+    } @else {
+      <ng-container [ngTemplateOutlet]="combinationNav" />
+    }
 
     <csb-schedule-grid-view
       [scheduleCourses]="selectedCombinationScheduleCourses()"
@@ -26,7 +32,7 @@
   <button mat-button type="button" mat-dialog-close>Cancel</button>
 
   <button mat-flat-button type="button"
-          [disabled]="scheduleForm().formGroup.invalid"
+          [disabled]="scheduleForm().formGroup.invalid || noScheduleFits()"
           [mat-dialog-close]="scheduleToSave()">
     {{editing() ? 'Save' : 'Create'}}
   </button>

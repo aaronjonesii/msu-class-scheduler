@@ -186,7 +186,7 @@ export class ScheduleGeneratorService {
         maxHeight: '100%',
         data: {
           userId: user.uid,
-          combinations: filteredCombinations
+          courses: semesterPlan.courses
         } satisfies ScheduleFormDialogContract,
       },
     );

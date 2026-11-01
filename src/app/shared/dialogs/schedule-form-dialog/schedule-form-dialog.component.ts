@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component, computed, effect,
-  inject, input, model, OnInit,
+  inject, OnInit,
   signal
 } from '@angular/core';
 import { ReadSchedule } from "../../interfaces/schedule";
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose,
-  MatDialogContent, MatDialogRef,
+  MatDialogContent,
   MatDialogTitle
 } from "@angular/material/dialog";
 import { MatButton, MatIconButton } from "@angular/material/button";
@@ -15,7 +15,7 @@ import { ScheduleForm } from "../../forms/schedule-form";
 import {
   ScheduleFormComponent
 } from "../../components/schedule-form/schedule-form.component";
-import { CoursesCombination, ReadCourseWithSelectedSection } from "../../interfaces/course";
+import { ReadCourseWithSections } from "../../interfaces/course";
 import {
   ScheduleGridViewComponent
 } from "../../components/schedule-grid-view/schedule-grid-view.component";
@@ -28,7 +28,7 @@ import { NgTemplateOutlet } from "@angular/common";
 export interface ScheduleFormDialogContract {
   schedule?: ReadSchedule,
   userId: string,
-  combinations?: ReadCourseWithSelectedSection[][]
+  courses?: ReadCourseWithSections[]
 }
 
 @Component({
@@ -53,13 +53,23 @@ export interface ScheduleFormDialogContract {
 export class ScheduleFormDialogComponent implements OnInit {
   private scheduleGeneratorService = inject(ScheduleGeneratorService);
   private contract = inject<ScheduleFormDialogContract>(MAT_DIALOG_DATA);
-  private dialogRef = inject(MatDialogRef<ScheduleFormDialogComponent>);
 
   protected readonly scrollToElementId = scrollToElementId;
 
   scheduleForm = signal(new ScheduleForm());
 
-  combinations = signal<CoursesCombination[]>([]);
+  /** The plan's courses when generating. Creating or editing by hand has none. */
+  courses = this.contract?.courses ?? [];
+
+  pickedSectionIds = signal<ReadonlySet<string>>(
+    new Set(this.courses.flatMap((course) => course.sections.map((section) => section.id))),
+  );
+
+  combinations = computed(() => {
+    return this.scheduleGeneratorService.fittingCombinations(this.courses, this.pickedSectionIds());
+  });
+
+  noScheduleFits = computed(() => this.courses.length > 0 && this.combinations().length === 0);
 
   editing = signal(false);
 
@@ -84,13 +94,6 @@ export class ScheduleFormDialogComponent implements OnInit {
 
     if (this.contract.userId) {
       this.scheduleForm().userId = this.contract.userId;
-    }
-
-    if (this.contract.combinations?.length) {
-      this.combinations.set(this.contract.combinations);
-
-      // update dialog to full screen
-      this.dialogRef.updateSize('100%', '100%');
     }
 
     if (!this.contract.schedule) return;
