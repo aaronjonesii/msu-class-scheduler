@@ -9,6 +9,7 @@ import { CourseMeetingTime } from "../interfaces/course-meeting-time";
 export interface MsuClassOption {
   optionNumber: number,
   status: CourseStatus | null,
+  inCart: boolean,
   sectionName: string,
   meetings: CourseMeeting[],
   seats: string[],
@@ -20,7 +21,7 @@ export interface MsuClassOption {
 export interface MsuClassPage {
   courseCode: string,
   subjectCode: string,
-  courseNumber: number,
+  courseNumber: string,
   name: string,
   description: string | null,
   credits: number,
@@ -40,12 +41,13 @@ interface ClassPart {
 
 interface RowColumns {
   parts: ClassPart[],
-  times: CourseMeetingTime[],
+  /** One entry per line of the column; null when no time is set, like an online section. */
+  times: (CourseMeetingTime | null)[],
   /** Rooms, then instructors, then seats. */
   details: string[],
 }
 
-const COURSE_CODE = /^([A-Z]{2,5}) (\d{3})[A-Z]?$/;
+const COURSE_CODE = /^([A-Z]{2,5}) (\d{3}[A-Z]?)$/;
 const TERM = /^(Spring|Summer|Fall) (\d{4})$/;
 const UNITS = /^Units([\d.]+)$/;
 const OPTION_COUNT = /^(\d+) options?$/;
@@ -57,7 +59,9 @@ const PART_SECTION = /- Class Sect (\S+)( -)?/;
 const DATE_RANGE = /^\d{2}\/\d{2}\/\d{4} - \d{2}\/\d{2}\/\d{4}$/;
 const TIME_RANGE = /^(\d{1,2}):(\d{2})([AP])M to (\d{1,2}):(\d{2})([AP])M$/;
 const OPTION_NUMBER = /^\d+$/;
-const NOT_ANNOUNCED = 'To be Announced';
+// MSU writes this as "To be Announced" for instructors and "To be announced" for times.
+const NOT_ANNOUNCED = /^to be announced$/i;
+const IN_CART = ' / Shopping Cart';
 const NOT_A_DESCRIPTION = 'See the Archived Descriptions of Courses';
 
 const DAYS: string[] = Object.values(Day);
@@ -117,14 +121,20 @@ function splitIntoColumns(row: string[]): RowColumns {
 
   while (DATE_RANGE.test(row[cursor] ?? '')) cursor++;
 
-  const times: CourseMeetingTime[] = [];
-  for (
-    let time = parseMeetingTime(row[cursor], row[cursor + 1]);
-    time !== null;
-    time = parseMeetingTime(row[cursor], row[cursor + 1])
-  ) {
-    times.push(time);
-    cursor += 2;
+  const times: RowColumns['times'] = [];
+  while (cursor < row.length) {
+    const time = parseMeetingTime(row[cursor], row[cursor + 1]);
+
+    if (time) {
+      times.push(time);
+      cursor += 2;
+    } else if (times.length < parts.length && NOT_ANNOUNCED.test(row[cursor])) {
+      // Once every part has its time, this text is a room or instructor instead.
+      times.push(null);
+      cursor++;
+    } else {
+      break;
+    }
   }
 
   return { parts, times, details: row.slice(cursor) };
@@ -144,18 +154,20 @@ function toOption(row: string[]): MsuClassOption {
   const { parts, times, details } = splitIntoColumns(row);
   const partCount = parts.length;
   const linesUp = times.length === partCount && details.length === partCount * 3;
-  const announced = (value: string) => linesUp && value !== NOT_ANNOUNCED ? value : null;
+  const announced = (value: string) => linesUp && !NOT_ANNOUNCED.test(value) ? value : null;
 
   return {
     optionNumber,
-    status: STATUSES[row[1]] ?? null,
+    status: STATUSES[row[1].replace(IN_CART, '')] ?? null,
+    inCart: row[1].endsWith(IN_CART),
     sectionName: parts.map((part) => part.sectionId ?? `Option ${optionNumber}`).join(' + '),
     meetings: parts.map((part, index) => ({
       type: toMeetingType(part) ?? CourseMeetingType.LECTURE,
       location: announced(details[index]),
       instructor: announced(details[partCount + index]),
       // Extra times stay with the last part rather than being dropped.
-      meetingTimes: index === partCount - 1 ? times.slice(index) : times.slice(index, index + 1),
+      meetingTimes: (index === partCount - 1 ? times.slice(index) : times.slice(index, index + 1))
+        .filter((time) => time !== null),
     })),
     seats: linesUp ? details.slice(partCount * 2) : [],
     warnings: warningsFor(parts, linesUp),
@@ -218,29 +230,22 @@ export function parseMsuClassPage(text: string): MsuClassPageResult {
 
   const courseCode = lines[courseCodeIndex];
   const [, subjectCode, courseNumber] = courseCode.match(COURSE_CODE) as RegExpMatchArray;
-  const savedAs = `${subjectCode} ${Number(courseNumber)}`;
   const units = firstMatch(lines, UNITS);
   const term = firstMatch(lines, TERM);
-  const warnings: string[] = [];
-
-  if (!units) warnings.push('Credits were not on the page, so they were set to 0.');
-  if (courseCode !== savedAs) {
-    warnings.push(`Course numbers are saved as plain numbers, so ${courseCode} is saved as ${savedAs}.`);
-  }
 
   return {
     error: null,
     page: {
       courseCode,
       subjectCode,
-      courseNumber: Number(courseNumber),
+      courseNumber,
       name: lines[courseCodeIndex + 1],
       description: findDescription(lines),
       credits: units ? Number(units[1]) : 0,
       term: term ? term[1] as SemesterTerm : null,
       year: term ? Number(term[2]) : null,
       options: rows.map(toOption),
-      warnings,
+      warnings: units ? [] : ['Credits were not on the page, so they were set to 0.'],
     },
   };
 }

@@ -1,5 +1,6 @@
 import { Day } from "../enums/day";
 import { CourseMeeting } from "../interfaces/course-meeting";
+import { noMeetingTimeLabel } from "./no-meeting-time-label";
 
 function dayToInitial(day: Day): string {
   switch (day) {
@@ -33,7 +34,7 @@ export function formatCourseMeetings(meetings: CourseMeeting[]): string {
       const daysInitials = days.map(dayToInitial);
       meetingTimes.push(`${daysInitials.join(' ')}: ${startTime} - ${endTime}`);
     }
-    list.push(`${type}: (${meetingTimes.join(', ')})`);
+    list.push(`${type}: (${meetingTimes.join(', ') || noMeetingTimeLabel(meeting)})`);
   }
 
   return list.join('; ');

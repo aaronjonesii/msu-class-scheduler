@@ -38,6 +38,9 @@
               @if (option.status !== CourseStatus.OPEN) {
                 <span class="status error-color">{{option.status ?? 'Unknown status'}}</span>
               }
+              @if (option.inCart) {
+                <span class="in-cart">In shopping cart</span>
+              }
             </mat-checkbox>
 
             <div class="option-details">

@@ -321,6 +321,80 @@ Waitlist Available Places 9999 of 9999
 Open Seats 74 of 104
 `;
 
+export const IAH_221C_PAGE = `Skip to Main Content
+Course DetailRecently VisitedFavoritesAccessibility
+HomeActionsActions List
+Manage Classes
+Spring 2027
+Undergraduate
+Change
+Manage Classes
+IAH 221C
+Great Ages Modern World (I)
+Course Information
+See the Archived Descriptions of Courses
+Units4.00
+Grading
+Undergraduate Graded
+Components
+Lecture
+Course Career
+Undergraduate
+${TABLE_HEADER}5 options
+${TABLE_COLUMNS}1
+Open
+Regular Academic Session
+Class Comp Lecture - Class Sect 001 - Cl
+01/19/2027 - 05/02/2027
+Monday Wednesday
+3:00PM to 4:50PM
+Hubbard Hall G29
+Sarah Panuska
+Open Seats 24 of 25
+
+2
+Open
+Regular Academic Session
+Class Comp Lecture - Class Sect 002 - Cl
+01/19/2027 - 05/02/2027
+Tuesday Thursday
+3:00PM to 4:50PM
+Hubbard Hall G32
+Sarah Panuska
+Open Seats 25 of 25
+
+3
+Open
+Regular Academic Session
+Class Comp Lecture - Class Sect 004 - Cl
+01/19/2027 - 05/02/2027
+Tuesday Thursday
+12:40PM to 2:30PM
+Business College Complex N22
+Yore Kedem
+Open Seats 19 of 25
+
+4
+Open / Shopping Cart
+Regular Academic Session
+Class Comp Lecture - Class Sect 730 - Cl
+01/19/2027 - 05/02/2027
+To be announced
+Online Asynchronous
+William Johnsen
+Open Seats 17 of 25
+
+5
+Open
+Regular Academic Session
+Class Comp Lecture - Class Sect 731 - Cl
+01/19/2027 - 05/02/2027
+To be announced
+Online Asynchronous
+William Johnsen
+Open Seats 22 of 25
+`;
+
 interface ClassRow {
   optionNumber?: number,
   status?: string,
