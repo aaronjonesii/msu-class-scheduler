@@ -16,6 +16,7 @@ import {
   lastValueFrom, first
 } from "rxjs";
 import {
+  CoursesCombination,
   ReadCourse,
   ReadCourseWithSections, ReadCourseWithSelectedSection
 } from "../interfaces/course";
@@ -33,7 +34,6 @@ import { AuthService } from "./auth.service";
 import { ReadSchedule, Schedule } from "../interfaces/schedule";
 import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
-import { CourseMeetingTime } from "../interfaces/course-meeting-time";
 import { CourseMeeting } from "../interfaces/course-meeting";
 import { sortSectionsByName } from "../utils/sort-sections-by-name";
 
@@ -80,6 +80,8 @@ export class ScheduleGeneratorService {
   }
 
   generateCourseCombinations(courses: ReadCourseWithSections[]): ReadCourseWithSelectedSection[][] {
+    if (courses.length === 0) return [];
+
     const combinations: ReadCourseWithSelectedSection[][] = [];
 
     const helper = (index: number, currentCombination: ReadCourseWithSelectedSection[]) => {
@@ -101,6 +103,15 @@ export class ScheduleGeneratorService {
     helper(0, []);
 
     return combinations;
+  }
+
+  /** The schedules that fit using only the picked sections. A course with none picked is left out. */
+  fittingCombinations(courses: ReadCourseWithSections[], pickedSectionIds: ReadonlySet<string>): CoursesCombination[] {
+    const pickedCourses = courses
+      .map((course) => ({ ...course, sections: course.sections.filter((s) => pickedSectionIds.has(s.id)) }))
+      .filter((course) => course.sections.length > 0);
+
+    return this.removeOverlappingCombinations(this.generateCourseCombinations(pickedCourses));
   }
 
   getSemesterPlanWithCourses$(semesterPlanId: string) {

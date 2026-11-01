@@ -45,7 +45,7 @@
 
             <div class="option-details">
               <p>{{formatCourseMeetings(option.meetings)}}</p>
-              @if (meetingDetails(option); as details) {
+              @if (formatMeetingDetails(option.meetings); as details) {
                 <p>{{details}}</p>
               }
               @if (option.seats.length > 0) {

@@ -168,6 +168,50 @@ describe('ScheduleGeneratorService', () => {
     });
   });
 
+  describe('fittingCombinations', () => {
+    const everySection = ['math-1', 'math-2', 'physics-1', 'physics-2'];
+    const withSections = (id: string) => ({ ...course(id), sections: sections[id] });
+
+    /** Each schedule as its sections, like "math-1 physics-2". */
+    const fitting = (picks: string[], plan = [withSections('math'), withSections('physics')]) =>
+      service.fittingCombinations(plan, new Set(picks))
+        .map((combination) => combination.map((c) => c.selectedSectionId).join(' '));
+
+    it('should keep the numbering of schedules when everything is picked', () => {
+      expect(fitting(everySection)).toEqual([
+        'math-1 physics-1', 'math-1 physics-2', 'math-2 physics-1', 'math-2 physics-2',
+      ]);
+    });
+
+    it('should leave out a section that is not picked', () => {
+      expect(fitting(['math-1', 'physics-1', 'physics-2'])).toEqual(['math-1 physics-1', 'math-1 physics-2']);
+    });
+
+    it('should leave out a course with no sections picked', () => {
+      expect(fitting(['math-1', 'math-2'])).toEqual(['math-1', 'math-2']);
+    });
+
+    it('should leave out a course that has no sections', () => {
+      sections['history'] = [];
+
+      expect(fitting(everySection, [withSections('math'), withSections('history')])).toEqual(['math-1', 'math-2']);
+    });
+
+    it('should have no schedules when nothing is picked', () => {
+      expect(fitting([])).toEqual([]);
+    });
+
+    it('should have no schedules when there are no courses', () => {
+      expect(fitting(everySection, [])).toEqual([]);
+    });
+
+    it('should still leave out sections that conflict', () => {
+      sections['physics'] = [section('physics-1', '09:30', '10:20'), section('physics-2', '15:00', '15:50')];
+
+      expect(fitting(everySection)).toEqual(['math-1 physics-2', 'math-2 physics-1', 'math-2 physics-2']);
+    });
+  });
+
   describe('generateSchedules', () => {
     it('should save the sections of the combination on screen, not the defaults', async () => {
       await service.generateSchedules(PLAN_ID);
