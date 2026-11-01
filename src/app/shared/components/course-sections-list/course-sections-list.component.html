@@ -1,52 +1,45 @@
-<mat-accordion>
+<ul class="sections">
   @for (section of sections(); track section.id) {
-    <mat-expansion-panel
-      [hideToggle]="section.meetings.length === 0"
-    >
-      <mat-expansion-panel-header>
-        <mat-panel-title>
-          Section: {{section.name}}
-          @if (courseSelectedSectionId() === section.id) {
-            &nbsp;<mat-chip class="secondary-chip" [highlighted]="true">Default</mat-chip>
-          }
-          @if (section.status && section.status !== CourseStatus.OPEN) {
-            &nbsp;<mat-chip class="secondary-chip" [highlighted]="true">{{section.status}}</mat-chip>
-          }
-        </mat-panel-title>
-        <mat-panel-description>
-          @if (section.meetings.length > 0) {
-            {{sectionDescription(section.meetings)}}
-          } @else {
-            No meetings
-          }
-        </mat-panel-description>
-      </mat-expansion-panel-header>
+    <li class="section">
+      <div class="section-heading">
+        <span class="section-name">{{section.name}}</span>
 
-      @for (meeting of section.meetings; track meeting) {
-        <div>
-          <p>{{meeting.type}} - {{meeting.location}}</p>
-          <p>{{meeting.instructor}}</p>
-          @for (meetingTime of meeting.meetingTimes; track meetingTime) {
-            <p>{{meetingTime.days.join(', ')}}</p>
-            <p>{{meetingTime.startTime}} - {{meetingTime.endTime}}</p>
-          } @empty {
-            No meeting times added to this meeting.
-          }
-        </div>
-      } @empty {
-        No meetings added to this section.
-      }
-
-      <mat-action-row>
-        @if (courseSelectedSectionId() !== section.id) {
-          <button mat-button class="tertiary-button" (click)="defaultSection(section.id)">Set as Default</button>
+        @if (course().selectedSectionId === section.id) {
+          <span class="default">Default</span>
         }
 
-        <button mat-button class="primary-button" (click)="editSection(section)">Edit</button>
-        <button mat-button class="error-button" (click)="deleteSection(section.id)">Delete</button>
-      </mat-action-row>
-    </mat-expansion-panel>
+        @if (sectionStatus(section, course()); as status) {
+          <span class="status" [class.error-color]="status !== CourseStatus.OPEN">{{status}}</span>
+        }
+      </div>
+
+      <div class="meetings">
+        @for (meeting of section.meetings; track meeting) {
+          <csb-course-meeting [meeting]="meeting" />
+        } @empty {
+          No meetings
+        }
+      </div>
+
+      <button mat-icon-button type="button" class="section-menu"
+              [matMenuTriggerFor]="menu"
+              [attr.aria-label]="'Actions for section ' + section.name">
+        <mat-icon fontIcon="more_vert" />
+      </button>
+
+      <mat-menu #menu>
+        @if (course().selectedSectionId !== section.id) {
+          <button mat-menu-item type="button" (click)="defaultSection(section.id)">Set as Default</button>
+        }
+
+        <button mat-menu-item type="button" (click)="editSection(section)">Edit</button>
+
+        <button mat-menu-item type="button" (click)="deleteSection(section.id)">
+          <span class="error-color">Delete</span>
+        </button>
+      </mat-menu>
+    </li>
   } @empty {
-    No sections to display.
+    <li>No sections yet.</li>
   }
-</mat-accordion>
+</ul>

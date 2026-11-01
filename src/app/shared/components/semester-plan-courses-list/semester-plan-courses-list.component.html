@@ -19,8 +19,7 @@
       <mat-card-content>
         <h4>Sections</h4>
         <csb-course-sections-list
-          [courseId]="course.id"
-          [courseSelectedSectionId]="course.selectedSectionId ?? ''"
+          [course]="course"
           [semesterPlanId]="semesterPlanId()" />
       </mat-card-content>
 

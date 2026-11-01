@@ -100,7 +100,7 @@ describe('MsuClassImportDialogComponent', () => {
   });
 
   describe('a page with online sections and the shopping cart', () => {
-    const options = () => Array.from(element().querySelectorAll('.option'));
+    const options = () => Array.from(element().querySelectorAll('.section'));
 
     it('should check the online sections along with the others', () => {
       setUp();

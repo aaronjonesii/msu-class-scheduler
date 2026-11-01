@@ -1,41 +1,35 @@
-import { Component, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import {
   SemesterPlanCourseSectionsService
 } from "../../services/semester-plan-course-sections.service";
 import { toObservable, toSignal } from "@angular/core/rxjs-interop";
 import { switchMap, combineLatest, map } from "rxjs";
-import {
-  MatAccordion,
-  MatExpansionPanel,
-  MatExpansionPanelActionRow,
-  MatExpansionPanelDescription,
-  MatExpansionPanelHeader,
-  MatExpansionPanelTitle
-} from "@angular/material/expansion";
-import { MatButton } from "@angular/material/button";
+import { MatIconButton } from "@angular/material/button";
+import { MatIcon } from "@angular/material/icon";
+import { MatMenu, MatMenuItem, MatMenuTrigger } from "@angular/material/menu";
 import { CourseStatus } from "../../enums/course-status";
+import { ReadCourse } from "../../interfaces/course";
 import { ReadCourseSection } from "../../interfaces/course-section";
-import { formatCourseMeetings } from "../../utils/format-course-meetings";
+import { sectionStatus } from "../../utils/section-status";
 import { sortSectionsByName } from "../../utils/sort-sections-by-name";
 import { SemesterPlanCoursesService } from "../../services/semester-plan-courses.service";
-import { MatChip } from "@angular/material/chips";
 import { LoggerService } from "../../services/logger.service";
+import { CourseMeetingComponent } from "../course-meeting/course-meeting.component";
 
 @Component({
   selector: 'csb-course-sections-list',
   standalone: true,
   imports: [
-    MatAccordion,
-    MatExpansionPanel,
-    MatExpansionPanelHeader,
-    MatExpansionPanelTitle,
-    MatExpansionPanelDescription,
-    MatButton,
-    MatExpansionPanelActionRow,
-    MatChip
+    MatIconButton,
+    MatIcon,
+    MatMenu,
+    MatMenuItem,
+    MatMenuTrigger,
+    CourseMeetingComponent,
   ],
   templateUrl: './course-sections-list.component.html',
-  styleUrl: './course-sections-list.component.scss'
+  styleUrl: './course-sections-list.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CourseSectionsListComponent {
   private semesterPlanCourseSectionsService = inject(SemesterPlanCourseSectionsService)
@@ -43,10 +37,13 @@ export class CourseSectionsListComponent {
   private logger = inject(LoggerService)
 
   protected readonly CourseStatus = CourseStatus;
+  protected readonly sectionStatus = sectionStatus;
 
-  courseId = input.required<string>();
-  courseSelectedSectionId = input.required<string>();
+  course = input.required<ReadCourse>();
   semesterPlanId = input.required<string>();
+
+  /** So an update to the course doesn't reload its sections. */
+  private courseId = computed(() => this.course().id);
 
   sections = toSignal(
     combineLatest([
@@ -57,8 +54,6 @@ export class CourseSectionsListComponent {
       map(sortSectionsByName),
     )
   );
-
-  sectionDescription = formatCourseMeetings;
 
   editSection = (section: ReadCourseSection) => {
     this.semesterPlanCourseSectionsService.openEditSectionDialog(this.semesterPlanId(), this.courseId(), section);

@@ -1,0 +1,29 @@
+// Rows of sections, for the plan page, the picks list and the Import dialog.
+.sections {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.section {
+  padding: 0.25rem 0;
+  border-top: 1px solid rgba(128, 128, 128, 0.3);
+}
+
+.section-name {
+  font-weight: 600;
+}
+
+.status {
+  margin-left: 0.5rem;
+  font-weight: 600;
+}
+
+.section-details {
+  padding: 0 0 0.25rem 2.5rem;
+  font-size: 0.875rem;
+}
+
+.section-details p {
+  margin: 0;
+}
