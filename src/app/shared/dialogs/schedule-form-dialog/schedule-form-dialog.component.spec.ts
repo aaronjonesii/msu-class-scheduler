@@ -258,12 +258,122 @@ describe('ScheduleFormDialogComponent', () => {
     });
   });
 
+  describe('changing the picks', () => {
+    // Schedules: 1 m1 p1, 2 m1 p2, 3 m2 p1, 4 m2 p2.
+    const plan = [course('math', ['m1', 'm2']), course('physics', ['p1', 'p2'])];
+
+    function typeNumber(value: string) {
+      numberBoxes()[0].value = value;
+      numberBoxes()[0].dispatchEvent(new Event('change'));
+      fixture.detectChanges();
+    }
+
+    function pick(...sectionIds: string[]) {
+      component.onPicksChange(new Set(sectionIds));
+      fixture.detectChanges();
+    }
+
+    const sectionBox = (name: string) => Array.from(dialog().querySelectorAll('.section'))
+      .find((row) => row.textContent?.includes(name))?.querySelector('input') as HTMLInputElement;
+
+    beforeEach(async () => {
+      await setUp({ courses: plan });
+
+      typeNumber('3');
+    });
+
+    it('should start with every section picked', () => {
+      expect([...component.pickedSectionIds()]).toEqual(['m1', 'm2', 'p1', 'p2']);
+      expect(dialog().textContent).toContain('/ 4');
+    });
+
+    it('should use a pick made in the list', () => {
+      sectionBox('m1').click();
+      fixture.detectChanges();
+
+      expect(dialog().textContent).toContain('/ 2');
+    });
+
+    it('should stay on the schedule when another section is turned off, and renumber it', () => {
+      pick('m2', 'p1', 'p2');
+
+      expect(courseIds()).toEqual(['m2', 'p1']);
+      expect(numberBoxes()[0].value).toBe('1');
+    });
+
+    it('should change only that course when a section on screen is turned off', () => {
+      pick('m1', 'm2', 'p2');
+
+      expect(courseIds()).toEqual(['m2', 'p2']);
+    });
+
+    it('should keep the other courses when a whole course is turned off', () => {
+      pick('m1', 'm2');
+
+      expect(courseIds()).toEqual(['m2']);
+    });
+
+    it('should show a course again when it is turned back on', () => {
+      pick('m1', 'm2');
+      pick('m1', 'm2', 'p1', 'p2');
+
+      expect(courseIds()).toEqual(['m2', 'p1']);
+      expect(component.shownCourses()).toEqual(['m2', 'p1']);
+    });
+
+    it('should go to the first schedule when nothing on screen is left', () => {
+      pick('m1', 'p2');
+
+      expect(courseIds()).toEqual(['m1', 'p2']);
+      expect(numberBoxes()[0].value).toBe('1');
+    });
+
+    it('should explain when nothing is picked, then recover', () => {
+      pick();
+
+      expect(dialog().querySelector('[role="alert"]')).not.toBeNull();
+      expect(numberBoxes().length).toBe(0);
+
+      pick('m1', 'p1');
+
+      expect(dialog().querySelector('[role="alert"]')).toBeNull();
+      expect(courseIds()).toEqual(['m1', 'p1']);
+    });
+
+    it('should keep the name typed so far', () => {
+      typeName();
+
+      pick();
+      pick('m1', 'p1');
+
+      expect((dialog().querySelector('input[name="name"]') as HTMLInputElement).value).toBe('Fall');
+    });
+  });
+
+  describe('when the picks that are left no longer fit with the schedule on screen', () => {
+    it('should go to the first schedule', async () => {
+      // Schedules: 1 a1 c1, 2 a2 c1, 3 a2 c2. a1 clashes with c2.
+      const [a, c] = [course('a', ['a1', 'a2']), course('c', ['c1', 'c2'])];
+      a.sections[0].meetings = [MONDAY_AT_9];
+      c.sections[1].meetings = [MONDAY_AT_9];
+
+      await setUp({ courses: [a, c] });
+
+      component.onPicksChange(new Set(['a1', 'a2', 'c2']));
+      fixture.detectChanges();
+
+      expect(courseIds()).toEqual(['a2', 'c2']);
+      expect(numberBoxes()[0].value).toBe('1');
+    });
+  });
+
   describe('when creating or editing by hand', () => {
     it('should show nothing about generating', async () => {
       await setUp();
 
       expect(dialog().querySelector('[role="alert"]')).toBeNull();
       expect(dialog().querySelector('csb-schedule-grid-view')).toBeNull();
+      expect(dialog().querySelector('csb-section-picker')).toBeNull();
     });
 
     it('should leave Create on once there is a name', async () => {

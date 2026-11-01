@@ -51,6 +51,10 @@ describe('ScheduleGeneratorService', () => {
   const buttonWithText = (text: string) => Array.from(dialog().querySelectorAll('button'))
     .find((b) => b.textContent?.trim() === text) as HTMLButtonElement;
 
+  const courseBox = (id: string) => dialog().querySelector(`input[aria-label="All sections of ${id}"]`) as HTMLInputElement;
+  const sectionBox = (id: string) => Array.from(dialog().querySelectorAll('.section'))
+    .find((row) => row.textContent?.includes(id))?.querySelector('input') as HTMLInputElement;
+
   /** Lets the dialog render, or finish closing, with no animations. */
   async function settle() {
     for (let i = 0; i < 5; i++) {
@@ -306,28 +310,113 @@ describe('ScheduleGeneratorService', () => {
       expect(added).toEqual([]);
     });
 
-    it('should explain instead of opening an empty dialog when every combination conflicts', async () => {
-      sections = {
-        math: [section('math-1', '09:00', '09:50')],
-        physics: [section('physics-1', '09:30', '10:20')],
-      };
+    describe('when every combination conflicts', () => {
+      beforeEach(async () => {
+        sections = {
+          math: [section('math-1', '09:00', '09:50')],
+          physics: [section('physics-1', '09:30', '10:20')],
+        };
 
-      await service.generateSchedules(PLAN_ID);
-      await settle();
+        await service.generateSchedules(PLAN_ID);
+        await settle();
+      });
 
-      expect(dialog()).toBeNull();
-      expect(logger.warn).toHaveBeenCalledOnceWith(jasmine.stringContaining('No schedule fits'));
+      it('should open and explain, because only the picks can fix it', () => {
+        expect(dialog().querySelector('[role="alert"]')?.textContent).toContain('No schedule fits');
+        expect(buttonWithText('Create').disabled).toBeTrue();
+        expect(logger.warn).not.toHaveBeenCalled();
+      });
+
+      it('should fit once one of the courses is turned off', async () => {
+        courseBox('physics').click();
+        await settle();
+
+        await createSchedule();
+
+        expect(savedTimes()).toEqual(['math 09:00']);
+      });
     });
 
-    it('should explain instead of opening an empty dialog when a course has no sections', async () => {
+    it('should leave out a course with no sections and offer the rest', async () => {
       courses = [course('math', 'math-1'), course('physics', 'physics-1'), course('history')];
       sections['history'] = [];
 
       await service.generateSchedules(PLAN_ID);
       await settle();
 
+      expect(dialog().textContent).toContain('/ 4');
+      expect(dialog().textContent).toContain('No sections');
+
+      await createSchedule();
+
+      expect(savedTimes()).toEqual(['math 09:00', 'physics 13:00']);
+    });
+
+    it('should explain instead of opening when no course has a section', async () => {
+      sections = { math: [], physics: [] };
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
       expect(dialog()).toBeNull();
-      expect(logger.warn).toHaveBeenCalledOnceWith(jasmine.stringContaining('No schedule fits'));
+      expect(logger.warn).toHaveBeenCalledOnceWith('Add a section to a course before generating schedules.');
+    });
+
+    it('should explain instead of opening when the plan has no courses', async () => {
+      courses = [];
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      expect(dialog()).toBeNull();
+      expect(logger.warn).toHaveBeenCalledOnceWith('Add a section to a course before generating schedules.');
+    });
+
+    it('should open for a single course', async () => {
+      courses = [course('math', 'math-1')];
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      expect(dialog().textContent).toContain('/ 2');
+    });
+
+    it('should not need default sections', async () => {
+      courses = [course('math'), course('physics')];
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      expect(dialog().textContent).toContain('/ 4');
+    });
+
+    it('should save what is on screen after narrowing the picks', async () => {
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      await stepForward(3);
+      sectionBox('physics-2').click();
+      await settle();
+
+      await createSchedule();
+
+      expect(savedTimes()).toEqual(['math 11:00', 'physics 13:00']);
+    });
+
+    it('should start with everything picked when opened again', async () => {
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      sectionBox('math-1').click();
+      await settle();
+
+      buttonWithText('Cancel').click();
+      await settle();
+
+      await service.generateSchedules(PLAN_ID);
+      await settle();
+
+      expect(dialog().textContent).toContain('/ 4');
     });
   });
 });

@@ -24,6 +24,7 @@ import { scrollToElementId } from "../../utils/scroll-to-element";
 import { ScheduleGeneratorService } from "../../services/schedule-generator.service";
 import { ReadScheduleCourse } from "../../interfaces/schedule-course";
 import { NgTemplateOutlet } from "@angular/common";
+import { SectionPickerComponent } from "../../components/section-picker/section-picker.component";
 
 export interface ScheduleFormDialogContract {
   schedule?: ReadSchedule,
@@ -44,7 +45,8 @@ export interface ScheduleFormDialogContract {
     ScheduleGridViewComponent,
     MatIconButton,
     MatIcon,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    SectionPickerComponent
   ],
   templateUrl: './schedule-form-dialog.component.html',
   styleUrl: './schedule-form-dialog.component.scss',
@@ -106,6 +108,21 @@ export class ScheduleFormDialogComponent implements OnInit {
   /** The schedule to save, with the courses of the combination on screen. */
   scheduleToSave(): ReadSchedule {
     return { ...this.scheduleForm().schedule, courses: this.selectedCombinationScheduleCourses() };
+  }
+
+  /** Numbers change with the picks, so this stays on the schedule on screen as far as it can. */
+  onPicksChange(pickedSectionIds: ReadonlySet<string>) {
+    const stillPicked = this.selectedCombination()
+      .map((course) => course.selectedSectionId)
+      .filter((sectionId) => pickedSectionIds.has(sectionId));
+
+    this.pickedSectionIds.set(pickedSectionIds);
+
+    const closest = this.combinations().findIndex((combination) => {
+      return stillPicked.every((sectionId) => combination.some((course) => course.selectedSectionId === sectionId));
+    });
+
+    this.selectedCombinationIndex.set(Math.max(closest, 0));
   }
 
   previousCombination() {

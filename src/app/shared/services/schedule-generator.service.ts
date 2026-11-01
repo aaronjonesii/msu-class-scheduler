@@ -157,22 +157,8 @@ export class ScheduleGeneratorService {
 
     const semesterPlan = await lastValueFrom(this.getSemesterPlanWithCourses$(semesterPlanId).pipe(first()))
 
-    let courseSectionsCount = 0;
-    for (const course of semesterPlan.courses) {
-      const courseSection = course.sections?.find(s => s.id === course.selectedSectionId);
-      if (courseSection != null) courseSectionsCount += 1;
-    }
-
-    if (semesterPlan.courses.length < 2 || courseSectionsCount < 2) {
-      this.logger.warn('A schedule requires at least 2 courses with selected sections.');
-      return;
-    }
-
-    const combinations = this.generateCourseCombinations(semesterPlan.courses);
-    const filteredCombinations = this.removeOverlappingCombinations(combinations);
-
-    if (filteredCombinations.length === 0) {
-      this.logger.warn('No schedule fits. Every combination has a time conflict, or a course has no sections.');
+    if (!semesterPlan.courses.some((course) => course.sections.length > 0)) {
+      this.logger.warn('Add a section to a course before generating schedules.');
       return;
     }
 

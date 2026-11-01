@@ -12,19 +12,27 @@
   <csb-schedule-form [scheduleForm]="scheduleForm()" />
 
   @if (courses.length > 0) {
-    @if (noScheduleFits()) {
-      <p class="error-color" role="alert">
-        No schedule fits these picks. Turn on more sections, or turn off a course that conflicts.
-      </p>
-    } @else {
-      <ng-container [ngTemplateOutlet]="combinationNav" />
-    }
+    <div class="generated">
+      <csb-section-picker [courses]="courses"
+                          [pickedSectionIds]="pickedSectionIds()"
+                          (picksChanged)="onPicksChange($event)" />
 
-    <csb-schedule-grid-view
-      [scheduleCourses]="selectedCombinationScheduleCourses()"
-      [(shownCourses)]="shownCourses"
-      (courseClicked)="scrollToElementId($event.id)"
-    />
+      <div class="week">
+        @if (noScheduleFits()) {
+          <p class="error-color" role="alert">
+            No schedule fits these picks. Turn on more sections, or turn off a course that conflicts.
+          </p>
+        } @else {
+          <ng-container [ngTemplateOutlet]="combinationNav" />
+        }
+
+        <csb-schedule-grid-view
+          [scheduleCourses]="selectedCombinationScheduleCourses()"
+          [(shownCourses)]="shownCourses"
+          (courseClicked)="scrollToElementId($event.id)"
+        />
+      </div>
+    </div>
   }
 </mat-dialog-content>
 
