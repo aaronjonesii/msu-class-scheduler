@@ -63,12 +63,9 @@ export class ScheduleFormDialogComponent implements OnInit {
 
   editing = signal(false);
 
-  selectedCombinationIndex = signal<number | null>(null);
+  selectedCombinationIndex = signal(0);
 
-  selectedCombination = computed(() => {
-    const selectedCombinationIndex = this.selectedCombinationIndex();
-    return selectedCombinationIndex !== null ? this.combinations()[selectedCombinationIndex] : [];
-  });
+  selectedCombination = computed(() => this.combinations()[this.selectedCombinationIndex()] ?? []);
 
   selectedCombinationScheduleCourses = computed<ReadScheduleCourse[]>(() => {
     return this.selectedCombination().map(c => this.scheduleGeneratorService.courseToScheduleCourse(c) as ReadScheduleCourse);
@@ -91,7 +88,6 @@ export class ScheduleFormDialogComponent implements OnInit {
 
     if (this.contract.combinations?.length) {
       this.combinations.set(this.contract.combinations);
-      this.selectedCombinationIndex.set(0);
 
       // update dialog to full screen
       this.dialogRef.updateSize('100%', '100%');
@@ -110,16 +106,23 @@ export class ScheduleFormDialogComponent implements OnInit {
   }
 
   previousCombination() {
-    const currentIndex = this.selectedCombinationIndex();
-    if (currentIndex !== null && currentIndex > 0) {
-      this.selectedCombinationIndex.set(currentIndex - 1);
-    }
+    this.goToCombination(this.selectedCombinationIndex() - 1);
   }
 
   nextCombination() {
-    const currentIndex = this.selectedCombinationIndex();
-    if (currentIndex !== null && currentIndex < this.combinations().length - 1) {
-      this.selectedCombinationIndex.set(currentIndex + 1);
-    }
+    this.goToCombination(this.selectedCombinationIndex() + 1);
+  }
+
+  goToTypedNumber(numberBox: HTMLInputElement) {
+    const typedNumber = Math.trunc(numberBox.valueAsNumber);
+
+    if (!Number.isNaN(typedNumber)) this.goToCombination(typedNumber - 1);
+
+    // The binding can't correct the box when the schedule stays the same, like 99 on the last one.
+    numberBox.value = `${this.selectedCombinationIndex() + 1}`;
+  }
+
+  private goToCombination(index: number) {
+    this.selectedCombinationIndex.set(Math.min(Math.max(index, 0), this.combinations().length - 1));
   }
 }

@@ -69,7 +69,7 @@ describe('ScheduleGeneratorService', () => {
   }
 
   async function createSchedule() {
-    const name = dialog().querySelector('input') as HTMLInputElement;
+    const name = dialog().querySelector('input[name="name"]') as HTMLInputElement;
     name.value = 'My schedule';
     name.dispatchEvent(new Event('input', { bubbles: true }));
     await settle();

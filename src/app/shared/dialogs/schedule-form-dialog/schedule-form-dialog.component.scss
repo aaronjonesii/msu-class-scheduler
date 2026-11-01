@@ -2,3 +2,14 @@ mat-dialog-content {
   padding: var(--padding) !important;
   max-height: unset;
 }
+
+.schedule-number {
+  width: 5.5rem;
+  padding: 2px 4px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: center;
+}

@@ -38,7 +38,14 @@
         <mat-icon matButtonIcon fontIcon="chevron_left" />
       </button>
 
-      <span>{{selectedCombinationIndex()}} / {{combinations().length}}</span>
+      <input #numberBox class="schedule-number" type="number" min="1"
+             aria-label="Go to schedule number"
+             [max]="combinations().length"
+             [value]="selectedCombinationIndex() + 1"
+             (click)="numberBox.select()"
+             (change)="goToTypedNumber(numberBox)" />
+
+      <span>/ {{combinations().length}}</span>
 
       <button mat-icon-button type="button" (click)="nextCombination()">
         <mat-icon matButtonIcon fontIcon="chevron_right" />
