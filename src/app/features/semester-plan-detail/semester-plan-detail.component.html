@@ -81,10 +81,17 @@
   <div class="header">
     <h4 class="title">Courses</h4>
 
-    <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
-      <mat-icon matButtonIcon fontIcon="add" />
-      Course
-    </button>
+    <div class="btn-container">
+      <button mat-button type="button" id="import-msu-class-btn" (click)="importFromMsu(semesterPlan)">
+        <mat-icon matButtonIcon fontIcon="content_paste" />
+        Import from MSU
+      </button>
+
+      <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
+        <mat-icon matButtonIcon fontIcon="add" />
+        Course
+      </button>
+    </div>
   </div>
 
   <csb-semester-plan-courses-list

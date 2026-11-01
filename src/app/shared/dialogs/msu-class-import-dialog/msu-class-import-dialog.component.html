@@ -1,0 +1,70 @@
+<h1 mat-dialog-title>Import from MSU</h1>
+
+<mat-dialog-content>
+  <p class="instructions">
+    Open a class on MSU's site, press Ctrl+A then Ctrl+C, and paste the page below.
+  </p>
+
+  <mat-form-field class="paste-box" appearance="outline">
+    <mat-label>Paste the class page here</mat-label>
+    <textarea matInput rows="4" name="msuClassPage" #pasteBox
+              (input)="onTextChange(pasteBox.value)"></textarea>
+  </mat-form-field>
+
+  @if (error(); as error) {
+    <p class="message error-color" role="alert">{{error}}</p>
+  }
+
+  @if (page(); as page) {
+    <section aria-live="polite">
+      <h2 class="course-title">{{page.courseCode}} - {{page.name}}</h2>
+
+      <p class="course-summary">{{page.credits}} {{page.credits === 1 ? 'credit' : 'credits'}}</p>
+
+      @if (termMismatch(); as termMismatch) {
+        <p class="message warning" role="alert">{{termMismatch}}</p>
+      }
+
+      @for (warning of page.warnings; track warning) {
+        <p class="message warning">{{warning}}</p>
+      }
+
+      <ul class="options">
+        @for (option of page.options; track option.optionNumber) {
+          <li class="option">
+            <mat-checkbox [checked]="selectedOptionNumbers().has(option.optionNumber)"
+                          (change)="toggleOption(option.optionNumber, $event.checked)">
+              <span class="section-name">{{option.sectionName}}</span>
+              @if (option.status !== CourseStatus.OPEN) {
+                <span class="status error-color">{{option.status ?? 'Unknown status'}}</span>
+              }
+            </mat-checkbox>
+
+            <div class="option-details">
+              <p>{{formatCourseMeetings(option.meetings)}}</p>
+              @if (meetingDetails(option); as details) {
+                <p>{{details}}</p>
+              }
+              @if (option.seats.length > 0) {
+                <p>{{option.seats.join(' · ')}}</p>
+              }
+              @for (warning of option.warnings; track warning) {
+                <p class="message warning">{{warning}}</p>
+              }
+            </div>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
+
+  <button mat-flat-button type="button"
+          [disabled]="selectedOptions().length === 0"
+          [mat-dialog-close]="importResult()">
+    Import {{selectedOptions().length}} {{selectedOptions().length === 1 ? 'section' : 'sections'}}
+  </button>
+</mat-dialog-actions>
