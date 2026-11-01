@@ -46,7 +46,9 @@ export const FirebaseProviders = [
   provideAppCheck(() => {
     const ssrSafeService = inject(SSRSafeService);
 
-    if (!ssrSafeService.isBrowser) return new AppCheck({app: getApp()});
+    // The emulators don't enforce App Check, and in dev its token exchange with
+    // the real backend throws, which blocks sign-in against the Auth emulator.
+    if (!ssrSafeService.isBrowser || isDevMode()) return new AppCheck({app: getApp()});
 
     const provider = new ReCaptchaV3Provider(environment.recaptcha3SiteKey);
     return initializeAppCheck(

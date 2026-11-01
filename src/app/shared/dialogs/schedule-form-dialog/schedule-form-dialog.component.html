@@ -27,7 +27,7 @@
 
   <button mat-flat-button type="button"
           [disabled]="scheduleForm().formGroup.invalid"
-          [mat-dialog-close]="scheduleForm().schedule">
+          [mat-dialog-close]="scheduleToSave()">
     {{editing() ? 'Save' : 'Create'}}
   </button>
 </mat-dialog-actions>

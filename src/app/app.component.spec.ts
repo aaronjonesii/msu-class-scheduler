@@ -5,6 +5,22 @@ import {
 } from "./shared/components/top-nav-bar/top-nav-bar.component";
 import { ActivatedRoute } from "@angular/router";
 import { AuthService } from "./shared/services/auth.service";
+import { SplashScreenService } from "./shared/services/splash-screen.service";
+
+describe('AppComponent startup', () => {
+  it('should hide the splash screen when the app is ready', () => {
+    const splashScreen = jasmine.createSpyObj<SplashScreenService>('SplashScreenService', ['hideWhenAppIsReady']);
+
+    TestBed.configureTestingModule({
+      imports: [AppComponent],
+      providers: [{ provide: SplashScreenService, useValue: splashScreen }],
+    }).overrideComponent(AppComponent, { set: { imports: [], template: '' } });
+
+    TestBed.createComponent(AppComponent);
+
+    expect(splashScreen.hideWhenAppIsReady).toHaveBeenCalledTimes(1);
+  });
+});
 
 xdescribe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;

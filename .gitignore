@@ -10,6 +10,9 @@ seed
 # Keys
 keys.ts
 
+# Personal data
+classes-backup-*.json
+
 # Compiled output
 /dist
 /tmp

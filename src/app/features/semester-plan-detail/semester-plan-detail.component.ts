@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { SemesterPlansService } from '../../shared/services/semester-plans.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { first, lastValueFrom, of, switchMap, withLatestFrom } from 'rxjs';
+import { first, firstValueFrom, lastValueFrom, of, switchMap, withLatestFrom } from 'rxjs';
 import { ReadSemesterPlan } from '../../shared/interfaces/semester-plan';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -16,6 +16,12 @@ import { ColorToClassPipe } from '../../shared/pipes/color-to-class.pipe';
 import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 import { DatePipe, DOCUMENT } from '@angular/common';
 import { SemesterPlanCoursesService } from '../../shared/services/semester-plan-courses.service';
+import { MsuClassImportService } from '../../shared/services/msu-class-import.service';
+import {
+  MsuClassImportDialogComponent,
+  MsuClassImportDialogContract,
+  MsuClassImportDialogResult
+} from '../../shared/dialogs/msu-class-import-dialog/msu-class-import-dialog.component';
 import { DateAgoPipe } from '../../shared/pipes/date-ago.pipe';
 import { MatButton } from '@angular/material/button';
 import {
@@ -42,6 +48,7 @@ import { ScheduleGeneratorService } from "../../shared/services/schedule-generat
 export class SemesterPlanDetailComponent {
   private semesterPlansService = inject(SemesterPlansService);
   private semesterPlanCoursesService = inject(SemesterPlanCoursesService);
+  private msuClassImportService = inject(MsuClassImportService);
   private semesterPlanCourseSectionsService = inject(SemesterPlanCourseSectionsService);
   private scheduleGeneratorService = inject(ScheduleGeneratorService);
   private logger = inject(LoggerService);
@@ -133,6 +140,29 @@ export class SemesterPlanDetailComponent {
     if (!semesterPlanId) return;
 
     this.semesterPlanCoursesService.openAddCourseDialog(semesterPlanId);
+  }
+
+  async importFromMsu({ id, term, year }: ReadSemesterPlan) {
+    const dialogRef = this.dialog.open(
+      MsuClassImportDialogComponent,
+      {
+        id: 'import-msu-class-dialog',
+        width: '100%',
+        maxWidth: '720px',
+        data: { term, year } satisfies MsuClassImportDialogContract,
+      },
+    );
+
+    const selection: MsuClassImportDialogResult | undefined = await firstValueFrom(dialogRef.afterClosed());
+
+    if (!selection) return;
+
+    const { page, options } = selection;
+    const result = await this.msuClassImportService.importClass(id, page, options);
+
+    if (result) {
+      this.logger.info(`${page.courseCode}: ${result.added} added, ${result.skipped} already in the plan`);
+    }
   }
 
   editSemesterPlanCourse(course: ReadCourse) {

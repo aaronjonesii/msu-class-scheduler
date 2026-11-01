@@ -9,6 +9,9 @@
           @if (courseSelectedSectionId() === section.id) {
             &nbsp;<mat-chip class="secondary-chip" [highlighted]="true">Default</mat-chip>
           }
+          @if (section.status && section.status !== CourseStatus.OPEN) {
+            &nbsp;<mat-chip class="secondary-chip" [highlighted]="true">{{section.status}}</mat-chip>
+          }
         </mat-panel-title>
         <mat-panel-description>
           @if (section.meetings.length > 0) {
