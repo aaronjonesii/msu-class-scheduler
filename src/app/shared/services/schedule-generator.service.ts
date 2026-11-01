@@ -160,6 +160,11 @@ export class ScheduleGeneratorService {
     const combinations = this.generateCourseCombinations(semesterPlan.courses);
     const filteredCombinations = this.removeOverlappingCombinations(combinations);
 
+    if (filteredCombinations.length === 0) {
+      this.logger.warn('No schedule fits. Every combination has a time conflict, or a course has no sections.');
+      return;
+    }
+
     const dialogRef = this.dialog.open(
       ScheduleFormDialogComponent,
       {
@@ -175,13 +180,15 @@ export class ScheduleGeneratorService {
       },
     );
 
-    dialogRef.afterClosed().subscribe(async (schedule?: ReadSchedule) => {
-      if (!schedule) return
+    dialogRef.afterClosed().subscribe(async (result?: ReadSchedule) => {
+      if (!result) return
+
+      // Courses live in their own documents, not on the schedule.
+      const { courses: scheduleCourses = [], ...schedule } = result;
 
       await this.createSchedule(schedule)
         .then(newDoc => {
           if (!newDoc) return;
-          const scheduleCourses: ScheduleCourse[] = semesterPlan.courses.map(this.courseToScheduleCourse)
           return Promise.all(scheduleCourses.map((scheduleCourse => this.createScheduleCourse(newDoc.id, scheduleCourse))))
             .then(() => this.router.navigate([appRoutes.scheduleDetail(newDoc.id)]))
             .catch(error => this.logger.error('An error occurred while creating schedule courses from semester plan.', error))
@@ -200,7 +207,7 @@ export class ScheduleGeneratorService {
     const scheduleCourseMeetings: ScheduleCourseMeeting[] = courseMeetings ?? []
     return {
       id: course.id,
-      status: course.status as unknown as ScheduleCourseStatus,
+      status: (courseSection?.status ?? course.status) as unknown as ScheduleCourseStatus,
       subjectCode: course.subjectCode ?? null,
       courseNumber: course.courseNumber ?? null,
       name: course.name,

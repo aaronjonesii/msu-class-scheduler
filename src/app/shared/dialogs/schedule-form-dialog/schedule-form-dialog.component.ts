@@ -104,6 +104,11 @@ export class ScheduleFormDialogComponent implements OnInit {
     this.scheduleForm.set(new ScheduleForm(this.contract.schedule));
   }
 
+  /** The schedule to save, with the courses of the combination on screen. */
+  scheduleToSave(): ReadSchedule {
+    return { ...this.scheduleForm().schedule, courses: this.selectedCombinationScheduleCourses() };
+  }
+
   previousCombination() {
     const currentIndex = this.selectedCombinationIndex();
     if (currentIndex !== null && currentIndex > 0) {
