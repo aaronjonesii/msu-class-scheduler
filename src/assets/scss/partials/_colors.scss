@@ -16,6 +16,19 @@ $azure-theme: mat.define-theme((color: (primary: mat.$azure-palette)));
 $violet-theme: mat.define-theme((color: (primary: mat.$violet-palette)));
 $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
 
+// A course's chips share the tint of its card header, so the two read as one course.
+@function course-tint($theme) {
+  @return rgba(mat.get-theme-color($theme, primary, 95), 0.75);
+}
+
+@mixin course-chip($theme) {
+  @include mat.chips-color($theme, $color-variant: primary);
+  @include mat.chips-overrides((
+    elevated-selected-container-color: course-tint($theme),
+    label-text-color: mat.get-theme-color($theme, primary),
+  ));
+}
+
 :root {
   .red-color {
     color: mat.get-theme-color($red-theme, primary);
@@ -27,10 +40,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($red-theme, $color-variant: primary);
   }
   .red-chip {
-    @include mat.chips-color($red-theme, $color-variant: primary);
+    @include course-chip($red-theme);
   }
   .red-card {
-    background: rgba(mat.get-theme-color($red-theme, primary, 95), 0.75);
+    background: course-tint($red-theme);
     color: mat.get-theme-color($red-theme, primary);
   }
 
@@ -44,10 +57,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($green-theme, $color-variant: primary);
   }
   .green-chip {
-    @include mat.chips-color($green-theme, $color-variant: primary);
+    @include course-chip($green-theme);
   }
   .green-card {
-    background: rgba(mat.get-theme-color($green-theme, primary, 95), 0.75);
+    background: course-tint($green-theme);
     color: mat.get-theme-color($green-theme, primary);
   }
 
@@ -61,10 +74,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($blue-theme, $color-variant: primary);
   }
   .blue-chip {
-    @include mat.chips-color($blue-theme, $color-variant: primary);
+    @include course-chip($blue-theme);
   }
   .blue-card {
-    background: rgba(mat.get-theme-color($blue-theme, primary, 95), 0.75);
+    background: course-tint($blue-theme);
     color: mat.get-theme-color($blue-theme, primary);
   }
 
@@ -78,10 +91,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($yellow-theme, $color-variant: primary);
   }
   .yellow-chip {
-    @include mat.chips-color($yellow-theme, $color-variant: primary);
+    @include course-chip($yellow-theme);
   }
   .yellow-card {
-    background: rgba(mat.get-theme-color($yellow-theme, primary, 95), 0.75);
+    background: course-tint($yellow-theme);
     color: mat.get-theme-color($yellow-theme, primary);
   }
 
@@ -95,10 +108,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($cyan-theme, $color-variant: primary);
   }
   .cyan-chip {
-    @include mat.chips-color($cyan-theme, $color-variant: primary);
+    @include course-chip($cyan-theme);
   }
   .cyan-card {
-    background: rgba(mat.get-theme-color($cyan-theme, primary, 95), 0.75);
+    background: course-tint($cyan-theme);
     color: mat.get-theme-color($cyan-theme, primary);
   }
 
@@ -112,10 +125,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($magenta-theme, $color-variant: primary);
   }
   .magenta-chip {
-    @include mat.chips-color($magenta-theme, $color-variant: primary);
+    @include course-chip($magenta-theme);
   }
   .magenta-card {
-    background: rgba(mat.get-theme-color($magenta-theme, primary, 95), 0.75);
+    background: course-tint($magenta-theme);
     color: mat.get-theme-color($magenta-theme, primary);
   }
 
@@ -129,10 +142,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($orange-theme, $color-variant: primary);
   }
   .orange-chip {
-    @include mat.chips-color($orange-theme, $color-variant: primary);
+    @include course-chip($orange-theme);
   }
   .orange-card {
-    background: rgba(mat.get-theme-color($orange-theme, primary, 95), 0.75);
+    background: course-tint($orange-theme);
     color: mat.get-theme-color($orange-theme, primary);
   }
 
@@ -146,10 +159,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($chartreuse-theme, $color-variant: primary);
   }
   .chartreuse-chip {
-    @include mat.chips-color($chartreuse-theme, $color-variant: primary);
+    @include course-chip($chartreuse-theme);
   }
   .chartreuse-card {
-    background: rgba(mat.get-theme-color($chartreuse-theme, primary, 95), 0.75);
+    background: course-tint($chartreuse-theme);
     color: mat.get-theme-color($chartreuse-theme, primary);
   }
 
@@ -163,10 +176,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($spring-green-theme, $color-variant: primary);
   }
   .spring-green-chip {
-    @include mat.chips-color($spring-green-theme, $color-variant: primary);
+    @include course-chip($spring-green-theme);
   }
   .spring-green-card {
-    background: rgba(mat.get-theme-color($spring-green-theme, primary, 95), 0.75);
+    background: course-tint($spring-green-theme);
     color: mat.get-theme-color($spring-green-theme, primary);
   }
 
@@ -180,10 +193,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($azure-theme, $color-variant: primary);
   }
   .azure-chip {
-    @include mat.chips-color($azure-theme, $color-variant: primary);
+    @include course-chip($azure-theme);
   }
   .azure-card {
-    background: rgba(mat.get-theme-color($azure-theme, primary, 95), 0.75);
+    background: course-tint($azure-theme);
     color: mat.get-theme-color($azure-theme, primary);
   }
 
@@ -197,10 +210,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($violet-theme, $color-variant: primary);
   }
   .violet-chip {
-    @include mat.chips-color($violet-theme, $color-variant: primary);
+    @include course-chip($violet-theme);
   }
   .violet-card {
-    background: rgba(mat.get-theme-color($violet-theme, primary, 95), 0.75);
+    background: course-tint($violet-theme);
     color: mat.get-theme-color($violet-theme, primary);
   }
 
@@ -214,10 +227,10 @@ $rose-theme: mat.define-theme((color: (primary: mat.$rose-palette)));
     @include mat.option-color($rose-theme, $color-variant: primary);
   }
   .rose-chip {
-    @include mat.chips-color($rose-theme, $color-variant: primary);
+    @include course-chip($rose-theme);
   }
   .rose-card {
-    background: rgba(mat.get-theme-color($rose-theme, primary, 95), 0.75);
+    background: course-tint($rose-theme);
     color: mat.get-theme-color($rose-theme, primary);
   }
 }

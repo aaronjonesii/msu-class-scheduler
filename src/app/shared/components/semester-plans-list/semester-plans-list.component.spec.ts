@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { MatTooltip } from '@angular/material/tooltip';
+import { By } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { SemesterPlansListComponent } from './semester-plans-list.component';
@@ -61,5 +63,38 @@ describe('SemesterPlansListComponent', () => {
     const title = (list().querySelector('mat-card-title') as HTMLElement).getBoundingClientRect();
 
     expect(title.right).toBeLessThanOrEqual(credits().getBoundingClientRect().left);
+  });
+
+  describe('the chips on a card', () => {
+    const tooltip = () => fixture.debugElement.query(By.directive(MatTooltip)).injector.get(MatTooltip);
+
+    it('should need no label above them', async () => {
+      await render({ courses: [{ id: 'math', name: 'Calculus II' }] as ReadSemesterPlanWithCourses['courses'] });
+
+      expect(list().querySelector('label')).toBeNull();
+    });
+
+    it('should need no label while they load', () => {
+      expect(list().querySelector('mat-card')).not.toBeNull();
+      expect(list().querySelector('label')).toBeNull();
+    });
+
+    it('should still be named for a screen reader', async () => {
+      await render({ courses: [{ id: 'math', name: 'Calculus II' }] as ReadSemesterPlanWithCourses['courses'] });
+
+      expect(list().querySelector('mat-chip-set')?.getAttribute('aria-label')).toBe('Courses in this plan');
+    });
+
+    it('should show the name and credits of a course on hover', async () => {
+      await render({ courses: [{ id: 'math', name: 'Calculus II', credits: 1 }] as ReadSemesterPlanWithCourses['courses'] });
+
+      expect(tooltip().message).toBe('Calculus II - 1 credit');
+    });
+
+    it('should not say undefined for a course with no credits', async () => {
+      await render({ courses: [{ id: 'club', name: 'Study Group' }] as ReadSemesterPlanWithCourses['courses'] });
+
+      expect(tooltip().message).toBe('Study Group - 0 credits');
+    });
   });
 });

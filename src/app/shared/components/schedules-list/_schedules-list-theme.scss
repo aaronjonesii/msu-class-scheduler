@@ -32,10 +32,6 @@
     .schedule .mat-mdc-list-item-line {
       font: mat.get-theme-typography($theme, title-large);
     }
-
-    label {
-      font: mat.get-theme-typography($theme, label-large);
-    }
   }
 }
 

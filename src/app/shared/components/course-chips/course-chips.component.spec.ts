@@ -7,6 +7,7 @@ import { CourseChipsComponent } from './course-chips.component';
 import { Color } from '../../enums/color';
 import { CourseStatus } from '../../enums/course-status';
 import { ReadCourse } from '../../interfaces/course';
+import { ColorToClassPipe } from '../../pipes/color-to-class.pipe';
 
 describe('CourseChipsComponent', () => {
   let fixture: ComponentFixture<CourseChipsComponent>;
@@ -50,6 +51,24 @@ describe('CourseChipsComponent', () => {
     render([course('math', { color: Color.AZURE })]);
 
     expect(chips()[0].classList).toContain('azure-chip');
+  });
+
+  it('should tint every color of chip like the header of its course', () => {
+    const colors = Object.values(Color);
+
+    render(colors.map((color) => course(color, { color })));
+
+    const header = element().appendChild(document.createElement('div'));
+
+    colors.forEach((color, index) => {
+      header.className = new ColorToClassPipe().transform(color, 'card');
+
+      const chip = chips()[index];
+      const label = chip.querySelector('.mdc-evolution-chip__text-label') as HTMLElement;
+
+      expect(getComputedStyle(chip).backgroundColor).withContext(color).toBe(getComputedStyle(header).backgroundColor);
+      expect(getComputedStyle(label).color).withContext(color).toBe(getComputedStyle(header).color);
+    });
   });
 
   it('should say which course was clicked', () => {
