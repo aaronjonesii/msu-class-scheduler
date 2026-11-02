@@ -88,6 +88,19 @@ describe('SchedulesListComponent', () => {
       expect(list().querySelector('mat-chip')?.getAttribute('role')).toBe('listitem');
     });
 
+    it('should show the section, so schedules can be compared without opening them', async () => {
+      await render({
+        courses: [
+          { id: 'math', name: 'Calculus II', subjectCode: 'MTH', courseNumber: '133', sectionName: '002' },
+          { id: 'club', name: 'Study Group', sectionName: '001' },
+          { id: 'art', name: 'Drawing', subjectCode: 'STA', courseNumber: '110' },
+        ] as ReadScheduleWithCourses['courses'],
+      });
+
+      expect(Array.from(list().querySelectorAll('mat-chip')).map((chip) => chip.textContent?.replace(/\s+/g, ' ').trim()))
+        .toEqual(['MTH 133 002', 'Study Group 001', 'STA 110']);
+    });
+
     it('should show the name and credits of a course on hover', async () => {
       await render({ courses: [{ id: 'math', name: 'Calculus II', credits: 1 }] as ReadScheduleWithCourses['courses'] });
 

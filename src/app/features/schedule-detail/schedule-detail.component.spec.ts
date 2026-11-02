@@ -1,9 +1,13 @@
 import { ComponentFixture, DeferBlockBehavior, DeferBlockState, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { ScheduleDetailComponent } from './schedule-detail.component';
+import {
+  ScheduleCalendarDialogComponent, ScheduleCalendarDialogContract,
+} from '../../shared/dialogs/schedule-calendar-dialog/schedule-calendar-dialog.component';
 import { ScheduleCourseStatus } from '../../shared/enums/schedule-course-status';
 import { ReadSchedule } from '../../shared/interfaces/schedule';
 import { ReadScheduleCourse } from '../../shared/interfaces/schedule-course';
@@ -100,6 +104,55 @@ describe('ScheduleDetailComponent', () => {
       await renderPage();
 
       expect(element().querySelector('.details')).toBeNull();
+    });
+  });
+
+  describe('adding it to a calendar', () => {
+    it('should offer it once there are courses', async () => {
+      courses$.next([course('math')]);
+
+      await renderPage();
+
+      expect(buttonWithText('Add to calendar')?.hasAttribute('mat-flat-button')).toBeTrue();
+    });
+
+    it('should not offer it with no courses', async () => {
+      await renderPage();
+
+      expect(buttonWithText('Add to calendar')).toBeUndefined();
+    });
+
+    it('should open with the schedule and its courses', async () => {
+      const open = spyOn(TestBed.inject(MatDialog), 'open');
+      const math = course('math');
+      courses$.next([math]);
+
+      await renderPage();
+
+      buttonWithText('Add to calendar')?.click();
+
+      const { data } = open.calls.mostRecent().args[1] as { data: ScheduleCalendarDialogContract };
+
+      expect(open.calls.mostRecent().args[0]).toBe(ScheduleCalendarDialogComponent);
+      expect(data.scheduleId).toBe(SCHEDULE.id);
+      expect(data.scheduleName).toBe(SCHEDULE.name);
+      expect(data.courses()).toEqual([math]);
+    });
+
+    it('should keep the dialog up to date with the courses on the page', async () => {
+      const open = spyOn(TestBed.inject(MatDialog), 'open');
+      const math = course('math');
+      const physics = course('physics');
+      courses$.next([math]);
+
+      await renderPage();
+
+      buttonWithText('Add to calendar')?.click();
+      courses$.next([math, physics]);
+
+      const { data } = open.calls.mostRecent().args[1] as { data: ScheduleCalendarDialogContract };
+
+      expect(data.courses()).toEqual([math, physics]);
     });
   });
 

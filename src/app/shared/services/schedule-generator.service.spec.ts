@@ -172,6 +172,21 @@ describe('ScheduleGeneratorService', () => {
     });
   });
 
+  describe('courseToScheduleCourse', () => {
+    const math = {
+      ...course('math', 'math-2'),
+      sections: [section('math-1', '09:00', '09:50'), { ...section('math-2', '10:00', '10:50'), name: '002 + LEC1' }],
+    };
+
+    it('should keep the name of the section the schedule uses', () => {
+      expect(service.courseToScheduleCourse(math).sectionName).toBe('002 + LEC1');
+    });
+
+    it('should use null with no section chosen, because Firestore refuses undefined', () => {
+      expect(service.courseToScheduleCourse(course('math')).sectionName).toBeNull();
+    });
+  });
+
   describe('fittingCombinations', () => {
     const everySection = ['math-1', 'math-2', 'physics-1', 'physics-2'];
     const withSections = (id: string) => ({ ...course(id), sections: sections[id] });
@@ -225,6 +240,56 @@ describe('ScheduleGeneratorService', () => {
       await createSchedule();
 
       expect(savedTimes()).toEqual(['math 11:00', 'physics 15:00']);
+    });
+
+    describe('the sections to enroll in', () => {
+      const savedSections = () => scheduleCourseDocs().map(({ data }) => data['sectionName']);
+
+      it('should save the sections on screen next to their own meetings, not the defaults', async () => {
+        await service.generateSchedules(PLAN_ID);
+        await settle();
+
+        await stepForward(3);
+        await createSchedule();
+
+        expect(savedSections()).toEqual(['math-2', 'physics-2']);
+        expect(savedTimes()).toEqual(['math 11:00', 'physics 15:00']);
+      });
+
+      it('should save the first schedule when the user does not step away from it', async () => {
+        courses = [course('math', 'math-2'), course('physics', 'physics-2')];
+
+        await service.generateSchedules(PLAN_ID);
+        await settle();
+
+        await createSchedule();
+
+        expect(savedSections()).toEqual(['math-1', 'physics-1']);
+      });
+
+      it('should save what is left on screen after sections are turned off', async () => {
+        await service.generateSchedules(PLAN_ID);
+        await settle();
+
+        sectionBox('math-1').click();
+        await settle();
+
+        await createSchedule();
+
+        expect(savedSections()).toEqual(['math-2', 'physics-1']);
+        expect(savedTimes()).toEqual(['math 11:00', 'physics 13:00']);
+      });
+
+      it('should save one section for every course on the schedule', async () => {
+        await service.generateSchedules(PLAN_ID);
+        await settle();
+
+        await stepForward(1);
+        await createSchedule();
+
+        expect(savedSections().length).toBe(courses.length);
+        expect(savedSections().every(Boolean)).toBeTrue();
+      });
     });
 
     it('should save the first combination when the user does not step away from it', async () => {

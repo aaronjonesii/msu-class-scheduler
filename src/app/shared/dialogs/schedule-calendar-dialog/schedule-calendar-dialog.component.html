@@ -1,0 +1,73 @@
+<h1 mat-dialog-title>Add to calendar</h1>
+
+<mat-dialog-content>
+  <p>Download one file with every class as a weekly event, then import it into your calendar once.</p>
+
+  <div class="dates">
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>First day of classes</mat-label>
+      <input matInput type="date" name="firstDay" required [(ngModel)]="firstDay" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Last day of classes</mat-label>
+      <input matInput type="date" name="lastDay" required [(ngModel)]="lastDay" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Break starts (optional)</mat-label>
+      <input matInput type="date" name="breakStart" [(ngModel)]="breakStart" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" subscriptSizing="dynamic">
+      <mat-label>Break ends (optional)</mat-label>
+      <input matInput type="date" name="breakEnd" [(ngModel)]="breakEnd" />
+    </mat-form-field>
+  </div>
+
+  <p class="note">
+    Classes use these dates unless they have their own, so check any class that doesn't run
+    the whole term. Final exams aren't included.
+  </p>
+
+  @if (dateError(); as error) {
+    <p class="error-color" role="alert">{{error}}</p>
+  }
+
+  <div aria-live="polite">
+    @if (calendar()?.leftOut?.length) {
+      <section class="left-out">
+        <h2>Not in the file</h2>
+
+        <ul>
+          @for (left of calendar()?.leftOut; track left) {
+            <li>{{left.course}}: {{left.reason}}</li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
+
+  <section>
+    <h2>Getting it into your calendar</h2>
+
+    <p>
+      Import it into a new calendar. Importing twice can make duplicates, so to change
+      anything, delete that calendar and start again.
+    </p>
+
+    <ul>
+      <li><strong>Google Calendar, on a computer:</strong> Settings, then Import &amp; export. Pick your new calendar.</li>
+      <li><strong>Apple Calendar, on a Mac:</strong> File, then Import. Pick your new calendar.</li>
+      <li><strong>Outlook, on the web:</strong> Add calendar, then Upload from file.</li>
+    </ul>
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" mat-dialog-close>Close</button>
+
+  <button mat-flat-button type="button" [disabled]="!calendar()?.ics" (click)="download()">
+    Download calendar file
+  </button>
+</mat-dialog-actions>

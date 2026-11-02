@@ -24,6 +24,7 @@ export interface ScheduleCourse {
   color?: Color | null,
   isNotMSUCourse: boolean | null,
   sections?: ScheduleCourseSection[],
+  sectionName?: string | null,
 }
 
 export interface ReadScheduleCourse extends ScheduleCourse {

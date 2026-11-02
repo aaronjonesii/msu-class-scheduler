@@ -1,0 +1,22 @@
+.dates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--gap);
+  /* Room for the first label, which sits on the edge of its box. */
+  padding-top: 0.5rem;
+}
+
+.note {
+  font-size: 0.875rem;
+}
+
+h2 {
+  margin: var(--gap) 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+ul {
+  margin: 0.25rem 0;
+  padding-left: 1.25rem;
+}

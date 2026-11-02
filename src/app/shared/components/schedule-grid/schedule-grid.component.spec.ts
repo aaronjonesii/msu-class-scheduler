@@ -216,6 +216,41 @@ describe('ScheduleGridComponent', () => {
       expect(isInsideTile(tileElements()[0].querySelector('.course-title') as Element)).toBeTrue();
     });
 
+    describe('with a section', () => {
+      const titleOf = (tile: Element) => tile.querySelector('.course-title')?.textContent?.replace(/\s+/g, ' ').trim();
+
+      it('should show it right after the code', () => {
+        render([{ ...ece302, sectionName: '001' }]);
+
+        expect(titleOf(tileElements()[0])).toBe('ECE 302 001 Electronic Circuits');
+      });
+
+      it('should show it on a class with no course code', () => {
+        render([{ ...timed('Study Group', '09:10', '10:00'), sectionName: '001' }]);
+
+        expect(titleOf(tileElements()[0])).toBe('001 Study Group');
+      });
+
+      it('should keep the time on a waitlisted class with a long section in the narrowest column', () => {
+        render([{
+          ...ece302,
+          name: 'Microprocessors & Digital Systems For Engineers',
+          sectionName: '001 + LEC1',
+          status: ScheduleCourseStatus.WAITlIST,
+        }]);
+        (fixture.nativeElement as HTMLElement).style.width = '672px';
+
+        expect(isInsideTile(tileElements()[0].querySelector('.times') as Element)).toBeTrue();
+      });
+
+      it('should name it in the tooltip', () => {
+        render([{ ...timed('Calculus II', '09:00', '09:50'), sectionName: '001' }]);
+
+        expect(tileElements()[0].getAttribute('title'))
+          .toBe('Calculus II, Section 001, 9:00 AM - 9:50 AM, Wells Hall A1, Lecture');
+      });
+    });
+
     describe('on the waitlist', () => {
       const waitlisted = { ...ece302, status: ScheduleCourseStatus.WAITlIST };
 

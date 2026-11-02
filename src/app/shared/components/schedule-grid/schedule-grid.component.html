@@ -31,6 +31,12 @@
         </span>
       }
 
+      @if (courseTile.scheduleCourse?.sectionName; as sectionName) {
+        <span class="section">
+          {{sectionName}}
+        </span>
+      }
+
       <span class="name">{{courseTile.name}}</span>
     </span>
 
