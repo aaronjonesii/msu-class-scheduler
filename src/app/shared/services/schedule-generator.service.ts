@@ -212,6 +212,7 @@ export class ScheduleGeneratorService {
       description: course.description ?? null,
       meetings: scheduleCourseMeetings,
       sections: [],
+      sectionName: courseSection?.name ?? null,
       color: course.color ?? null,
       endDate: course.endDate ?? null,
       credits: course.credits ?? null,

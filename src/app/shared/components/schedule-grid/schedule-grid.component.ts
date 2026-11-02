@@ -220,8 +220,9 @@ export class ScheduleGridComponent {
 
   /** Short tiles only have room for the course and time, and a narrow one can cut the time off. */
   tileDetails({ name, times, meeting, scheduleCourse }: GridTile): string {
+    const section = scheduleCourse?.sectionName && `Section ${scheduleCourse.sectionName}`;
     // A Set because an online class's location is also its time.
-    const details = [...new Set([name, times, meeting?.location, meeting?.type, meeting?.instructor])]
+    const details = [...new Set([name, section, times, meeting?.location, meeting?.type, meeting?.instructor])]
       .filter(Boolean)
       .join(', ');
 

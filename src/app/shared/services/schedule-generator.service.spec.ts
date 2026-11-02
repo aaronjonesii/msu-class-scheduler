@@ -172,6 +172,21 @@ describe('ScheduleGeneratorService', () => {
     });
   });
 
+  describe('courseToScheduleCourse', () => {
+    const math = {
+      ...course('math', 'math-2'),
+      sections: [section('math-1', '09:00', '09:50'), { ...section('math-2', '10:00', '10:50'), name: '002 + LEC1' }],
+    };
+
+    it('should keep the name of the section the schedule uses', () => {
+      expect(service.courseToScheduleCourse(math).sectionName).toBe('002 + LEC1');
+    });
+
+    it('should use null with no section chosen, because Firestore refuses undefined', () => {
+      expect(service.courseToScheduleCourse(course('math')).sectionName).toBeNull();
+    });
+  });
+
   describe('fittingCombinations', () => {
     const everySection = ['math-1', 'math-2', 'physics-1', 'physics-2'];
     const withSections = (id: string) => ({ ...course(id), sections: sections[id] });
