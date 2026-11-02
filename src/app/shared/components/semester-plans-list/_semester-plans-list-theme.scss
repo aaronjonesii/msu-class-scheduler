@@ -33,14 +33,6 @@
     .semester-plan .mat-mdc-list-item-line {
       font: mat.get-theme-typography($theme, title-large);
     }
-
-    mat-card .badge {
-      font: mat.get-theme-typography($theme, label-small);
-    }
-
-    label {
-      font: mat.get-theme-typography($theme, label-large);
-    }
   }
 }
 

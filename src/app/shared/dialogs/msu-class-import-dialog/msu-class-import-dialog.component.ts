@@ -12,6 +12,7 @@ import { MatInput } from "@angular/material/input";
 import { CourseStatus } from "../../enums/course-status";
 import { ReadSemesterPlan } from "../../interfaces/semester-plan";
 import { formatCourseMeetings } from "../../utils/format-course-meetings";
+import { formatMeetingDetails } from "../../utils/format-meeting-details";
 import {
   MsuClassOption,
   MsuClassPage,
@@ -49,6 +50,7 @@ export class MsuClassImportDialogComponent {
 
   protected readonly CourseStatus = CourseStatus;
   protected readonly formatCourseMeetings = formatCourseMeetings;
+  protected readonly formatMeetingDetails = formatMeetingDetails;
 
   result = signal<MsuClassPageResult | null>(null);
 
@@ -100,11 +102,5 @@ export class MsuClassImportDialogComponent {
     else selected.delete(optionNumber);
 
     this.selectedOptionNumbers.set(selected);
-  }
-
-  meetingDetails(option: MsuClassOption): string {
-    const details = option.meetings.flatMap((m) => [m.location, m.instructor]);
-
-    return [...new Set(details.filter((detail) => !!detail))].join(' · ');
   }
 }

@@ -10,13 +10,13 @@ import {
   switchMap,
   map,
   from,
-  mergeMap,
+  concatMap,
   Observable,
-  take,
   toArray,
   lastValueFrom, first
 } from "rxjs";
 import {
+  CoursesCombination,
   ReadCourse,
   ReadCourseWithSections, ReadCourseWithSelectedSection
 } from "../interfaces/course";
@@ -34,8 +34,9 @@ import { AuthService } from "./auth.service";
 import { ReadSchedule, Schedule } from "../interfaces/schedule";
 import { Router } from "@angular/router";
 import { appRoutes } from "../../app.routes";
-import { CourseMeetingTime } from "../interfaces/course-meeting-time";
 import { CourseMeeting } from "../interfaces/course-meeting";
+import { sectionStatus } from "../utils/section-status";
+import { sortSectionsByName } from "../utils/sort-sections-by-name";
 
 @Injectable({ providedIn: 'root' })
 export class ScheduleGeneratorService {
@@ -80,6 +81,8 @@ export class ScheduleGeneratorService {
   }
 
   generateCourseCombinations(courses: ReadCourseWithSections[]): ReadCourseWithSelectedSection[][] {
+    if (courses.length === 0) return [];
+
     const combinations: ReadCourseWithSelectedSection[][] = [];
 
     const helper = (index: number, currentCombination: ReadCourseWithSelectedSection[]) => {
@@ -103,6 +106,15 @@ export class ScheduleGeneratorService {
     return combinations;
   }
 
+  /** The schedules that fit using only the picked sections. A course with none picked is left out. */
+  fittingCombinations(courses: ReadCourseWithSections[], pickedSectionIds: ReadonlySet<string>): CoursesCombination[] {
+    const pickedCourses = courses
+      .map((course) => ({ ...course, sections: course.sections.filter((s) => pickedSectionIds.has(s.id)) }))
+      .filter((course) => course.sections.length > 0);
+
+    return this.removeOverlappingCombinations(this.generateCourseCombinations(pickedCourses));
+  }
+
   getSemesterPlanWithCourses$(semesterPlanId: string) {
     return this.db.doc$<ReadSemesterPlan>(FirestorePaths.semesterPlan(semesterPlanId)).pipe(
       switchMap(semesterPlan => {
@@ -112,8 +124,8 @@ export class ScheduleGeneratorService {
         ).pipe(
           switchMap(courses => {
             return from(courses).pipe(
-              mergeMap(c => this.getCourseWithSections$(semesterPlanId, c)),
-              take(courses.length),
+              // One at a time, so the same plan always numbers its schedules the same way.
+              concatMap(c => this.getCourseWithSections$(semesterPlanId, c).pipe(first())),
               toArray(),
             )
           })
@@ -133,7 +145,7 @@ export class ScheduleGeneratorService {
           { idField: 'id' }
         );
         return combineLatest([of(c), courseSections]).pipe(
-          map(([_course, sections]) => ({ ..._course, sections }))
+          map(([_course, sections]) => ({ ..._course, sections: sortSectionsByName(sections) }))
         )
       })
     );
@@ -146,22 +158,8 @@ export class ScheduleGeneratorService {
 
     const semesterPlan = await lastValueFrom(this.getSemesterPlanWithCourses$(semesterPlanId).pipe(first()))
 
-    let courseSectionsCount = 0;
-    for (const course of semesterPlan.courses) {
-      const courseSection = course.sections?.find(s => s.id === course.selectedSectionId);
-      if (courseSection != null) courseSectionsCount += 1;
-    }
-
-    if (semesterPlan.courses.length < 2 || courseSectionsCount < 2) {
-      this.logger.warn('A schedule requires at least 2 courses with selected sections.');
-      return;
-    }
-
-    const combinations = this.generateCourseCombinations(semesterPlan.courses);
-    const filteredCombinations = this.removeOverlappingCombinations(combinations);
-
-    if (filteredCombinations.length === 0) {
-      this.logger.warn('No schedule fits. Every combination has a time conflict, or a course has no sections.');
+    if (!semesterPlan.courses.some((course) => course.sections.length > 0)) {
+      this.logger.warn('Add a section to a course before generating schedules.');
       return;
     }
 
@@ -175,7 +173,7 @@ export class ScheduleGeneratorService {
         maxHeight: '100%',
         data: {
           userId: user.uid,
-          combinations: filteredCombinations
+          courses: semesterPlan.courses
         } satisfies ScheduleFormDialogContract,
       },
     );
@@ -207,7 +205,7 @@ export class ScheduleGeneratorService {
     const scheduleCourseMeetings: ScheduleCourseMeeting[] = courseMeetings ?? []
     return {
       id: course.id,
-      status: (courseSection?.status ?? course.status) as unknown as ScheduleCourseStatus,
+      status: sectionStatus(courseSection, course) as unknown as ScheduleCourseStatus,
       subjectCode: course.subjectCode ?? null,
       courseNumber: course.courseNumber ?? null,
       name: course.name,

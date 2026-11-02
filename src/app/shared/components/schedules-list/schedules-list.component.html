@@ -1,38 +1,32 @@
 @defer (when !!schedules()) {
   @for (schedule of schedules(); track schedule.id) {
     <mat-card>
-      <div class="badge primary-card">
-        {{scheduleCredits(schedule)}} {{scheduleCredits(schedule) === 1 ? 'credit' : 'credits'}}
-      </div>
-
       <mat-card-header>
         <mat-card-title-group>
           <mat-card-title>{{schedule?.name || 'Unnamed schedule'}}</mat-card-title>
 
           <mat-card-subtitle>{{schedule.description}}</mat-card-subtitle>
+
+          <span class="credits">{{formatCredits(scheduleCredits(schedule))}}</span>
         </mat-card-title-group>
       </mat-card-header>
 
       <mat-card-content>
         @if (schedule.courses.length) {
-          <div class="courses">
-            <label for="schedule-courses">Courses</label>
-
-            <mat-chip-set id="schedule-courses"
-                          aria-label="Schedule courses selection">
-              @for (scheduleCourse of schedule.courses; track scheduleCourse) {
-                <mat-chip [highlighted]="true"
-                          [matTooltip]="scheduleCourse.name+' - '+scheduleCourse.credits+' '+((scheduleCourse.credits === 1) ? 'credit' : 'credits')"
-                          [class]="scheduleCourse.color | colorToClass: 'chip'">
-                  @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
-                    {{scheduleCourse.subjectCode}} {{scheduleCourse.courseNumber}}
-                  } @else {
-                    {{scheduleCourse.name}}
-                  }
-                </mat-chip>
-              }
-            </mat-chip-set>
-          </div>
+          <mat-chip-set role="list" aria-label="Courses in this schedule">
+            @for (scheduleCourse of schedule.courses; track scheduleCourse) {
+              <mat-chip role="listitem"
+                        [highlighted]="true"
+                        [matTooltip]="scheduleCourse.name + ' - ' + formatCredits(scheduleCourse.credits)"
+                        [class]="scheduleCourse.color | colorToClass: 'chip'">
+                @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+                  {{scheduleCourse.subjectCode}} {{scheduleCourse.courseNumber}}
+                } @else {
+                  {{scheduleCourse.name}}
+                }
+              </mat-chip>
+            }
+          </mat-chip-set>
         }
       </mat-card-content>
 
@@ -71,14 +65,10 @@
     </mat-card-header>
 
     <mat-card-content>
-      <div class="classes">
-        <label for="schedule-courses">Courses</label>
-
-        <div class="placeholder-chips">
-          <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
-          <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
-          <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
-        </div>
+      <div class="placeholder-chips">
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
+        <csb-skeleton [styles]="{width: '100%', maxWidth: '100px'}" />
       </div>
     </mat-card-content>
   </mat-card>

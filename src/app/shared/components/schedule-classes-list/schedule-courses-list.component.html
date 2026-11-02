@@ -1,41 +1,41 @@
 @defer (when !!scheduleCourses()) {
   @for (scheduleCourse of scheduleCourses(); track scheduleCourse.id) {
-    <mat-card [id]="scheduleCourse.id"
-              [class]="scheduleCourse.color | colorToClass: 'card'">
-      <div class="badge secondary-card">
-        {{scheduleCourse.credits || 0}} credits
-      </div>
-
-      <mat-card-header>
+    <mat-card class="course-card" [id]="scheduleCourse.id">
+      <mat-card-header [class]="scheduleCourse.color | colorToClass: 'card'">
         <mat-card-title-group>
           <mat-card-title>
             @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
               {{scheduleCourse.subjectCode}} {{scheduleCourse.courseNumber}}
-              -
+            } @else {
+              {{scheduleCourse.name}}
             }
-            {{scheduleCourse.name}}
           </mat-card-title>
 
-          <mat-card-subtitle>{{scheduleCourse.description}}</mat-card-subtitle>
+          @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
+            <mat-card-subtitle>{{scheduleCourse.name}}</mat-card-subtitle>
+          }
+
+          <span class="credits">{{formatCredits(scheduleCourse.credits)}}</span>
         </mat-card-title-group>
       </mat-card-header>
 
       <mat-card-content>
-        @for (meeting of scheduleCourse.meetings; track meeting.type) {
-          <div class="meeting-time">
-            {{meeting.type}}
-            -
-            @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
-              {{meetingTime.days.join(', ')}} {{meetingTime.startTime | time}} to {{meetingTime.endTime | time}}
-            } @empty {
-              {{noMeetingTimeLabel(meeting)}}
-            }
-          </div>
-        }
+        <div class="meetings">
+          @for (meeting of scheduleCourse.meetings; track meeting) {
+            <csb-course-meeting [meeting]="meeting" />
+          }
+        </div>
 
         <div class="status">{{scheduleCourse.status}}</div>
 
         <div class="notes">{{scheduleCourse?.notes}}</div>
+
+        @if (scheduleCourse.description) {
+          <details class="course-description">
+            <summary>Description</summary>
+            {{scheduleCourse.description}}
+          </details>
+        }
       </mat-card-content>
 
       <mat-card-actions>

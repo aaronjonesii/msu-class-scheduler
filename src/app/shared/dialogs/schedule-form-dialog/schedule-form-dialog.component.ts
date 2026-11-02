@@ -1,13 +1,13 @@
 import {
   ChangeDetectionStrategy,
   Component, computed, effect,
-  inject, input, model, OnInit,
+  inject, OnInit,
   signal
 } from '@angular/core';
 import { ReadSchedule } from "../../interfaces/schedule";
 import {
   MAT_DIALOG_DATA, MatDialogActions, MatDialogClose,
-  MatDialogContent, MatDialogRef,
+  MatDialogContent,
   MatDialogTitle
 } from "@angular/material/dialog";
 import { MatButton, MatIconButton } from "@angular/material/button";
@@ -15,7 +15,7 @@ import { ScheduleForm } from "../../forms/schedule-form";
 import {
   ScheduleFormComponent
 } from "../../components/schedule-form/schedule-form.component";
-import { CoursesCombination, ReadCourseWithSelectedSection } from "../../interfaces/course";
+import { CoursesCombination, ReadCourseWithSections } from "../../interfaces/course";
 import {
   ScheduleGridViewComponent
 } from "../../components/schedule-grid-view/schedule-grid-view.component";
@@ -24,11 +24,12 @@ import { scrollToElementId } from "../../utils/scroll-to-element";
 import { ScheduleGeneratorService } from "../../services/schedule-generator.service";
 import { ReadScheduleCourse } from "../../interfaces/schedule-course";
 import { NgTemplateOutlet } from "@angular/common";
+import { SectionPickerComponent } from "../../components/section-picker/section-picker.component";
 
 export interface ScheduleFormDialogContract {
   schedule?: ReadSchedule,
   userId: string,
-  combinations?: ReadCourseWithSelectedSection[][]
+  courses?: ReadCourseWithSections[]
 }
 
 @Component({
@@ -44,7 +45,8 @@ export interface ScheduleFormDialogContract {
     ScheduleGridViewComponent,
     MatIconButton,
     MatIcon,
-    NgTemplateOutlet
+    NgTemplateOutlet,
+    SectionPickerComponent
   ],
   templateUrl: './schedule-form-dialog.component.html',
   styleUrl: './schedule-form-dialog.component.scss',
@@ -53,21 +55,33 @@ export interface ScheduleFormDialogContract {
 export class ScheduleFormDialogComponent implements OnInit {
   private scheduleGeneratorService = inject(ScheduleGeneratorService);
   private contract = inject<ScheduleFormDialogContract>(MAT_DIALOG_DATA);
-  private dialogRef = inject(MatDialogRef<ScheduleFormDialogComponent>);
 
   protected readonly scrollToElementId = scrollToElementId;
 
   scheduleForm = signal(new ScheduleForm());
 
-  combinations = signal<CoursesCombination[]>([]);
+  /** The plan's courses when generating. Creating or editing by hand has none. */
+  courses = this.contract?.courses ?? [];
+
+  pickedSectionIds = signal<ReadonlySet<string>>(
+    new Set(this.courses.flatMap((course) => course.sections.map((section) => section.id))),
+  );
+
+  combinations = computed(() => {
+    return this.scheduleGeneratorService.fittingCombinations(this.courses, this.pickedSectionIds());
+  });
+
+  noScheduleFits = computed(() => this.courses.length > 0 && this.combinations().length === 0);
 
   editing = signal(false);
 
-  selectedCombinationIndex = signal<number | null>(null);
+  selectedCombinationIndex = signal(0);
 
-  selectedCombination = computed(() => {
-    const selectedCombinationIndex = this.selectedCombinationIndex();
-    return selectedCombinationIndex !== null ? this.combinations()[selectedCombinationIndex] : [];
+  selectedCombination = computed(() => this.combinations()[this.selectedCombinationIndex()] ?? [], {
+    // A pick rebuilds the list, but the same sections on screen are still the same schedule.
+    equal: (a, b) => {
+      return a.length === b.length && a.every((course, index) => course.selectedSectionId === b[index].selectedSectionId);
+    },
   });
 
   selectedCombinationScheduleCourses = computed<ReadScheduleCourse[]>(() => {
@@ -89,14 +103,6 @@ export class ScheduleFormDialogComponent implements OnInit {
       this.scheduleForm().userId = this.contract.userId;
     }
 
-    if (this.contract.combinations?.length) {
-      this.combinations.set(this.contract.combinations);
-      this.selectedCombinationIndex.set(0);
-
-      // update dialog to full screen
-      this.dialogRef.updateSize('100%', '100%');
-    }
-
     if (!this.contract.schedule) return;
 
     this.editing.set(true);
@@ -109,17 +115,38 @@ export class ScheduleFormDialogComponent implements OnInit {
     return { ...this.scheduleForm().schedule, courses: this.selectedCombinationScheduleCourses() };
   }
 
+  /** Numbers change with the picks, so this stays as close to the schedule on screen as it can. */
+  onPicksChange(pickedSectionIds: ReadonlySet<string>) {
+    const onScreen = this.selectedCombination().map((course) => course.selectedSectionId);
+    const sectionsKept = (combination: CoursesCombination) => {
+      return combination.filter((course) => onScreen.includes(course.selectedSectionId)).length;
+    };
+
+    this.pickedSectionIds.set(pickedSectionIds);
+
+    this.selectedCombinationIndex.set(this.combinations().reduce((closest, combination, index, combinations) => {
+      return sectionsKept(combination) > sectionsKept(combinations[closest]) ? index : closest;
+    }, 0));
+  }
+
   previousCombination() {
-    const currentIndex = this.selectedCombinationIndex();
-    if (currentIndex !== null && currentIndex > 0) {
-      this.selectedCombinationIndex.set(currentIndex - 1);
-    }
+    this.goToCombination(this.selectedCombinationIndex() - 1);
   }
 
   nextCombination() {
-    const currentIndex = this.selectedCombinationIndex();
-    if (currentIndex !== null && currentIndex < this.combinations().length - 1) {
-      this.selectedCombinationIndex.set(currentIndex + 1);
-    }
+    this.goToCombination(this.selectedCombinationIndex() + 1);
+  }
+
+  goToTypedNumber(numberBox: HTMLInputElement) {
+    const typedNumber = Math.trunc(numberBox.valueAsNumber);
+
+    if (!Number.isNaN(typedNumber)) this.goToCombination(typedNumber - 1);
+
+    // The binding can't correct the box when the schedule stays the same, like 99 on the last one.
+    numberBox.value = `${this.selectedCombinationIndex() + 1}`;
+  }
+
+  private goToCombination(index: number) {
+    this.selectedCombinationIndex.set(Math.min(Math.max(index, 0), this.combinations().length - 1));
   }
 }

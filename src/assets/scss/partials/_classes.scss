@@ -58,6 +58,7 @@
 .uppercase { text-transform: uppercase; }
 .position-absolute { position: absolute; }
 .text-bold { font-weight: bold; }
+
 .text-break-word { word-break: break-word; }
 .text-upright {
   text-orientation: upright;
@@ -81,3 +82,33 @@
 .font-weight-normal { font-weight: normal !important; }
 .font-weight-600 { font-weight: 600; }
 .float-right { float: right; }
+
+// Inside a card's title group, so it can't sit on top of the title.
+.credits {
+  flex: none;
+  margin-left: var(--gap);
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.course-card {
+  flex: 1 100%;
+  overflow: hidden;
+
+  .mat-mdc-card-header {
+    padding-bottom: var(--padding);
+  }
+
+  .mat-mdc-card-content {
+    padding-top: var(--padding);
+  }
+}
+
+.course-description {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+
+  summary {
+    cursor: pointer;
+  }
+}

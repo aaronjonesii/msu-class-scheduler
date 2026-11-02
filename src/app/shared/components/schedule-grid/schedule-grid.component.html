@@ -16,36 +16,32 @@
        [title]="tileDetails(courseTile)"
        [class]="courseTile.color | colorToClass: 'card'"
        [ngStyle]="courseTile.styles"
-       [ngClass]="{
-         'waitlist': courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST,
-         'no-time': courseTile.meeting?.meetingTimes?.length === 0
-       }"
+       [ngClass]="{ 'no-time': courseTile.meeting?.meetingTimes?.length === 0 }"
        (keyup)="courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined"
        (click)=" courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined">
-    @if (courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST) {
-      <mat-chip class="error-chip waitlist-chip"
-                [highlighted]="true"
-                [matTooltip]="((courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) ? (courseTile.scheduleCourse?.subjectCode+' '+courseTile.scheduleCourse?.courseNumber) : courseTile.scheduleCourse?.name)+' class has Waitlist status'">Waitlist</mat-chip>
-    }
+    <span class="course-title">
+      @if (courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST) {
+        <span class="waitlist error-color">Waitlist</span>
+      }
 
-    @if (courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) {
-      <span class="subject-code"
-            [title]="courseTile.scheduleCourse?.subjectCode+' '+courseTile.scheduleCourse?.courseNumber">
-        {{courseTile.scheduleCourse?.subjectCode}}
-        {{courseTile.scheduleCourse?.courseNumber}}
-      </span>
-    }
+      @if (courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) {
+        <span class="subject-code">
+          {{courseTile.scheduleCourse?.subjectCode}}
+          {{courseTile.scheduleCourse?.courseNumber}}
+        </span>
+      }
 
-    <span class="times" [title]="courseTile.times">{{courseTile.times}}</span>
+      <span class="name">{{courseTile.name}}</span>
+    </span>
+
+    <span class="times">{{courseTile.times}}</span>
 
     @if (courseTile.meeting?.location !== courseTile.times) {
-      <span class="location" [title]="courseTile.meeting?.location">{{courseTile.meeting?.location}}</span>
+      <span class="location">{{courseTile.meeting?.location}}</span>
     }
 
-    <span class="name" [title]="courseTile.name">{{courseTile.name}}</span>
+    <span class="type">{{courseTile.meeting?.type}}</span>
 
-    <span class="type" [title]="courseTile.meeting?.type">{{courseTile.meeting?.type}}</span>
-
-    <span class="instructor" [title]="courseTile.meeting?.instructor">{{courseTile.meeting?.instructor}}</span>
+    <span class="instructor">{{courseTile.meeting?.instructor}}</span>
   </div>
 }

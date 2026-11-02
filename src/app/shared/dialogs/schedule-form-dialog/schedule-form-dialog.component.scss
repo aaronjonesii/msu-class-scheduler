@@ -1,4 +1,35 @@
+@import '../../../../assets/scss/partials/media_queries';
+
 mat-dialog-content {
   padding: var(--padding) !important;
   max-height: unset;
+}
+
+.generated {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.week {
+  min-width: 0;
+}
+
+@media (min-width: $tabletLandscape) {
+  .generated {
+    display: grid;
+    grid-template-columns: 22rem minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.schedule-number {
+  width: 5.5rem;
+  padding: 2px 4px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: center;
 }

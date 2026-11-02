@@ -29,9 +29,9 @@
         <p class="message warning">{{warning}}</p>
       }
 
-      <ul class="options">
+      <ul class="sections">
         @for (option of page.options; track option.optionNumber) {
-          <li class="option">
+          <li class="section">
             <mat-checkbox [checked]="selectedOptionNumbers().has(option.optionNumber)"
                           (change)="toggleOption(option.optionNumber, $event.checked)">
               <span class="section-name">{{option.sectionName}}</span>
@@ -43,9 +43,9 @@
               }
             </mat-checkbox>
 
-            <div class="option-details">
+            <div class="section-details">
               <p>{{formatCourseMeetings(option.meetings)}}</p>
-              @if (meetingDetails(option); as details) {
+              @if (formatMeetingDetails(option.meetings); as details) {
                 <p>{{details}}</p>
               }
               @if (option.seats.length > 0) {

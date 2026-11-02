@@ -11,10 +11,9 @@ import {
 } from "../../interfaces/schedule-course";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
 import { Color, DefaultColor } from "../../enums/color";
+import { formatTime, formatTimeRange } from "../../utils/format-time";
 import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 import { ScheduleCourseStatus } from "../../enums/schedule-course-status";
-import { MatChip } from "@angular/material/chips";
-import { MatTooltip } from "@angular/material/tooltip";
 import { ScheduleCourseMeeting } from '../../interfaces/schedule-course-meeting';
 
 export interface GridTile {
@@ -53,8 +52,7 @@ function toMinutes(time: string): number {
   selector: 'csb-schedule-grid',
   standalone: true,
   imports: [
-    NgStyle, ColorToClassPipe,
-    MatChip, MatTooltip, NgClass,
+    NgStyle, ColorToClassPipe, NgClass,
   ],
   templateUrl: './schedule-grid.component.html',
   styleUrl: './schedule-grid.component.scss',
@@ -140,7 +138,7 @@ export class ScheduleGridComponent {
 
       tiles.push({
         id: startTime.toLocaleTimeString(),
-        name: this._formatTime(startTime),
+        name: formatTime(startTime.toTimeString().slice(0, 5)),
         styles: {
           gridColumnStart: 1,
           gridColumnEnd: 2,
@@ -194,7 +192,7 @@ export class ScheduleGridComponent {
             tiles.push({
               ...tile,
               id: `${scheduleCourse.id}-${meeting.type}-${day}-${time.startTime}`,
-              times: `${this._formatTime(this._parseTime(time.startTime))} - ${this._formatTime(this._parseTime(time.endTime))}`,
+              times: formatTimeRange(time),
               styles: {
                 /** +2 to account for the time column and label column */
                 gridColumnStart: dayIndex + 2,
@@ -220,9 +218,14 @@ export class ScheduleGridComponent {
     return [...tiles, ...noTimeTiles];
   });
 
-  /** Short tiles only have room for the course, time and room. */
-  tileDetails({ name, meeting }: GridTile): string {
-    return [name, meeting?.type, meeting?.instructor].filter(Boolean).join(', ');
+  /** Short tiles only have room for the course and time, and a narrow one can cut the time off. */
+  tileDetails({ name, times, meeting, scheduleCourse }: GridTile): string {
+    // A Set because an online class's location is also its time.
+    const details = [...new Set([name, times, meeting?.location, meeting?.type, meeting?.instructor])]
+      .filter(Boolean)
+      .join(', ');
+
+    return [details, scheduleCourse?.description].filter(Boolean).join('\n\n');
   }
 
   private _rowAtTime(time: string): number {
@@ -237,9 +240,5 @@ export class ScheduleGridComponent {
     date.setHours(hours, minutes);
 
     return date;
-  }
-
-  private _formatTime(date: Date): string {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   }
 }

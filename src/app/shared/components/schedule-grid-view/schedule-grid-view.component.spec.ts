@@ -24,4 +24,12 @@ describe('ScheduleGridViewComponent', () => {
   it('should show evening classes by default, which run as late as 9:50 PM', () => {
     expect(component.endTime()).toBe('22:00');
   });
+
+  it('should offer to hide the grid options once they are showing', () => {
+    component.showGridOptions.set(true);
+    fixture.detectChanges();
+
+    expect((fixture.nativeElement as HTMLElement).querySelector('.grid-options-btn')?.textContent?.trim())
+      .toBe('Hide grid options');
+  });
 });

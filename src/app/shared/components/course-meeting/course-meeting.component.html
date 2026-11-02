@@ -1,0 +1,20 @@
+<div class="meeting">
+  <div class="times">
+    @for (meetingTime of meeting().meetingTimes; track meetingTime) {
+      <div><span class="days">{{formatDays(meetingTime.days)}}</span>{{formatTimeRange(meetingTime)}}</div>
+    } @empty {
+      {{noTimeLabel()}}
+    }
+  </div>
+
+  <span class="type">{{meeting().type}}</span>
+
+  <div class="place">
+    @if (room(); as room) {
+      <span>{{room}}</span>
+    }
+    @if (meeting().instructor; as instructor) {
+      <span>{{instructor}}</span>
+    }
+  </div>
+</div>

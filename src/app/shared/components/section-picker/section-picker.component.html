@@ -1,0 +1,61 @@
+<h2 class="heading">Choose what to include</h2>
+
+<mat-accordion>
+  @for (course of courses(); track course.id) {
+    <div class="course">
+      <mat-checkbox class="course-checkbox"
+                    [aria-label]="'All sections of ' + course.name"
+                    [checked]="allPicked(course)"
+                    [indeterminate]="pickedCount(course) > 0 && !allPicked(course)"
+                    [disabled]="course.sections.length === 0"
+                    (change)="togglePicks(course.sections, $event.checked)" />
+
+      <mat-expansion-panel [disabled]="course.sections.length === 0"
+                           [hideToggle]="course.sections.length === 0">
+        <mat-expansion-panel-header collapsedHeight="auto" expandedHeight="auto">
+          <mat-panel-title>
+            <span class="course-name">
+              @if (course.subjectCode && course.courseNumber) {
+                {{course.subjectCode}} {{course.courseNumber}} -
+              }
+              {{course.name}}
+            </span>
+
+            <span class="picked-count">
+              @if (course.sections.length > 0) {
+                {{pickedCount(course)}} of {{course.sections.length}}
+                {{course.sections.length === 1 ? 'section' : 'sections'}}
+              } @else {
+                No sections
+              }
+            </span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <ul class="sections">
+          @for (section of course.sections; track section.id) {
+            <li class="section">
+              <mat-checkbox [checked]="pickedSectionIds().has(section.id)"
+                            [aria-describedby]="'section-details-' + section.id"
+                            (change)="togglePicks([section], $event.checked)">
+                <span class="section-name">{{section.name}}</span>
+                @if (sectionStatus(section, course); as status) {
+                  @if (status !== CourseStatus.OPEN) {
+                    <span class="status error-color">{{status}}</span>
+                  }
+                }
+              </mat-checkbox>
+
+              <div class="section-details" [id]="'section-details-' + section.id">
+                <p>{{formatCourseMeetings(section.meetings) || 'No meetings'}}</p>
+                @if (formatMeetingDetails(section.meetings); as details) {
+                  <p>{{details}}</p>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      </mat-expansion-panel>
+    </div>
+  }
+</mat-accordion>

@@ -1,0 +1,17 @@
+@if (courses()?.length) {
+  <mat-chip-set role="list" aria-label="Jump to a course">
+    @for (course of courses(); track course.id) {
+      <mat-chip role="listitem" class="cursor-pointer"
+                [highlighted]="true"
+                [matTooltip]="course.name"
+                [class]="course.color | colorToClass: 'chip'"
+                (click)="courseClicked.emit(course.id)">
+        @if (course?.subjectCode && course?.courseNumber) {
+          {{course.subjectCode}} {{course.courseNumber}}
+        } @else {
+          {{course.name}}
+        }
+      </mat-chip>
+    }
+  </mat-chip-set>
+}

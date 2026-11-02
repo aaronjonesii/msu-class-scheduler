@@ -11,6 +11,7 @@ import { MatAnchor, MatButton } from "@angular/material/button";
 import { SemesterTerm } from "../../enums/semester-term";
 import { SemesterPlansService } from "../../services/semester-plans.service";
 import { ReadCourse } from "../../interfaces/course";
+import { formatCredits } from "../../utils/format-credits";
 import {
   CourseSectionsListComponent
 } from "../course-sections-list/course-sections-list.component";
@@ -37,6 +38,8 @@ import {
 })
 export class SemesterPlanCoursesListComponent {
   private semesterPlansService = inject(SemesterPlansService);
+
+  protected readonly formatCredits = formatCredits;
 
   term = input.required<SemesterTerm>();
 

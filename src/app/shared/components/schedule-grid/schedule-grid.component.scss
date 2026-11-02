@@ -29,6 +29,7 @@
 .tile.course {
   position: relative;
   z-index: 1;
+  container-type: size;
   /* Lines that don't fit wrap into a hidden column, so none is cut in half. */
   display: flex;
   flex-flow: column wrap;
@@ -40,21 +41,31 @@
   border-radius: 6px;
   cursor: pointer;
 
-  span {
+  > span {
     width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  .subject-code {
-    font-weight: 600;
+  /* Two lines at most, so the time still fits under it on a 50 minute class. */
+  > .course-title {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    white-space: normal;
   }
 
-  .waitlist-chip {
-    position: absolute;
-    top: 2px;
-    right: 2px;
+  /* Too short for two lines of title and the time, so the time keeps its place. */
+  @container (height < 3.9em) {
+    > .course-title {
+      -webkit-line-clamp: 1;
+    }
+  }
+
+  .subject-code,
+  .waitlist {
+    font-weight: 600;
   }
 
   &:focus-visible {
@@ -65,6 +76,8 @@
 
 /* A class with no set time is a single line across the whole week. */
 .tile.course.no-time {
+  /* Its row is only as tall as its text, which a size container would ignore. */
+  container-type: normal;
   flex-flow: row wrap;
   gap: 0 1rem;
   align-items: center;

@@ -1,0 +1,45 @@
+/* Follows the width it is given, because a card can be narrow on a wide screen. */
+:host {
+  display: block;
+  container-type: inline-size;
+  font-size: 0.875rem;
+}
+
+.meeting {
+  display: grid;
+  grid-template-columns: 6.5rem minmax(0, 1fr);
+}
+
+.times {
+  grid-column: 1 / -1;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.days {
+  display: inline-block;
+  min-width: 6.5rem;
+  padding-right: 0.5rem;
+  white-space: nowrap;
+}
+
+.place {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--gap);
+}
+
+.place span {
+  flex: 1 1 11rem;
+  min-width: 0;
+}
+
+@container (min-width: 32rem) {
+  .meeting {
+    grid-template-columns: 18.5rem 6rem minmax(0, 1fr);
+  }
+
+  .times {
+    grid-column: auto;
+  }
+}

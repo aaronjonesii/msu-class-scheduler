@@ -11,14 +11,34 @@
 <mat-dialog-content>
   <csb-schedule-form [scheduleForm]="scheduleForm()" />
 
-  @if (combinations().length > 0) {
-    <ng-container [ngTemplateOutlet]="combinationNav" />
+  @if (courses.length > 0) {
+    <div class="generated">
+      <p class="cdk-visually-hidden" aria-live="polite">
+        @if (combinations().length > 0) {
+          Schedule {{selectedCombinationIndex() + 1}} of {{combinations().length}}
+        }
+      </p>
 
-    <csb-schedule-grid-view
-      [scheduleCourses]="selectedCombinationScheduleCourses()"
-      [(shownCourses)]="shownCourses"
-      (courseClicked)="scrollToElementId($event.id)"
-    />
+      <csb-section-picker [courses]="courses"
+                          [pickedSectionIds]="pickedSectionIds()"
+                          (picksChanged)="onPicksChange($event)" />
+
+      <div class="week">
+        @if (noScheduleFits()) {
+          <p class="error-color" role="alert">
+            No schedule fits these picks. Turn on more sections, or turn off a course that conflicts.
+          </p>
+        } @else {
+          <ng-container [ngTemplateOutlet]="combinationNav" />
+        }
+
+        <csb-schedule-grid-view
+          [scheduleCourses]="selectedCombinationScheduleCourses()"
+          [(shownCourses)]="shownCourses"
+          (courseClicked)="scrollToElementId($event.id)"
+        />
+      </div>
+    </div>
   }
 </mat-dialog-content>
 
@@ -26,7 +46,7 @@
   <button mat-button type="button" mat-dialog-close>Cancel</button>
 
   <button mat-flat-button type="button"
-          [disabled]="scheduleForm().formGroup.invalid"
+          [disabled]="scheduleForm().formGroup.invalid || noScheduleFits()"
           [mat-dialog-close]="scheduleToSave()">
     {{editing() ? 'Save' : 'Create'}}
   </button>
@@ -38,7 +58,14 @@
         <mat-icon matButtonIcon fontIcon="chevron_left" />
       </button>
 
-      <span>{{selectedCombinationIndex()}} / {{combinations().length}}</span>
+      <input #numberBox class="schedule-number" type="number" min="1"
+             aria-label="Go to schedule number"
+             [max]="combinations().length"
+             [value]="selectedCombinationIndex() + 1"
+             (click)="numberBox.select()"
+             (change)="goToTypedNumber(numberBox)" />
+
+      <span>/ {{combinations().length}}</span>
 
       <button mat-icon-button type="button" (click)="nextCombination()">
         <mat-icon matButtonIcon fontIcon="chevron_right" />

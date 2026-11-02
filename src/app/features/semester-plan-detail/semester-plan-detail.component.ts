@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { SemesterPlansService } from '../../shared/services/semester-plans.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { first, firstValueFrom, lastValueFrom, of, switchMap, withLatestFrom } from 'rxjs';
+import { first, firstValueFrom, of, switchMap } from 'rxjs';
 import { ReadSemesterPlan } from '../../shared/interfaces/semester-plan';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,9 +10,7 @@ import { ConfirmDialogComponent, ConfirmDialogContract } from '../../shared/comp
 import { LoggerService } from '../../shared/services/logger.service';
 import { Router, RouterLink } from '@angular/router';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton.component';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTooltip } from '@angular/material/tooltip';
-import { ColorToClassPipe } from '../../shared/pipes/color-to-class.pipe';
+import { CourseChipsComponent } from '../../shared/components/course-chips/course-chips.component';
 import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 import { DatePipe, DOCUMENT } from '@angular/common';
 import { SemesterPlanCoursesService } from '../../shared/services/semester-plan-courses.service';
@@ -32,6 +30,7 @@ import {
   SemesterPlanCourseSectionsService
 } from "../../shared/services/semester-plan-course-sections.service";
 import { ScheduleGeneratorService } from "../../shared/services/schedule-generator.service";
+import { formatCredits } from "../../shared/utils/format-credits";
 
 @Component({
   selector: 'csb-semester-plan-detail',
@@ -41,7 +40,7 @@ import { ScheduleGeneratorService } from "../../shared/services/schedule-generat
   standalone: true,
   imports: [
     MatIcon, SkeletonComponent, RouterLink,
-    MatChipsModule, MatTooltip, ColorToClassPipe,
+    CourseChipsComponent,
     DateAgoPipe, DatePipe, MatButton, SemesterPlanCoursesListComponent,
   ],
 })
@@ -57,6 +56,7 @@ export class SemesterPlanDetailComponent {
   private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
+  protected readonly formatCredits = formatCredits;
 
   semesterPlanId = signal<string | null>(null);
 

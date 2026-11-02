@@ -108,7 +108,6 @@ export class MsuClassImportService {
         });
       }
 
-      // Generate Schedules only uses courses that have a default section.
       const defaultSection = sections.find((s) => s.option.inCart) ??
         sections.find((s) => s.option.status === CourseStatus.OPEN) ?? sections[0];
       const courseRef = this.db.doc(FirestorePaths.semesterPlanCourse(semesterPlanId, courseId));
