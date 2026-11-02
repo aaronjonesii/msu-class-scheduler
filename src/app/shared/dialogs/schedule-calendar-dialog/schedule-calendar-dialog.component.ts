@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, Signal, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButton } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogActions, MatDialogClose, MatDialogContent, MatDialogTitle } from '@angular/material/dialog';
@@ -9,10 +9,13 @@ import { ReadScheduleCourse } from '../../interfaces/schedule-course';
 import { downloadFile } from '../../utils/download-file';
 import { scheduleCalendar } from '../../utils/schedule-calendar';
 
+/** A date box takes any year, so one slip could put every class centuries away. */
+const THIS_CENTURY = /^20\d{2}-\d{2}-\d{2}$/;
+
 export interface ScheduleCalendarDialogContract {
   scheduleId: string,
   scheduleName: string,
-  courses: ReadScheduleCourse[],
+  courses: Signal<ReadScheduleCourse[]>,
 }
 
 @Component({
@@ -45,6 +48,10 @@ export class ScheduleCalendarDialogComponent {
   dateError = computed(() => {
     const [firstDay, lastDay, breakStart, breakEnd] = [this.firstDay(), this.lastDay(), this.breakStart(), this.breakEnd()];
 
+    if ([firstDay, lastDay, breakStart, breakEnd].some((date) => date && !THIS_CENTURY.test(date))) {
+      return 'Check the year of each date.';
+    }
+
     if (firstDay && lastDay && lastDay < firstDay) return 'The last day must be on or after the first day.';
 
     if (Boolean(breakStart) !== Boolean(breakEnd)) return 'Fill in both break dates, or neither.';
@@ -63,7 +70,7 @@ export class ScheduleCalendarDialogComponent {
       breakEnd: this.breakEnd(),
     };
 
-    return scheduleCalendar(scheduleId, courses, dates, new Date());
+    return scheduleCalendar(scheduleId, courses(), dates, new Date());
   });
 
   download() {

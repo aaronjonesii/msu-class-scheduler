@@ -1,3 +1,4 @@
+import { Timestamp } from "@angular/fire/firestore";
 import { Day } from "../enums/day";
 import { ReadScheduleCourse } from "../interfaces/schedule-course";
 import { ScheduleCourseMeeting } from "../interfaces/schedule-course-meeting";
@@ -66,6 +67,10 @@ const ENDS_BEFORE_IT_STARTS = 'its end time is not after its start time';
 /** Whole days since 1970. A typed date has no time or zone, so it can't drift a day in any time zone. */
 const toDayNumber = (date: string) => Date.parse(`${date}T00:00:00Z`) / MS_PER_DAY;
 
+/** The course form saves the midnight a date picker gives, so read it back as a day in Michigan. */
+const michiganDay = (date: Timestamp) =>
+  toDayNumber(new Intl.DateTimeFormat('en-CA', { timeZone: TIME_ZONE }).format(date.toDate()));
+
 const weekdayOf = (day: number) => WEEK[new Date(day * MS_PER_DAY).getUTCDay()];
 
 const dateStamp = (day: number) => new Date(day * MS_PER_DAY).toISOString().slice(0, 10).replace(/-/g, '');
@@ -85,6 +90,14 @@ function classSpans({ firstDay, lastDay, breakStart, breakEnd }: CalendarDates):
     { first, last: Math.min(last, toDayNumber(breakStart) - 1) },
     { first: Math.max(first, toDayNumber(breakEnd) + 1), last },
   ];
+}
+
+/** A class with its own dates keeps to them, like one that only runs the second half of the term. */
+function courseSpans(spans: DaySpan[], { startDate, endDate }: ReadScheduleCourse): DaySpan[] {
+  const first = startDate ? michiganDay(startDate) : -Infinity;
+  const last = endDate ? michiganDay(endDate) : Infinity;
+
+  return spans.map((span) => ({ first: Math.max(span.first, first), last: Math.min(span.last, last) }));
 }
 
 function firstClassIn({ first, last }: DaySpan, days: Day[]): number | undefined {
@@ -183,8 +196,9 @@ export function scheduleCalendar(
   const events: string[][] = [];
   const leftOut: LeftOutClass[] = [];
 
-  const leaveOut = (course: ReadScheduleCourse, reason: string) => {
-    const label = courseLabel(course);
+  /** Names the meeting too, because the rest of the course may be in the file. */
+  const leaveOut = (course: ReadScheduleCourse, reason: string, meeting?: ScheduleCourseMeeting) => {
+    const label = [courseLabel(course), meeting?.type].filter(Boolean).join(' ');
 
     if (!leftOut.some((left) => left.course === label && left.reason === reason)) {
       leftOut.push({ course: label, reason });
@@ -195,23 +209,23 @@ export function scheduleCalendar(
     if (course.meetings.length === 0) leaveOut(course, NO_SET_TIME);
 
     course.meetings.forEach((meeting, meetingIndex) => {
-      if (meeting.meetingTimes.length === 0) leaveOut(course, NO_SET_TIME);
+      if (meeting.meetingTimes.length === 0) leaveOut(course, NO_SET_TIME, meeting);
 
       meeting.meetingTimes.forEach((time, timeIndex) => {
         if (time.endTime <= time.startTime) {
-          leaveOut(course, ENDS_BEFORE_IT_STARTS);
+          leaveOut(course, ENDS_BEFORE_IT_STARTS, meeting);
 
           return;
         }
 
-        const classEvents = spans.flatMap((span, spanIndex) => {
+        const classEvents = courseSpans(spans, course).flatMap((span, spanIndex) => {
           const firstClass = firstClassIn(span, time.days);
           const uid = [scheduleId, course.id, meetingIndex, timeIndex, spanIndex].join('-');
 
           return firstClass === undefined ? [] : [eventLines(uid, stamp, course, meeting, time, firstClass, span)];
         });
 
-        if (classEvents.length === 0) leaveOut(course, NOT_IN_DATES);
+        if (classEvents.length === 0) leaveOut(course, NOT_IN_DATES, meeting);
 
         events.push(...classEvents);
       });

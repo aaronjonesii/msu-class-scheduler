@@ -5,7 +5,9 @@ import { provideRouter } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { ScheduleDetailComponent } from './schedule-detail.component';
-import { ScheduleCalendarDialogComponent } from '../../shared/dialogs/schedule-calendar-dialog/schedule-calendar-dialog.component';
+import {
+  ScheduleCalendarDialogComponent, ScheduleCalendarDialogContract,
+} from '../../shared/dialogs/schedule-calendar-dialog/schedule-calendar-dialog.component';
 import { ScheduleCourseStatus } from '../../shared/enums/schedule-course-status';
 import { ReadSchedule } from '../../shared/interfaces/schedule';
 import { ReadScheduleCourse } from '../../shared/interfaces/schedule-course';
@@ -129,9 +131,28 @@ describe('ScheduleDetailComponent', () => {
 
       buttonWithText('Add to calendar')?.click();
 
-      expect(open).toHaveBeenCalledOnceWith(ScheduleCalendarDialogComponent, jasmine.objectContaining({
-        data: { scheduleId: SCHEDULE.id, scheduleName: SCHEDULE.name, courses: [math] },
-      }));
+      const { data } = open.calls.mostRecent().args[1] as { data: ScheduleCalendarDialogContract };
+
+      expect(open.calls.mostRecent().args[0]).toBe(ScheduleCalendarDialogComponent);
+      expect(data.scheduleId).toBe(SCHEDULE.id);
+      expect(data.scheduleName).toBe(SCHEDULE.name);
+      expect(data.courses()).toEqual([math]);
+    });
+
+    it('should keep the dialog up to date with the courses on the page', async () => {
+      const open = spyOn(TestBed.inject(MatDialog), 'open');
+      const math = course('math');
+      const physics = course('physics');
+      courses$.next([math]);
+
+      await renderPage();
+
+      buttonWithText('Add to calendar')?.click();
+      courses$.next([math, physics]);
+
+      const { data } = open.calls.mostRecent().args[1] as { data: ScheduleCalendarDialogContract };
+
+      expect(data.courses()).toEqual([math, physics]);
     });
   });
 

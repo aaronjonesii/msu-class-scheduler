@@ -199,7 +199,7 @@ export class ScheduleDetailComponent {
         data: {
           scheduleId: id,
           scheduleName: name,
-          courses: this.scheduleCourses() ?? [],
+          courses: computed(() => this.scheduleCourses() ?? []),
         } satisfies ScheduleCalendarDialogContract,
       },
     );

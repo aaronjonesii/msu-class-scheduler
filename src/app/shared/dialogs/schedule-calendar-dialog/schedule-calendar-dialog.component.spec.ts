@@ -1,3 +1,4 @@
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
@@ -51,7 +52,7 @@ describe('ScheduleCalendarDialogComponent', () => {
         provideNoopAnimations(),
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { scheduleId: 'schedule', scheduleName: 'Spring plan', courses: [course()], ...changes },
+          useValue: { scheduleId: 'schedule', scheduleName: 'Spring plan', courses: signal([course()]), ...changes },
         },
       ],
     }).compileComponents();
@@ -157,24 +158,38 @@ describe('ScheduleCalendarDialogComponent', () => {
 
       expect(text()).toContain('whole term');
     });
+
+    it('should stop a year that is not four digits, which would put classes centuries away', async () => {
+      await render();
+
+      await typeDates({ firstDay: '0027-01-19', lastDay: '2027-05-02' });
+
+      expect(dialog().querySelector('[role="alert"]')?.textContent).toContain('Check the year');
+      expect(downloadButton().disabled).toBeTrue();
+
+      await typeDates({ firstDay: '2027-01-19', lastDay: '20277-05-02' });
+
+      expect(dialog().querySelector('[role="alert"]')?.textContent).toContain('Check the year');
+      expect(downloadButton().disabled).toBeTrue();
+    });
   });
 
   describe('what is left out', () => {
     it('should name a class with no set time, so it is not a surprise', async () => {
-      await render({ courses: [course(), ONLINE] });
+      await render({ courses: signal([course(), ONLINE]) });
 
       await typeDates(SPRING_2027);
 
-      expect(text()).toContain('IAH 221C: it has no set time');
+      expect(text()).toContain('IAH 221C Lecture: it has no set time');
       expect(downloadButton().disabled).toBeFalse();
     });
 
     it('should explain why there is no file when nothing can go in it', async () => {
-      await render({ courses: [ONLINE] });
+      await render({ courses: signal([ONLINE]) });
 
       await typeDates(SPRING_2027);
 
-      expect(text()).toContain('IAH 221C: it has no set time');
+      expect(text()).toContain('IAH 221C Lecture: it has no set time');
       expect(downloadButton().disabled).toBeTrue();
     });
 
@@ -184,6 +199,30 @@ describe('ScheduleCalendarDialogComponent', () => {
       await typeDates(SPRING_2027);
 
       expect(dialog().querySelector('.left-out')).toBeNull();
+    });
+
+    it('should read the list out when it appears, so it is not missed', async () => {
+      await render({ courses: signal([course(), ONLINE]) });
+
+      const region = dialog().querySelector('[aria-live="polite"]');
+
+      await typeDates(SPRING_2027);
+
+      expect(region).not.toBeNull();
+      expect(dialog().querySelector('[aria-live="polite"]')).toBe(region);
+      expect(region?.textContent).toContain('IAH 221C Lecture: it has no set time');
+    });
+
+    it('should follow changes made to the schedule while it is open', async () => {
+      const courses = signal([course()]);
+      await render({ courses });
+
+      await typeDates(SPRING_2027);
+
+      courses.set([course(), ONLINE]);
+      fixture.detectChanges();
+
+      expect(text()).toContain('IAH 221C Lecture: it has no set time');
     });
   });
 

@@ -26,25 +26,27 @@
   </div>
 
   <p class="note">
-    Every class uses these dates, so check any class that doesn't run the whole term.
-    Final exams aren't included.
+    Classes use these dates unless they have their own, so check any class that doesn't run
+    the whole term. Final exams aren't included.
   </p>
 
   @if (dateError(); as error) {
     <p class="error-color" role="alert">{{error}}</p>
   }
 
-  @if (calendar()?.leftOut?.length) {
-    <section class="left-out">
-      <h2>Not in the file</h2>
+  <div aria-live="polite">
+    @if (calendar()?.leftOut?.length) {
+      <section class="left-out">
+        <h2>Not in the file</h2>
 
-      <ul>
-        @for (left of calendar()?.leftOut; track left) {
-          <li>{{left.course}}: {{left.reason}}</li>
-        }
-      </ul>
-    </section>
-  }
+        <ul>
+          @for (left of calendar()?.leftOut; track left) {
+            <li>{{left.course}}: {{left.reason}}</li>
+          }
+        </ul>
+      </section>
+    }
+  </div>
 
   <section>
     <h2>Getting it into your calendar</h2>

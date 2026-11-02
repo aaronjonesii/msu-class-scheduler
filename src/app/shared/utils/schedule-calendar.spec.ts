@@ -1,3 +1,5 @@
+import { Timestamp } from '@angular/fire/firestore';
+
 import { CalendarDates, scheduleCalendar } from './schedule-calendar';
 import { Day } from '../enums/day';
 import { ScheduleCourseMeetingType } from '../enums/schedule-course-meeting-type';
@@ -203,6 +205,57 @@ describe('scheduleCalendar', () => {
     });
   });
 
+  describe('a class with its own dates', () => {
+    /** The course form saves the midnight a date picker gives, in Michigan. */
+    const savedAt = (instant: string) => ({ toDate: () => new Date(instant) }) as unknown as Timestamp;
+    const thursdayLab = (changes: Partial<ReadScheduleCourse>) => course([meeting([THURSDAY], '08:00', '10:50')], changes);
+    const startsIn = (ics: string) => eventsIn(ics).map((event) => event.find((line) => line.startsWith('DTSTART')));
+    const rulesIn = (ics: string) => eventsIn(ics).map((event) => event.find((line) => line.startsWith('RRULE')));
+
+    it('should start a second-half class on its own first day', () => {
+      const ics = fileFor([thursdayLab({ startDate: savedAt('2027-03-15T04:00:00Z'), endDate: savedAt('2027-05-02T04:00:00Z') })]);
+
+      expect(startsIn(ics)).toEqual(['DTSTART;TZID=America/Detroit:20270318T080000']);
+      expect(rulesIn(ics)).toEqual(['RRULE:FREQ=WEEKLY;UNTIL=20270503T035959Z;BYDAY=TH']);
+    });
+
+    it('should end a first-half class on its own last day', () => {
+      const ics = fileFor([thursdayLab({ startDate: savedAt('2027-01-19T05:00:00Z'), endDate: savedAt('2027-03-05T05:00:00Z') })]);
+
+      expect(startsIn(ics)).toEqual(['DTSTART;TZID=America/Detroit:20270121T080000']);
+      expect(rulesIn(ics)).toEqual(['RRULE:FREQ=WEEKLY;UNTIL=20270306T045959Z;BYDAY=TH']);
+    });
+
+    it('should use just the one date a class has', () => {
+      const ics = fileFor([thursdayLab({ startDate: savedAt('2027-03-15T04:00:00Z'), endDate: null })]);
+
+      expect(startsIn(ics)).toEqual(['DTSTART;TZID=America/Detroit:20270318T080000']);
+    });
+
+    it('should read a saved date as the day it is in Michigan', () => {
+      const monday = course([meeting([MONDAY])], { startDate: savedAt('2027-03-16T03:00:00Z') });
+
+      expect(startsIn(fileFor([monday]))).toEqual(['DTSTART;TZID=America/Detroit:20270315T135000']);
+    });
+
+    it('should name a class whose own dates miss the term, like one saved for another year', () => {
+      const old = thursdayLab({ startDate: savedAt('2024-10-21T04:00:00Z'), endDate: savedAt('2024-12-08T05:00:00Z') });
+      const calendar = scheduleCalendar('schedule', [old], SPRING_2027, NOW);
+
+      expect(calendar.ics).toBeNull();
+      expect(calendar.leftOut).toEqual([{ course: 'ECE 302 Lecture', reason: 'it does not meet between these dates' }]);
+    });
+
+    it('should work out Michigan days and times in Michigan, whatever zone the computer is in', () => {
+      const format = spyOn(Intl, 'DateTimeFormat').and.callThrough();
+
+      fileFor([thursdayLab({ startDate: savedAt('2027-03-15T04:00:00Z') })]);
+
+      expect(format).toHaveBeenCalled();
+      format.calls.allArgs().forEach(([, options]) => expect(options?.timeZone).toBe('America/Detroit'));
+    });
+  });
+
   describe('what is left out', () => {
     const leftOut = (courses: ReadScheduleCourse[], dates = SPRING_2027) =>
       scheduleCalendar('schedule', courses, dates, NOW).leftOut;
@@ -212,7 +265,7 @@ describe('scheduleCalendar', () => {
         subjectCode: 'IAH', courseNumber: '221C',
       });
 
-      expect(leftOut([online])).toEqual([{ course: 'IAH 221C', reason: 'it has no set time' }]);
+      expect(leftOut([online])).toEqual([{ course: 'IAH 221C Lecture', reason: 'it has no set time' }]);
     });
 
     it('should name a course with no meetings at all', () => {
@@ -229,14 +282,14 @@ describe('scheduleCalendar', () => {
       const dates = { firstDay: '2027-01-19', lastDay: '2027-01-19' };
 
       expect(leftOut([course([meeting([MONDAY])])], dates))
-        .toEqual([{ course: 'ECE 302', reason: 'it does not meet between these dates' }]);
+        .toEqual([{ course: 'ECE 302 Lecture', reason: 'it does not meet between these dates' }]);
     });
 
     it('should name a class the break covers completely', () => {
       const dates = { ...NO_BREAK, breakStart: '2027-01-19', breakEnd: '2027-05-02' };
 
       expect(leftOut([course([meeting([MONDAY, WEDNESDAY])])], dates))
-        .toEqual([{ course: 'ECE 302', reason: 'it does not meet between these dates' }]);
+        .toEqual([{ course: 'ECE 302 Lecture', reason: 'it does not meet between these dates' }]);
     });
 
     it('should not guess at a class that ends before it starts or crosses midnight', () => {
@@ -244,7 +297,16 @@ describe('scheduleCalendar', () => {
       const calendar = scheduleCalendar('schedule', [course(backwards)], SPRING_2027, NOW);
 
       expect(calendar.ics).toBeNull();
-      expect(calendar.leftOut).toEqual([{ course: 'ECE 302', reason: 'its end time is not after its start time' }]);
+      expect(calendar.leftOut).toEqual([{ course: 'ECE 302 Lecture', reason: 'its end time is not after its start time' }]);
+    });
+
+    it('should name only the part of a course that was left out', () => {
+      const lectureWithNoTime = meeting([], '', '', { meetingTimes: [] });
+      const lab = meeting([TUESDAY, THURSDAY], '10:20', '12:10', { type: ScheduleCourseMeetingType.LABORATORY });
+      const calendar = scheduleCalendar('schedule', [course([lab, lectureWithNoTime], { courseNumber: '102', subjectCode: 'CSE' })], NO_BREAK, NOW);
+
+      expect(calendar.leftOut).toEqual([{ course: 'CSE 102 Lecture', reason: 'it has no set time' }]);
+      expect(eventsIn(calendar.ics as string).length).toBe(1);
     });
 
     it('should keep the rest of the schedule when part of it is left out', () => {
