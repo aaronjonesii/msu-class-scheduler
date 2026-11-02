@@ -1,3 +1,5 @@
+@import '../../../assets/scss/partials/media_queries';
+
 @mixin flexCol() {
   display: flex;
   flex-direction: column;
@@ -17,19 +19,25 @@
   justify-content: space-between;
 }
 
-.details {
-  padding: var(--padding);
-  border-radius: var(--border-radius);
+.description,
+.dates {
+  margin: 0;
 }
 
-.classes {
-  @include flexCol();
-}
-.classes .header {
+.dates {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
+  column-gap: var(--gap);
+}
+
+.courses {
+  @include flexCol();
+}
+
+@media (min-width: $tabletPortrait) {
+  .generate {
+    align-self: flex-start;
+  }
 }
 
 .not-found-container,

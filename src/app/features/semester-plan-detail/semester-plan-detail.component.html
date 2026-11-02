@@ -1,5 +1,5 @@
 <div class="header">
-  <h2 class="title">Semester Plan Detail</h2>
+  <h2 class="title">{{ formattedSemesterPlanName() || "Semester Plan" }}</h2>
 
   @if (semesterPlan(); as semesterPlan) {
   <div class="btn-container">
@@ -22,64 +22,21 @@
 </div>
 
 @defer (when loaded()) { @if (semesterPlan(); as semesterPlan) {
-<section class="details">
-  <h3 class="semester-plan-name">
-    {{ formattedSemesterPlanName() }}
-  </h3>
-
-  <p class="semester-plan-description">{{ semesterPlan?.description }}</p>
-
-  <div class="classes-chips">
-    <label for="semester-plan-classes-chips">
-      Classes - {{ scheduleClassesCredits() }} credits
-    </label>
-
-    <mat-chip-set
-      id="semester-plan-classes-chips"
-      aria-label="Schedule classes selection"
-    >
-      @for (semesterPlanCourse of semesterPlanCourses(); track semesterPlanCourse)
-      {
-      <mat-chip
-        class="cursor-pointer"
-        [highlighted]="true"
-        [matTooltip]="semesterPlanCourse.name"
-        [class]="semesterPlanCourse.color | colorToClass : 'chip'"
-        (click)="scrollToElementId(semesterPlanCourse.id)"
-      >
-        @if (semesterPlanCourse?.subjectCode && semesterPlanCourse?.courseNumber)
-        {
-        {{ semesterPlanCourse.subjectCode }} {{ semesterPlanCourse.courseNumber }}
-        } @else {
-        {{ semesterPlanCourse.name }}
-        } - {{ semesterPlanCourse.credits || 0 }}
-        {{ semesterPlanCourse?.credits === 1 ? "credit" : "credits" }}
-      </mat-chip>
-      }
-
-      <mat-chip (click)="addCourse()"> Add new course </mat-chip>
-    </mat-chip-set>
-  </div>
-
-  @if (semesterPlan?.updated) {
-  <div class="updated">
-    Last updated {{ semesterPlan.updated?.toDate() | dateAgo }}
-  </div>
-  }
-  <div class="created">
-    Created on {{ semesterPlan.created?.toDate() | date }}
-  </div>
-</section>
+@if (semesterPlan.description) {
+<p class="description">{{ semesterPlan.description }}</p>
+}
 
 @if ((semesterPlanCourses()?.length ?? 0) > 0) {
-  <section class="generate-schedules">
-    <button mat-button (click)="generateSchedules()">Generate Schedules</button>
-  </section>
+<button mat-flat-button type="button" class="generate" (click)="generateSchedules()">
+  Generate Schedules
+</button>
 }
 
 <section class="courses">
   <div class="header">
-    <h4 class="title">Courses</h4>
+    <h3 class="title">
+      Courses <span class="credits">{{ formatCredits(scheduleClassesCredits()) }}</span>
+    </h3>
 
     <div class="btn-container">
       <button mat-button type="button" id="import-msu-class-btn" (click)="importFromMsu(semesterPlan)">
@@ -89,10 +46,30 @@
 
       <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
         <mat-icon matButtonIcon fontIcon="add" />
-        Course
+        Add course
       </button>
     </div>
   </div>
+
+  @if ((semesterPlanCourses()?.length ?? 0) > 0) {
+  <mat-chip-set aria-label="Jump to a course">
+    @for (semesterPlanCourse of semesterPlanCourses(); track semesterPlanCourse.id) {
+    <mat-chip
+      class="cursor-pointer"
+      [highlighted]="true"
+      [matTooltip]="semesterPlanCourse.name"
+      [class]="semesterPlanCourse.color | colorToClass : 'chip'"
+      (click)="scrollToElementId(semesterPlanCourse.id)"
+    >
+      @if (semesterPlanCourse?.subjectCode && semesterPlanCourse?.courseNumber) {
+      {{ semesterPlanCourse.subjectCode }} {{ semesterPlanCourse.courseNumber }}
+      } @else {
+      {{ semesterPlanCourse.name }}
+      }
+    </mat-chip>
+    }
+  </mat-chip-set>
+  }
 
   <csb-semester-plan-courses-list
     [semesterPlanCourses]="semesterPlanCourses()"
@@ -104,6 +81,14 @@
     (addSemesterPlanCourseSection)="addSemesterPlanCourseSection($event)"
   />
 </section>
+
+<p class="dates">
+  <span>Created on {{ semesterPlan.created?.toDate() | date }}</span>
+
+  @if (semesterPlan?.updated) {
+  <span>Last updated {{ semesterPlan.updated?.toDate() | dateAgo }}</span>
+  }
+</p>
 } @else {
 <div class="not-found-container text-center">
   <p>
@@ -130,32 +115,9 @@
   </button>
 </div>
 } } @placeholder (minimum 500ms) {
-<section class="details">
-  <h3 class="semester-plan-name">
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '55%' }" />
-  </h3>
-
-  <p class="semester-plan-description">
-    <csb-skeleton [styles]="{ width: '100%' }" />
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-  </p>
-
-  <div class="classes-chips">
-    <label for="semester-plan-classes-chips-placeholder"> Classes </label>
-
-    <div id="semester-plan-classes-chips-placeholder">
-      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-    </div>
-  </div>
-
-  <div class="updated">
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '45%' }" />
-  </div>
-
-  <div class="created">
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '35%' }" />
-  </div>
+<section class="courses">
+  <csb-skeleton [styles]="{ width: '100%', maxWidth: '45%' }" />
+  <csb-skeleton [styles]="{ width: '100%', maxWidth: '55%' }" />
+  <csb-skeleton [styles]="{ width: '100%', maxWidth: '35%' }" />
 </section>
 }

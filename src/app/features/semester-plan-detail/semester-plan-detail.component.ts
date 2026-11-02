@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, inject, Input, signal } from '@angular/core';
 import { SemesterPlansService } from '../../shared/services/semester-plans.service';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { first, firstValueFrom, lastValueFrom, of, switchMap, withLatestFrom } from 'rxjs';
+import { first, firstValueFrom, of, switchMap } from 'rxjs';
 import { ReadSemesterPlan } from '../../shared/interfaces/semester-plan';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -32,6 +32,7 @@ import {
   SemesterPlanCourseSectionsService
 } from "../../shared/services/semester-plan-course-sections.service";
 import { ScheduleGeneratorService } from "../../shared/services/schedule-generator.service";
+import { formatCredits } from "../../shared/utils/format-credits";
 
 @Component({
   selector: 'csb-semester-plan-detail',
@@ -57,6 +58,7 @@ export class SemesterPlanDetailComponent {
   private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
+  protected readonly formatCredits = formatCredits;
 
   semesterPlanId = signal<string | null>(null);
 
