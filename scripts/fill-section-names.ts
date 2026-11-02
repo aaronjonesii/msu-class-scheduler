@@ -4,8 +4,10 @@
  *
  * A saved course has the meetings of its section, so the section is the one
  * in the plan with exactly those meetings. A course with no such section, or
- * more than one, is left alone and listed. Only `sectionName` is written, and
- * nothing is written to a course that has changed since the dry run read it.
+ * more than one, is left alone and listed. When more than one has them, like
+ * two online sections with the same instructor, --choose names the one to use.
+ * Only `sectionName` is written, and nothing is written to a course that has
+ * changed since the dry run read it.
  *
  * Requires `firebase-admin` + `tsx` (not project dependencies) and Application
  * Default Credentials (`gcloud auth application-default login`). The IDs are
@@ -15,6 +17,7 @@
  *   npm i --no-save firebase-admin@13 tsx
  *   npx tsx scripts/fill-section-names.ts <scheduleId> <semesterPlanId>            # dry run (read-only)
  *   npx tsx scripts/fill-section-names.ts <scheduleId> <semesterPlanId> --apply    # write
+ *   npx tsx scripts/fill-section-names.ts <scheduleId> <semesterPlanId> "--choose=IAH 221C=730"    # pick between matches
  *   (set GOOGLE_CLOUD_QUOTA_PROJECT=msu-class-scheduler if ADC's quota project differs)
  *
  * Tests (Firestore emulator, never touches production):
@@ -56,7 +59,12 @@ async function existing(db: Firestore, path: string): Promise<DocumentData> {
 }
 
 /** Read-only: works out which section each course is. */
-export async function planSectionNames(db: Firestore, scheduleId: string, semesterPlanId: string): Promise<FillPlan> {
+export async function planSectionNames(
+  db: Firestore,
+  scheduleId: string,
+  semesterPlanId: string,
+  chosen: Record<string, string> = {},
+): Promise<FillPlan> {
   const schedule = await existing(db, FirestorePaths.schedule(scheduleId));
   const semesterPlan = await existing(db, FirestorePaths.semesterPlan(semesterPlanId));
 
@@ -90,10 +98,14 @@ export async function planSectionNames(db: Firestore, scheduleId: string, semest
       .map((section) => section.get('name') as string)
       .sort();
 
-    if (matches.length === 1) {
-      plan.fills.push({ path: scheduleCourse.ref.path, course, sectionName: matches[0]!, updateTime: scheduleCourse.updateTime });
+    const sectionName = matches.length === 1 ? matches[0] : matches.find((name) => name === chosen[course]);
+
+    if (sectionName) {
+      plan.fills.push({ path: scheduleCourse.ref.path, course, sectionName, updateTime: scheduleCourse.updateTime });
     } else if (matches.length === 0) {
       plan.unmatched.push({ course, reason: 'no section in the plan has its meetings' });
+    } else if (chosen[course]) {
+      plan.unmatched.push({ course, reason: `the chosen section ${chosen[course]} does not have its meetings, but ${matches.join(', ')} do` });
     } else {
       plan.unmatched.push({ course, reason: `more than one section has its meetings: ${matches.join(', ')}` });
     }
@@ -118,9 +130,12 @@ export async function applySectionNames(db: Firestore, plan: FillPlan): Promise<
 async function main(): Promise<void> {
   const [scheduleId, semesterPlanId] = process.argv.slice(2).filter((arg) => !arg.startsWith('--'));
   const apply = process.argv.includes('--apply');
+  const chosen = Object.fromEntries(process.argv
+    .filter((arg) => arg.startsWith('--choose='))
+    .map((arg) => arg.slice('--choose='.length).split('=')));
 
   if (!scheduleId || !semesterPlanId) {
-    throw new Error('Usage: npx tsx scripts/fill-section-names.ts <scheduleId> <semesterPlanId> [--apply]');
+    throw new Error('Usage: npx tsx scripts/fill-section-names.ts <scheduleId> <semesterPlanId> ["--choose=<course>=<section>"...] [--apply]');
   }
 
   initializeApp({ credential: applicationDefault(), projectId: PROJECT_ID });
@@ -128,7 +143,7 @@ async function main(): Promise<void> {
 
   console.log(`Project: ${PROJECT_ID}  Mode: ${apply ? 'APPLY' : 'DRY RUN'}\n`);
 
-  const plan = await planSectionNames(db, scheduleId, semesterPlanId);
+  const plan = await planSectionNames(db, scheduleId, semesterPlanId, chosen);
 
   plan.fills.forEach(({ course, sectionName }) => console.log(`  FILL     ${course} -> section ${sectionName}`));
   plan.alreadyNamed.forEach(({ course, sectionName }) => console.log(`  HAS      ${course} already has section ${sectionName}`));

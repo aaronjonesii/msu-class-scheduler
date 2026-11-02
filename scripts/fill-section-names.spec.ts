@@ -176,21 +176,38 @@ describe('fill-section-names', () => {
     assert.equal((await getScheduleCourse('schedule', 'a'))?.['sectionName'], undefined);
   });
 
-  it('leaves a course alone when more than one section has its meetings', async () => {
-    await seedPlan();
-    // Section IDs are random, so 731 is read first here.
-    await seedPlanCourse('plan', 'iah221', IAH_221, {
-      ...IAH_221_SECTIONS,
-      a731: { ...IAH_221_SECTIONS['s730'], name: '731' },
+  describe('when more than one section has the meetings', () => {
+    beforeEach(async () => {
+      await seedPlan();
+      // Section IDs are random, so 731 is read first here.
+      await seedPlanCourse('plan', 'iah221', IAH_221, {
+        ...IAH_221_SECTIONS,
+        a731: { ...IAH_221_SECTIONS['s730'], name: '731' },
+      });
+      await seedSchedule();
+      await seedScheduleCourse('schedule', 'b', savedCourse(IAH_221, IAH_221_SECTIONS['s730']!));
     });
-    await seedSchedule();
-    await seedScheduleCourse('schedule', 'b', savedCourse(IAH_221, IAH_221_SECTIONS['s730']!));
 
-    const plan = await planSectionNames(db, 'schedule', 'plan');
-    await applySectionNames(db, plan);
+    it('leaves the course alone and names them', async () => {
+      const plan = await planSectionNames(db, 'schedule', 'plan');
+      await applySectionNames(db, plan);
 
-    assert.deepEqual(plan.unmatched, [{ course: 'IAH 221C', reason: 'more than one section has its meetings: 730, 731' }]);
-    assert.equal((await getScheduleCourse('schedule', 'b'))?.['sectionName'], undefined);
+      assert.deepEqual(plan.unmatched, [{ course: 'IAH 221C', reason: 'more than one section has its meetings: 730, 731' }]);
+      assert.equal((await getScheduleCourse('schedule', 'b'))?.['sectionName'], undefined);
+    });
+
+    it('fills in the section chosen from them', async () => {
+      await applySectionNames(db, await planSectionNames(db, 'schedule', 'plan', { 'IAH 221C': '731' }));
+
+      assert.equal((await getScheduleCourse('schedule', 'b'))?.['sectionName'], '731');
+    });
+
+    it('leaves the course alone when the chosen section is not one of them', async () => {
+      const plan = await planSectionNames(db, 'schedule', 'plan', { 'IAH 221C': '001' });
+
+      assert.deepEqual(plan.fills, []);
+      assert.deepEqual(plan.unmatched, [{ course: 'IAH 221C', reason: 'the chosen section 001 does not have its meetings, but 730, 731 do' }]);
+    });
   });
 
   it('only looks at the sections of the same course', async () => {
