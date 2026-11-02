@@ -34,6 +34,9 @@ import {
 } from "../../shared/components/schedule-grid-view/schedule-grid-view.component";
 import { DateAgoPipe } from "../../shared/pipes/date-ago.pipe";
 import { CourseChipsComponent } from "../../shared/components/course-chips/course-chips.component";
+import {
+  ScheduleCalendarDialogComponent, ScheduleCalendarDialogContract
+} from "../../shared/dialogs/schedule-calendar-dialog/schedule-calendar-dialog.component";
 import { formatCredits } from "../../shared/utils/format-credits";
 import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 
@@ -184,6 +187,22 @@ export class ScheduleDetailComponent {
     if (!schedule) return;
 
     this.schedulesService.openEditDialog(schedule);
+  }
+
+  addToCalendar({ id, name }: ReadSchedule) {
+    this.dialog.open(
+      ScheduleCalendarDialogComponent,
+      {
+        id: 'schedule-calendar-dialog',
+        width: '100%',
+        maxWidth: '600px',
+        data: {
+          scheduleId: id,
+          scheduleName: name,
+          courses: this.scheduleCourses() ?? [],
+        } satisfies ScheduleCalendarDialogContract,
+      },
+    );
   }
 
   scrollToElementId = (elementId: string) =>

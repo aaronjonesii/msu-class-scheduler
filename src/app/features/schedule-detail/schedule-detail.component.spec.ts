@@ -1,9 +1,11 @@
 import { ComponentFixture, DeferBlockBehavior, DeferBlockState, TestBed } from '@angular/core/testing';
+import { MatDialog } from '@angular/material/dialog';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { BehaviorSubject } from 'rxjs';
 
 import { ScheduleDetailComponent } from './schedule-detail.component';
+import { ScheduleCalendarDialogComponent } from '../../shared/dialogs/schedule-calendar-dialog/schedule-calendar-dialog.component';
 import { ScheduleCourseStatus } from '../../shared/enums/schedule-course-status';
 import { ReadSchedule } from '../../shared/interfaces/schedule';
 import { ReadScheduleCourse } from '../../shared/interfaces/schedule-course';
@@ -100,6 +102,36 @@ describe('ScheduleDetailComponent', () => {
       await renderPage();
 
       expect(element().querySelector('.details')).toBeNull();
+    });
+  });
+
+  describe('adding it to a calendar', () => {
+    it('should offer it once there are courses', async () => {
+      courses$.next([course('math')]);
+
+      await renderPage();
+
+      expect(buttonWithText('Add to calendar')?.hasAttribute('mat-flat-button')).toBeTrue();
+    });
+
+    it('should not offer it with no courses', async () => {
+      await renderPage();
+
+      expect(buttonWithText('Add to calendar')).toBeUndefined();
+    });
+
+    it('should open with the schedule and its courses', async () => {
+      const open = spyOn(TestBed.inject(MatDialog), 'open');
+      const math = course('math');
+      courses$.next([math]);
+
+      await renderPage();
+
+      buttonWithText('Add to calendar')?.click();
+
+      expect(open).toHaveBeenCalledOnceWith(ScheduleCalendarDialogComponent, jasmine.objectContaining({
+        data: { scheduleId: SCHEDULE.id, scheduleName: SCHEDULE.name, courses: [math] },
+      }));
     });
   });
 

@@ -1,3 +1,5 @@
+@import '../../../assets/scss/partials/media_queries';
+
 @mixin flexCol() {
   display: flex;
   flex-direction: column;
@@ -30,6 +32,12 @@
 
 .courses {
   @include flexCol();
+}
+
+@media (min-width: $tabletPortrait) {
+  .add-to-calendar {
+    align-self: flex-start;
+  }
 }
 
 .not-found-container, .error-container {

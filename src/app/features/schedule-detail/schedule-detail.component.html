@@ -26,6 +26,12 @@
 <p class="description">{{ schedule.description }}</p>
 }
 
+@if ((scheduleCourses()?.length ?? 0) > 0) {
+<button mat-flat-button type="button" class="add-to-calendar" (click)="addToCalendar(schedule)">
+  Add to calendar
+</button>
+}
+
 <section class="courses">
   <div class="header">
     <h3 class="title">
