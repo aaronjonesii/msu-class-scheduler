@@ -20,17 +20,11 @@
       </mat-card-header>
 
       <mat-card-content>
-        @for (meeting of scheduleCourse.meetings; track meeting.type) {
-          <div class="meeting-time">
-            {{meeting.type}}
-            -
-            @for (meetingTime of meeting.meetingTimes; track meetingTime.startTime) {
-              {{meetingTime.days.join(', ')}} {{formatTimeRange(meetingTime)}}
-            } @empty {
-              {{noMeetingTimeLabel(meeting)}}
-            }
-          </div>
-        }
+        <div class="meetings">
+          @for (meeting of scheduleCourse.meetings; track meeting) {
+            <csb-course-meeting [meeting]="meeting" />
+          }
+        </div>
 
         <div class="status">{{scheduleCourse.status}}</div>
 

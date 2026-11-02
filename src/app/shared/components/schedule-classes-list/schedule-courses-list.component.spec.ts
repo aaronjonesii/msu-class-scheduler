@@ -7,6 +7,7 @@ import { Day } from '../../enums/day';
 import { ScheduleCourseMeetingType } from '../../enums/schedule-course-meeting-type';
 import { ScheduleCourseStatus } from '../../enums/schedule-course-status';
 import { ReadScheduleCourse } from '../../interfaces/schedule-course';
+import { ScheduleCourseMeeting } from '../../interfaces/schedule-course-meeting';
 
 describe('ScheduleClassesListComponent', () => {
   let component: ScheduleCoursesListComponent;
@@ -24,19 +25,22 @@ describe('ScheduleClassesListComponent', () => {
     fixture.detectChanges();
   });
 
-  async function meetingLine(location: string | null, meetingTimes: ReadScheduleCourse['meetings'][number]['meetingTimes'] = []) {
+  async function renderMeetings(...meetings: Partial<ScheduleCourseMeeting>[]) {
     fixture.componentRef.setInput('scheduleCourses', [{
       id: 'course',
       name: 'Course',
       status: ScheduleCourseStatus.OPEN,
       isNotMSUCourse: null,
-      meetings: [{ type: ScheduleCourseMeetingType.LECTURE, location, instructor: null, meetingTimes }],
+      meetings: meetings.map((meeting) => ({
+        type: ScheduleCourseMeetingType.LECTURE, location: null, instructor: null, meetingTimes: [], ...meeting,
+      })),
     } as ReadScheduleCourse]);
     fixture.detectChanges();
     await fixture.whenStable();
     fixture.detectChanges();
 
-    return (fixture.nativeElement as HTMLElement).querySelector('.meeting-time')?.textContent?.replace(/\s+/g, ' ').trim();
+    return Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('csb-course-meeting'))
+      .map((meeting) => meeting.textContent?.replace(/\s+/g, ' ').trim());
   }
 
   it('should create', () => {
@@ -44,13 +48,38 @@ describe('ScheduleClassesListComponent', () => {
   });
 
   it('should show where an online class meets instead of a time', async () => {
-    expect(await meetingLine('Online Asynchronous')).toBe('Lecture - Online Asynchronous');
+    const [meeting] = await renderMeetings({ location: 'Online Asynchronous' });
+
+    expect(meeting).toContain('Online Asynchronous');
   });
 
-  it('should show a meeting time in 12-hour form', async () => {
-    const meetingTimes = [{ days: [Day.MONDAY, Day.WEDNESDAY], startTime: '13:50', endTime: '14:40' }];
+  it('should show a meeting with its time, room and instructor', async () => {
+    const [meeting] = await renderMeetings({
+      location: 'Wells Hall A1',
+      instructor: 'Ada Lovelace',
+      meetingTimes: [{ days: [Day.MONDAY, Day.WEDNESDAY], startTime: '13:50', endTime: '14:40' }],
+    });
 
-    expect(await meetingLine('Wells Hall', meetingTimes)).toBe('Lecture - Monday, Wednesday 1:50 PM - 2:40 PM');
+    expect(meeting).toContain('Mon Wed');
+    expect(meeting).toContain('1:50 PM - 2:40 PM');
+    expect(meeting).toContain('Wells Hall A1');
+    expect(meeting).toContain('Ada Lovelace');
+  });
+
+  it('should size the status like the meetings above it', async () => {
+    await renderMeetings({ location: 'Wells Hall A1' });
+
+    const fontSize = (selector: string) =>
+      getComputedStyle((fixture.nativeElement as HTMLElement).querySelector(selector) as HTMLElement).fontSize;
+
+    expect(fontSize('.status')).toBe(fontSize('csb-course-meeting'));
+  });
+
+  it('should show two meetings of the same type', async () => {
+    const meetings = await renderMeetings({ location: 'Wells Hall A1' }, { location: 'Wells Hall B2' });
+
+    expect(meetings.length).toBe(2);
+    expect(meetings[1]).toContain('Wells Hall B2');
   });
 
   describe('the header of a course', () => {
@@ -141,6 +170,8 @@ describe('ScheduleClassesListComponent', () => {
   });
 
   it('should say to be announced when there is no time or online location', async () => {
-    expect(await meetingLine(null)).toBe('Lecture - To be announced');
+    const [meeting] = await renderMeetings({});
+
+    expect(meeting).toContain('To be announced');
   });
 });

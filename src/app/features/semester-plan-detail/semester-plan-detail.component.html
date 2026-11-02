@@ -51,25 +51,7 @@
     </div>
   </div>
 
-  @if ((semesterPlanCourses()?.length ?? 0) > 0) {
-  <mat-chip-set aria-label="Jump to a course">
-    @for (semesterPlanCourse of semesterPlanCourses(); track semesterPlanCourse.id) {
-    <mat-chip
-      class="cursor-pointer"
-      [highlighted]="true"
-      [matTooltip]="semesterPlanCourse.name"
-      [class]="semesterPlanCourse.color | colorToClass : 'chip'"
-      (click)="scrollToElementId(semesterPlanCourse.id)"
-    >
-      @if (semesterPlanCourse?.subjectCode && semesterPlanCourse?.courseNumber) {
-      {{ semesterPlanCourse.subjectCode }} {{ semesterPlanCourse.courseNumber }}
-      } @else {
-      {{ semesterPlanCourse.name }}
-      }
-    </mat-chip>
-    }
-  </mat-chip-set>
-  }
+  <csb-course-chips [courses]="semesterPlanCourses()" (courseClicked)="scrollToElementId($event)" />
 
   <csb-semester-plan-courses-list
     [semesterPlanCourses]="semesterPlanCourses()"

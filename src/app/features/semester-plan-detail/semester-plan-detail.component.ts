@@ -10,9 +10,7 @@ import { ConfirmDialogComponent, ConfirmDialogContract } from '../../shared/comp
 import { LoggerService } from '../../shared/services/logger.service';
 import { Router, RouterLink } from '@angular/router';
 import { SkeletonComponent } from '../../shared/components/skeleton/skeleton.component';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatTooltip } from '@angular/material/tooltip';
-import { ColorToClassPipe } from '../../shared/pipes/color-to-class.pipe';
+import { CourseChipsComponent } from '../../shared/components/course-chips/course-chips.component';
 import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 import { DatePipe, DOCUMENT } from '@angular/common';
 import { SemesterPlanCoursesService } from '../../shared/services/semester-plan-courses.service';
@@ -42,7 +40,7 @@ import { formatCredits } from "../../shared/utils/format-credits";
   standalone: true,
   imports: [
     MatIcon, SkeletonComponent, RouterLink,
-    MatChipsModule, MatTooltip, ColorToClassPipe,
+    CourseChipsComponent,
     DateAgoPipe, DatePipe, MatButton, SemesterPlanCoursesListComponent,
   ],
 })

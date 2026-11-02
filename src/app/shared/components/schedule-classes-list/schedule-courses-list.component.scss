@@ -4,6 +4,16 @@
   gap: var(--gap);
 }
 
+.meetings {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.status {
+  margin-top: 0.25rem;
+  font-size: 0.875rem;
+}
+
 mat-card-actions {
   display: flex;
   flex-wrap: wrap;

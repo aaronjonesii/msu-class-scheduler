@@ -16,9 +16,8 @@ import {
   MatCardModule,
 } from "@angular/material/card";
 import { ColorToClassPipe } from "../../pipes/color-to-class.pipe";
+import { CourseMeetingComponent } from "../course-meeting/course-meeting.component";
 import { formatCredits } from "../../utils/format-credits";
-import { formatTimeRange } from "../../utils/format-time";
-import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 
 @Component({
   selector: 'csb-schedule-courses-list',
@@ -28,6 +27,7 @@ import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
     MatListItemTitle,
     MatListItemLine, SkeletonComponent, MatListItemMeta,
     MatCardModule, MatButton, ColorToClassPipe, MatAnchor,
+    CourseMeetingComponent,
   ],
   templateUrl: './schedule-courses-list.component.html',
   styleUrl: './schedule-courses-list.component.scss',
@@ -35,8 +35,6 @@ import { noMeetingTimeLabel } from "../../utils/no-meeting-time-label";
 })
 export class ScheduleCoursesListComponent {
   protected readonly formatCredits = formatCredits;
-  protected readonly formatTimeRange = formatTimeRange;
-  protected readonly noMeetingTimeLabel = noMeetingTimeLabel;
 
   scheduleCourses = input<ReadScheduleCourse[] | null | undefined>(null);
 

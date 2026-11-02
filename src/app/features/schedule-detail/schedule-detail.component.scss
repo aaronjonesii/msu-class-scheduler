@@ -17,19 +17,19 @@
   justify-content: space-between;
 }
 
-.details {
-  padding: var(--padding);
-  border-radius: var(--border-radius);
+.description,
+.dates {
+  margin: 0;
+}
+
+.dates {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: var(--gap);
 }
 
 .courses {
   @include flexCol();
-}
-.courses .header {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .not-found-container, .error-container {

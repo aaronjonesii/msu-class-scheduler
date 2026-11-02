@@ -1,0 +1,4 @@
+/* With no box of its own, an empty list adds no gap to the page. */
+:host {
+  display: contents;
+}

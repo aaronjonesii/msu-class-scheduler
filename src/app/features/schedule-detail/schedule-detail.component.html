@@ -1,5 +1,5 @@
 <div class="header">
-  <h2 class="title">Schedule Detail</h2>
+  <h2 class="title">{{ scheduleName() }}</h2>
 
   @if (schedule()) {
   <div class="btn-container">
@@ -22,58 +22,23 @@
 </div>
 
 @defer (when loaded()) { @if (schedule(); as schedule) {
-<section class="details">
-  <h3 class="schedule-name">{{ schedule?.name || "Unnamed schedule" }}</h3>
-
-  <p class="schedule-description">{{ schedule?.description }}</p>
-
-  <div class="courses-chips">
-    <label for="schedule-courses-chips">
-      Courses - {{ scheduleCoursesCredits() }} credits
-    </label>
-
-    <mat-chip-set
-      id="schedule-courses-chips"
-      aria-label="Schedule courses selection"
-    >
-      @for (scheduleCourse of scheduleCourses(); track scheduleCourse) {
-      <mat-chip
-        class="cursor-pointer"
-        [highlighted]="true"
-        [matTooltip]="scheduleCourse.name"
-        [class]="scheduleCourse.color | colorToClass : 'chip'"
-        (click)="scrollToElementId(scheduleCourse.id)"
-      >
-        @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {
-        {{ scheduleCourse.subjectCode }} {{ scheduleCourse.courseNumber }}
-        } @else {
-        {{ scheduleCourse.name }}
-        } - {{ scheduleCourse.credits || 0 }}
-        {{ scheduleCourse?.credits === 1 ? "credit" : "credits" }}
-      </mat-chip>
-      }
-
-      <mat-chip (click)="addCourse()"> Add new course </mat-chip>
-    </mat-chip-set>
-  </div>
-
-  @if (schedule?.updated) {
-  <div class="updated">
-    Last updated {{ schedule.updated?.toDate() | dateAgo }}
-  </div>
-  }
-  <div class="created">Created on {{ schedule.created?.toDate() | date }}</div>
-</section>
+@if (schedule.description) {
+<p class="description">{{ schedule.description }}</p>
+}
 
 <section class="courses">
   <div class="header">
-    <h4 class="title">Courses</h4>
+    <h3 class="title">
+      Courses <span class="credits">{{ formatCredits(scheduleCoursesCredits()) }}</span>
+    </h3>
 
     <button mat-button type="button" id="add-course-btn" (click)="addCourse()">
       <mat-icon matButtonIcon fontIcon="add" />
-      Course
+      Add course
     </button>
   </div>
+
+  <csb-course-chips [courses]="scheduleCourses()" (courseClicked)="scrollToElementId($event)" />
 
   <csb-schedule-courses-list
     [scheduleCourses]="scheduleCourses()"
@@ -87,6 +52,14 @@
   [(shownCourses)]="shownCourses"
   (courseClicked)="scrollToElementId($event.id)"
 />
+
+<p class="dates">
+  <span>Created on {{ schedule.created?.toDate() | date }}</span>
+
+  @if (schedule?.updated) {
+  <span>Last updated {{ schedule.updated?.toDate() | dateAgo }}</span>
+  }
+</p>
 } @else {
 <div class="not-found-container text-center">
   <p>
@@ -108,44 +81,9 @@
   </button>
 </div>
 } } @placeholder (minimum 500ms) {
-<section class="details">
-  <h3 class="schedule-name">
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '55%' }" />
-  </h3>
-
-  <p class="schedule-description">
-    <csb-skeleton [styles]="{ width: '100%' }" />
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-  </p>
-
-  <div class="classes-chips">
-    <label for="schedule-classes-chips-placeholder"> Classes </label>
-
-    <div id="schedule-classes-chips-placeholder">
-      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-      <csb-skeleton [styles]="{ width: '100%', maxWidth: '25%' }" />
-    </div>
-  </div>
-
-  <div class="updated">
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '45%' }" />
-  </div>
-
-  <div class="created">
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '35%' }" />
-  </div>
-</section>
-
 <section class="courses">
-  <div class="header">
-    <h4 class="title">Courses</h4>
-
-    <csb-skeleton [styles]="{ width: '100%', maxWidth: '100px' }" />
-  </div>
-
-  <csb-schedule-courses-list [scheduleCourses]="[]" />
+  <csb-skeleton [styles]="{ width: '100%', maxWidth: '45%' }" />
+  <csb-skeleton [styles]="{ width: '100%', maxWidth: '55%' }" />
+  <csb-skeleton [styles]="{ width: '100%', maxWidth: '35%' }" />
 </section>
-
-<csb-schedule-grid-view [scheduleCourses]="[]" />
 }

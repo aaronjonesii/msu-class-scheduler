@@ -33,9 +33,8 @@ import {
   ScheduleGridViewComponent
 } from "../../shared/components/schedule-grid-view/schedule-grid-view.component";
 import { DateAgoPipe } from "../../shared/pipes/date-ago.pipe";
-import { MatChip, MatChipSet } from "@angular/material/chips";
-import { ColorToClassPipe } from "../../shared/pipes/color-to-class.pipe";
-import { MatTooltip } from "@angular/material/tooltip";
+import { CourseChipsComponent } from "../../shared/components/course-chips/course-chips.component";
+import { formatCredits } from "../../shared/utils/format-credits";
 import { scrollToElementId } from '../../shared/utils/scroll-to-element';
 
 @Component({
@@ -50,10 +49,7 @@ import { scrollToElementId } from '../../shared/utils/scroll-to-element';
     ScheduleGridViewComponent,
     DateAgoPipe,
     DatePipe,
-    MatChipSet,
-    MatChip,
-    ColorToClassPipe,
-    MatTooltip,
+    CourseChipsComponent,
   ],
   templateUrl: './schedule-detail.component.html',
   styleUrl: './schedule-detail.component.scss',
@@ -68,6 +64,7 @@ export class ScheduleDetailComponent {
   private router = inject(Router);
 
   protected readonly appRoutes = appRoutes;
+  protected readonly formatCredits = formatCredits;
 
   scheduleId = signal<string | null>(null);
 
@@ -82,6 +79,12 @@ export class ScheduleDetailComponent {
       }),
     ),
   );
+
+  scheduleName = computed(() => {
+    const schedule = this.schedule();
+
+    return schedule ? schedule.name || 'Unnamed schedule' : 'Schedule';
+  });
 
   scheduleCourses = toSignal(
     toObservable(this.scheduleId).pipe(
