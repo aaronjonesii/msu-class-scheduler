@@ -10,8 +10,9 @@ describe('CourseMeetingComponent', () => {
 
   const THURSDAY_MORNING = { days: [Day.THURSDAY], startTime: '08:00', endTime: '10:50' };
 
-  function render(meeting: Partial<CourseMeeting>) {
+  function render(meeting: Partial<CourseMeeting>, width?: string) {
     fixture = TestBed.createComponent(CourseMeetingComponent);
+    if (width) element().style.width = width;
     fixture.componentRef.setInput('meeting', {
       type: CourseMeetingType.LABORATORY, location: null, instructor: null, meetingTimes: [], ...meeting,
     });
@@ -31,6 +32,24 @@ describe('CourseMeetingComponent', () => {
 
     expect(textOf('.days')).toBe('Mon Fri');
     expect(textOf('.times')).toContain('1:50 PM - 2:40 PM');
+  });
+
+  describe('a class that meets every weekday', () => {
+    const EVERY_WEEKDAY = [Day.MONDAY, Day.TUESDAY, Day.WEDNESDAY, Day.THURSDAY, Day.FRIDAY];
+
+    function heightOfTimes(days: Day[], width: string) {
+      render({ meetingTimes: [{ days, startTime: '10:20', endTime: '11:40' }] }, width);
+
+      return (element().querySelector('.times') as HTMLElement).getBoundingClientRect().height;
+    }
+
+    it('should stay on one line in a wide row', () => {
+      expect(heightOfTimes(EVERY_WEEKDAY, '40rem')).toBe(heightOfTimes([Day.MONDAY], '40rem'));
+    });
+
+    it('should stay on one line on a phone', () => {
+      expect(heightOfTimes(EVERY_WEEKDAY, '19.5rem')).toBe(heightOfTimes([Day.MONDAY], '19.5rem'));
+    });
   });
 
   it('should show each meeting time', () => {

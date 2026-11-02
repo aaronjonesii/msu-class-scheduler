@@ -16,19 +16,14 @@
        [title]="tileDetails(courseTile)"
        [class]="courseTile.color | colorToClass: 'card'"
        [ngStyle]="courseTile.styles"
-       [ngClass]="{
-         'waitlist': courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST,
-         'no-time': courseTile.meeting?.meetingTimes?.length === 0
-       }"
+       [ngClass]="{ 'no-time': courseTile.meeting?.meetingTimes?.length === 0 }"
        (keyup)="courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined"
        (click)=" courseTile.scheduleCourse ? courseClicked.emit(courseTile.scheduleCourse) : undefined">
-    @if (courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST) {
-      <mat-chip class="error-chip waitlist-chip"
-                [highlighted]="true"
-                [matTooltip]="((courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) ? (courseTile.scheduleCourse?.subjectCode+' '+courseTile.scheduleCourse?.courseNumber) : courseTile.scheduleCourse?.name)+' class has Waitlist status'">Waitlist</mat-chip>
-    }
-
     <span class="course-title">
+      @if (courseTile.scheduleCourse?.status === ScheduleCourseStatus.WAITlIST) {
+        <span class="waitlist error-color">Waitlist</span>
+      }
+
       @if (courseTile.scheduleCourse?.subjectCode && courseTile.scheduleCourse?.courseNumber) {
         <span class="subject-code">
           {{courseTile.scheduleCourse?.subjectCode}}

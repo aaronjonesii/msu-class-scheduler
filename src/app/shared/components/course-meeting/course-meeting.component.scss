@@ -18,7 +18,9 @@
 
 .days {
   display: inline-block;
-  width: 6.5rem;
+  min-width: 6.5rem;
+  padding-right: 0.5rem;
+  white-space: nowrap;
 }
 
 .place {
@@ -34,7 +36,7 @@
 
 @container (min-width: 32rem) {
   .meeting {
-    grid-template-columns: 16.5rem 6rem minmax(0, 1fr);
+    grid-template-columns: 18.5rem 6rem minmax(0, 1fr);
   }
 
   .times {

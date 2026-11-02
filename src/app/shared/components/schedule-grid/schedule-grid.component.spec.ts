@@ -198,6 +198,49 @@ describe('ScheduleGridComponent', () => {
       expect(isInsideTile(tileElements()[0].querySelector('.times') as Element)).toBeTrue();
     });
 
+    it('should show the time on a 45 minute class with a long name', () => {
+      render([timed('Microprocessors & Digital Systems For Engineers And Scientists', '09:10', '09:55')]);
+
+      expect(isInsideTile(tileElements()[0].querySelector('.times') as Element)).toBeTrue();
+    });
+
+    it('should show the course on a 45 minute class with a long name', () => {
+      render([timed('Microprocessors & Digital Systems For Engineers And Scientists', '09:10', '09:55')]);
+
+      expect(isInsideTile(tileElements()[0].querySelector('.course-title') as Element)).toBeTrue();
+    });
+
+    it('should keep a class with no set time tall enough to read', () => {
+      render([online('iah')]);
+
+      expect(isInsideTile(tileElements()[0].querySelector('.course-title') as Element)).toBeTrue();
+    });
+
+    describe('on the waitlist', () => {
+      const waitlisted = { ...ece302, status: ScheduleCourseStatus.WAITlIST };
+
+      it('should say so ahead of the course, not on top of it', () => {
+        render([waitlisted]);
+
+        const title = tileElements()[0].querySelector('.course-title') as Element;
+
+        expect(title.textContent?.replace(/\s+/g, ' ').trim()).toBe('Waitlist ECE 302 Electronic Circuits');
+      });
+
+      it('should keep the time on a 50 minute class in the narrowest column', () => {
+        render([{ ...waitlisted, name: 'Microprocessors & Digital Systems For Engineers' }]);
+        (fixture.nativeElement as HTMLElement).style.width = '672px';
+
+        expect(isInsideTile(tileElements()[0].querySelector('.times') as Element)).toBeTrue();
+      });
+
+      it('should say nothing about it on any other class', () => {
+        render([ece302]);
+
+        expect(tileElements()[0].textContent).not.toContain('Waitlist');
+      });
+    });
+
     it('should wrap a long name onto a second line instead of cutting it off', () => {
       render([{ ...ece302, name: 'Great Ages Of The Modern World And Beyond' }]);
 
@@ -225,6 +268,16 @@ describe('ScheduleGridComponent', () => {
       expect(tileElements()[0].querySelector('.times')?.textContent).toBe('9:10 AM - 10:00 AM');
     });
 
+    it('should show the hour labels the same way as the classes beside them', () => {
+      render();
+
+      const labels = Array.from((fixture.nativeElement as HTMLElement).querySelectorAll('.tile.time'))
+        .map((label) => label.textContent?.trim());
+
+      expect(labels.slice(0, 2)).toEqual(['8:00 AM', '9:00 AM']);
+      expect(labels[5]).toBe('1:00 PM');
+    });
+
     it('should show the same tooltip anywhere on the tile', () => {
       render([ece302]);
 
@@ -240,20 +293,26 @@ describe('ScheduleGridComponent', () => {
       }]);
       render([math]);
 
-      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, Wells Hall A1, Lecture, Ann Lee');
+      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, 9:00 AM - 9:50 AM, Wells Hall A1, Lecture, Ann Lee');
     });
 
     it('should leave a missing instructor out of the tooltip', () => {
       render([timed('Calculus II', '09:00', '09:50')]);
 
-      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, Wells Hall A1, Lecture');
+      expect(tileElements()[0].getAttribute('title')).toBe('Calculus II, 9:00 AM - 9:50 AM, Wells Hall A1, Lecture');
+    });
+
+    it('should show an online location once in the tooltip', () => {
+      render([online('IAH 221C')]);
+
+      expect(tileElements()[0].getAttribute('title')).toBe('IAH 221C, Online Asynchronous, Lecture');
     });
 
     it('should add the course description to the tooltip on its own lines', () => {
       render([{ ...timed('Calculus II', '09:00', '09:50'), description: 'Limits and series.' }]);
 
       expect(tileElements()[0].getAttribute('title'))
-        .toBe('Calculus II, Wells Hall A1, Lecture\n\nLimits and series.');
+        .toBe('Calculus II, 9:00 AM - 9:50 AM, Wells Hall A1, Lecture\n\nLimits and series.');
     });
 
     it('should mark a class with no set time so it can sit on one line', () => {

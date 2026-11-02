@@ -108,6 +108,19 @@ describe('SectionPickerComponent', () => {
     expect(sectionRow('math-1').textContent).toContain('No meetings');
   });
 
+  it('should keep an open course level with its checkbox', () => {
+    render([math, physics, course('Chemistry', [section('chemistry-1')])], []);
+
+    const row = picker().querySelectorAll('.course')[1] as HTMLElement;
+
+    (row.querySelector('mat-expansion-panel-header') as HTMLElement).click();
+    fixture.detectChanges();
+
+    const panel = row.querySelector('mat-expansion-panel') as HTMLElement;
+
+    expect(panel.getBoundingClientRect().top).toBe(row.getBoundingClientRect().top);
+  });
+
   it('should say how many sections of each course are picked', () => {
     render([math, physics], ['math-1', 'math-3']);
 

@@ -10,5 +10,5 @@ export function scrollToElementId(elementId: string, _document?: Document) {
 
   const el = dom.getElementById(elementId);
 
-  if (el) el.scrollIntoView({ behavior: "smooth", block: 'center' });
+  if (el) el.scrollIntoView({ behavior: "smooth", block: 'start' });
 }
