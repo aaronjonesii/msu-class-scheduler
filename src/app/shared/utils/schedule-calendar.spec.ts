@@ -188,7 +188,12 @@ describe('scheduleCalendar', () => {
     });
 
     it('should change nothing when it falls outside the term', () => {
-      expect(timesOf([meeting([MONDAY, WEDNESDAY])], { ...NO_BREAK, breakStart: '2027-05-03', breakEnd: '2027-05-07' }))
+      expect(timesOf([meeting([MONDAY, WEDNESDAY])], { ...NO_BREAK, breakStart: '2027-05-10', breakEnd: '2027-05-14' }))
+        .toEqual(timesOf([meeting([MONDAY, WEDNESDAY])], NO_BREAK));
+    });
+
+    it('should not start a class early when the break is before the term', () => {
+      expect(timesOf([meeting([MONDAY, WEDNESDAY])], { ...NO_BREAK, breakStart: '2027-01-02', breakEnd: '2027-01-05' }))
         .toEqual(timesOf([meeting([MONDAY, WEDNESDAY])], NO_BREAK));
     });
 
