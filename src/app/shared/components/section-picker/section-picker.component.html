@@ -36,6 +36,7 @@
           @for (section of course.sections; track section.id) {
             <li class="section">
               <mat-checkbox [checked]="pickedSectionIds().has(section.id)"
+                            [aria-describedby]="'section-details-' + section.id"
                             (change)="togglePicks([section], $event.checked)">
                 <span class="section-name">{{section.name}}</span>
                 @if (sectionStatus(section, course); as status) {
@@ -45,7 +46,7 @@
                 }
               </mat-checkbox>
 
-              <div class="section-details">
+              <div class="section-details" [id]="'section-details-' + section.id">
                 <p>{{formatCourseMeetings(section.meetings) || 'No meetings'}}</p>
                 @if (formatMeetingDetails(section.meetings); as details) {
                   <p>{{details}}</p>

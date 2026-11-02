@@ -13,10 +13,11 @@ semesterPlan.id) {
 
   <mat-card-content>
     @if (semesterPlan.courses.length) {
-    <mat-chip-set aria-label="Courses in this plan">
+    <mat-chip-set role="list" aria-label="Courses in this plan">
       @for (semesterPlanClass of semesterPlan.courses; track
       semesterPlanClass.id) {
       <mat-chip
+        role="listitem"
         [highlighted]="true"
         [matTooltip]="semesterPlanClass.name + ' - ' + formatCredits(semesterPlanClass.credits)"
         [class]="semesterPlanClass.color | colorToClass : 'chip'"

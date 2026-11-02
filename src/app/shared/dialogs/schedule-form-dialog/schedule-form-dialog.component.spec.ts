@@ -276,6 +276,47 @@ describe('ScheduleFormDialogComponent', () => {
       typeNumber('3');
     });
 
+    describe('telling a screen reader what changed', () => {
+      const liveRegion = () => dialog().querySelector('[aria-live="polite"]') as HTMLElement;
+      const announcement = () => liveRegion().textContent?.replace(/\s+/g, ' ').trim();
+
+      it('should say which schedule is on screen', () => {
+        expect(announcement()).toBe('Schedule 3 of 4');
+      });
+
+      it('should follow the schedule on screen', () => {
+        typeNumber('4');
+
+        expect(announcement()).toBe('Schedule 4 of 4');
+      });
+
+      it('should say so when a pick changes the number of schedules', () => {
+        pick('m2', 'p1', 'p2');
+
+        expect(announcement()).toBe('Schedule 1 of 2');
+      });
+
+      it('should leave it to the alert when no schedule fits', () => {
+        pick();
+
+        expect(announcement()).toBe('');
+      });
+
+      it('should keep listening while no schedule fits, so the next one is read out', () => {
+        const region = liveRegion();
+
+        pick();
+        pick('m1', 'p1');
+
+        expect(liveRegion()).toBe(region);
+        expect(announcement()).toBe('Schedule 1 of 1');
+      });
+
+      it('should stay off the screen', () => {
+        expect(liveRegion().getBoundingClientRect().width).toBeLessThanOrEqual(1);
+      });
+    });
+
     it('should start with every section picked', () => {
       expect([...component.pickedSectionIds()]).toEqual(['m1', 'm2', 'p1', 'p2']);
       expect(dialog().textContent).toContain('/ 4');

@@ -13,9 +13,10 @@
 
       <mat-card-content>
         @if (schedule.courses.length) {
-          <mat-chip-set aria-label="Courses in this schedule">
+          <mat-chip-set role="list" aria-label="Courses in this schedule">
             @for (scheduleCourse of schedule.courses; track scheduleCourse) {
-              <mat-chip [highlighted]="true"
+              <mat-chip role="listitem"
+                        [highlighted]="true"
                         [matTooltip]="scheduleCourse.name + ' - ' + formatCredits(scheduleCourse.credits)"
                         [class]="scheduleCourse.color | colorToClass: 'chip'">
                 @if (scheduleCourse?.subjectCode && scheduleCourse?.courseNumber) {

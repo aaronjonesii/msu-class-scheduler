@@ -32,22 +32,13 @@ $class-schedule-builder-theme: mat.define-theme((
   .primary-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: primary);
   }
-  .primary-chip {
-    @include mat.chips-color($class-schedule-builder-theme, $color-variant: primary);
-  }
 
   .secondary-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: secondary);
   }
-  .secondary-chip {
-    @include mat.chips-color($class-schedule-builder-theme, $color-variant: secondary);
-  }
 
   .tertiary-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: tertiary);
-  }
-  .tertiary-chip {
-    @include mat.chips-color($class-schedule-builder-theme, $color-variant: tertiary);
   }
 
   .error-color {
@@ -55,9 +46,6 @@ $class-schedule-builder-theme: mat.define-theme((
   }
   .error-button {
     @include mat.button-color($class-schedule-builder-theme, $color-variant: error);
-  }
-  .error-chip {
-    @include mat.chips-color($class-schedule-builder-theme, $color-variant: error);
   }
 }
 

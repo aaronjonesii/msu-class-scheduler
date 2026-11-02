@@ -13,6 +13,12 @@
 
   @if (courses.length > 0) {
     <div class="generated">
+      <p class="cdk-visually-hidden" aria-live="polite">
+        @if (combinations().length > 0) {
+          Schedule {{selectedCombinationIndex() + 1}} of {{combinations().length}}
+        }
+      </p>
+
       <csb-section-picker [courses]="courses"
                           [pickedSectionIds]="pickedSectionIds()"
                           (picksChanged)="onPicksChange($event)" />

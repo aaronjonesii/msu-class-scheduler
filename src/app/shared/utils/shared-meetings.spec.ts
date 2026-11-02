@@ -65,7 +65,7 @@ describe('sharedMeetings', () => {
     });
   });
 
-  it('should treat a missing instructor and an empty one as the same', () => {
+  it('should treat a missing instructor and a null one as the same', () => {
     expect(sharedMeetings([sectionWith(LAB), sectionWith({ ...LAB, instructor: undefined })])).toEqual([LAB]);
   });
 });

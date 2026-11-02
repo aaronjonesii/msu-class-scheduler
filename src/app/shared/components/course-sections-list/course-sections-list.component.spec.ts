@@ -68,6 +68,18 @@ describe('CourseSectionsListComponent', () => {
     (document.querySelector('.cdk-overlay-backdrop') as HTMLElement | null)?.click();
   });
 
+  it('should keep its sections when only the course changes, like setting a default', async () => {
+    await render([section('001'), section('002')]);
+
+    fixture.componentRef.setInput('course', course({ selectedSectionId: '001' }));
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(sectionsService.getAll$).toHaveBeenCalledTimes(1);
+    expect(textOf(rows()[0], '.default')).toBe('Default');
+  });
+
   it('should list sections in order of their names', async () => {
     await render([section('007'), section('001'), section('003')]);
 

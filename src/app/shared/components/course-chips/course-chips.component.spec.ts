@@ -82,10 +82,14 @@ describe('CourseChipsComponent', () => {
     expect(clicked).toEqual(['physics']);
   });
 
-  it('should say what the chips are for', () => {
+  it('should be a named list for a screen reader, because a plain chip set has no role', () => {
     render([course('math')]);
 
-    expect(element().querySelector('mat-chip-set')?.getAttribute('aria-label')).toBe('Jump to a course');
+    const chipSet = element().querySelector('mat-chip-set');
+
+    expect(chipSet?.getAttribute('role')).toBe('list');
+    expect(chipSet?.getAttribute('aria-label')).toBe('Jump to a course');
+    expect(chips()[0].getAttribute('role')).toBe('listitem');
   });
 
   it('should show nothing with no courses', () => {

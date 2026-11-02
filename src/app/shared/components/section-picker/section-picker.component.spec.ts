@@ -78,6 +78,15 @@ describe('SectionPickerComponent', () => {
     expect(sectionRow('math-1').textContent).toContain('Wells Hall A1 · Ann Lee');
   });
 
+  it('should read out when and where a section meets from its own checkbox', () => {
+    render([math], []);
+
+    const details = document.getElementById(sectionBox('math-2').getAttribute('aria-describedby') as string);
+
+    expect(details?.textContent).toContain('Lecture: (Mon: 9:00 AM - 9:50 AM)');
+    expect(sectionRow('math-2').contains(details)).toBeTrue();
+  });
+
   it('should flag a section that is not open', () => {
     render([course('Calculus II', [section('math-1', CourseStatus.CLOSED)])], []);
 

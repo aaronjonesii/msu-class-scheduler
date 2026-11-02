@@ -1,11 +1,14 @@
 import { CourseMeeting } from "../interfaces/course-meeting";
 import { CourseSection } from "../interfaces/course-section";
 
-/** Firestore doesn't keep the order of a document's keys, so this names each field. */
+/**
+ * Firestore doesn't keep the order of a document's keys, so this names each field.
+ * In an array, JSON.stringify writes a missing value as null, so the two match.
+ */
 function meetingKey({ type, location, instructor, meetingTimes }: CourseMeeting): string {
   const times = meetingTimes.map(({ days, startTime, endTime }) => [days, startTime, endTime]);
 
-  return JSON.stringify([type, location ?? null, instructor ?? null, times]);
+  return JSON.stringify([type, location, instructor, times]);
 }
 
 /** The meetings every section has, like one lecture shared by several labs. */

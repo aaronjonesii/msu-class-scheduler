@@ -1,7 +1,7 @@
 @if (courses()?.length) {
-  <mat-chip-set aria-label="Jump to a course">
+  <mat-chip-set role="list" aria-label="Jump to a course">
     @for (course of courses(); track course.id) {
-      <mat-chip class="cursor-pointer"
+      <mat-chip role="listitem" class="cursor-pointer"
                 [highlighted]="true"
                 [matTooltip]="course.name"
                 [class]="course.color | colorToClass: 'chip'"

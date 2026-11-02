@@ -78,10 +78,14 @@ describe('SchedulesListComponent', () => {
       expect(list().querySelector('label')).toBeNull();
     });
 
-    it('should still be named for a screen reader', async () => {
+    it('should be a named list for a screen reader, because a plain chip set has no role', async () => {
       await render({ courses: [{ id: 'math', name: 'Calculus II' }] as ReadScheduleWithCourses['courses'] });
 
-      expect(list().querySelector('mat-chip-set')?.getAttribute('aria-label')).toBe('Courses in this schedule');
+      const chipSet = list().querySelector('mat-chip-set');
+
+      expect(chipSet?.getAttribute('role')).toBe('list');
+      expect(chipSet?.getAttribute('aria-label')).toBe('Courses in this schedule');
+      expect(list().querySelector('mat-chip')?.getAttribute('role')).toBe('listitem');
     });
 
     it('should show the name and credits of a course on hover', async () => {
