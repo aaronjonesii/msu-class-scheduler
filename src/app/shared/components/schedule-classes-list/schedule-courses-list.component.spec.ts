@@ -123,6 +123,29 @@ describe('ScheduleClassesListComponent', () => {
       expect(card().querySelector('mat-card-subtitle')).toBeNull();
     });
 
+    it('should show the section right after the code', async () => {
+      await render({ subjectCode: 'MTH', courseNumber: '133', sectionName: '002' });
+
+      expect(textOf('mat-card-title')).toBe('MTH 133 002');
+      expect(textOf('mat-card-subtitle')).toBe('Calculus II');
+    });
+
+    it('should show the section of a course with no code', async () => {
+      await render({ sectionName: '002' });
+
+      expect(textOf('mat-card-title')).toBe('Calculus II 002');
+    });
+
+    it('should never put the credits on top of a long section', async () => {
+      (fixture.nativeElement as HTMLElement).style.width = '311px';
+
+      await render({ subjectCode: 'ECE', courseNumber: '331', sectionName: '002 + LEC1 + REC1 + LAB1', credits: 4 });
+
+      const title = (card().querySelector('mat-card-title') as HTMLElement).getBoundingClientRect();
+
+      expect(title.right).toBeLessThanOrEqual(credits().getBoundingClientRect().left);
+    });
+
     it('should keep the id on the card, because the chips scroll to it', async () => {
       await render({});
 
